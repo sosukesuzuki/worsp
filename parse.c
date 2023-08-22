@@ -165,16 +165,16 @@ void next(char *source, struct ParseState *state) {
         strncpy(str, &source[start], length);
         str[length] = '\0';
 
-        if (str == "if") {
+        if (strcmp(str, "if") == 0) {
             new->kind = TK_IF;
             free(str);
-        } else if (str == "set") {
+        } else if (strcmp(str, "set") == 0) {
             new->kind = TK_SET;
             free(str);
-        } else if (str == "true") {
+        } else if (strcmp(str, "true") == 0) {
             new->kind = TK_TRUE;
             free(str);
-        } else if (str == "false") {
+        } else if (strcmp(str, "false") == 0) {
             new->kind = TK_FALSE;
             free(str);
         } else {
@@ -224,6 +224,9 @@ void next(char *source, struct ParseState *state) {
     state->token = current->next = new;
 }
 
+void parseAssignmentExpression(char *source, struct ParseState *state, struct ParseResult *result) {
+}
+
 void parseExpression(char *source, struct ParseState *state, struct ParseResult *result) {
 }
 
@@ -242,7 +245,7 @@ void parse(char *source, struct ParseState *state, struct ParseResult *result) {
 }
 
 int main() {
-    char *source = "(   33 i(adsfl) i \"foo\"  )";
+    char *source = "aa";
 
     struct ParseState state = (struct ParseState){NULL, 0};
     struct ParseResult result = (struct ParseResult){NULL};
