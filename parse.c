@@ -66,6 +66,11 @@ int match(struct ParseState *state, TokenKind kind) {
 }
 
 void next(char *source, struct ParseState *state) {
+    // Skip whitespaces
+    while (isspace(source[state->pos])) {
+        state->pos++;
+    }
+
     struct Token *current = state->token;
     struct Token *new = malloc(sizeof(struct Token));
 
@@ -128,13 +133,15 @@ void parse(char *source, struct ParseState *state, struct ParseResult *result) {
     next(source, state);
     printf("%s\n", state->token->str);
     next(source, state);
-    printf("%d\n", state->token->val);
+    printf("%s\n", state->token->str);
+    next(source, state);
+    printf("%s\n", state->token->str);
     next(source, state);
     printf("%s\n", state->token->str);
 }
 
 int main() {
-    char *source = "(33)aaa3uuu(33)";
+    char *source = "(   33 i(adsfl) i  )";
 
     struct ParseState state = (struct ParseState){NULL, 0};
     struct ParseResult result;
