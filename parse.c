@@ -33,6 +33,10 @@ typedef enum {
     TK_RPAREN, // )
     TK_SYMBOL,
     TK_STRING,
+    TK_IF,
+    TK_SET,
+    TK_TRUE,
+    TK_FALSE,
     TK_EOF
 } TokenKind;
 
@@ -156,10 +160,27 @@ void next(char *source, struct ParseState *state) {
             state->pos++;
         }
         int length = state->pos - start;
-        new->kind = TK_SYMBOL;
-        new->str = malloc(length + 1);
-        strncpy(new->str, &source[start], length);
-        new->str[length] = '\0';
+
+        char *str = malloc(length + 1);
+        strncpy(str, &source[start], length);
+        str[length] = '\0';
+
+        if (str == "if") {
+            new->kind = TK_IF;
+            free(str);
+        } else if (str == "set") {
+            new->kind = TK_SET;
+            free(str);
+        } else if (str == "true") {
+            new->kind = TK_TRUE;
+            free(str);
+        } else if (str == "false") {
+            new->kind = TK_FALSE;
+            free(str);
+        } else {
+            new->kind = TK_SYMBOL;
+            new->str = str;
+        }
     } else if (isdigit(source[state->pos])) {
         // tokenize digit
         int start = state->pos;
@@ -203,9 +224,12 @@ void next(char *source, struct ParseState *state) {
     state->token = current->next = new;
 }
 
-void parseExpression(char *source, struct ParseState *state, struct ParseResult *result) {}
+void parseExpression(char *source, struct ParseState *state, struct ParseResult *result) {
+}
 
 void parseProgram(char *source, struct ParseState *state, struct ParseResult *result) {
+    struct ProgramNode *program = malloc(sizeof(struct ProgramNode));
+    result->program = program;
     while (state->token->kind != TK_EOF) {
         parseExpression(source, state, result);
     }
