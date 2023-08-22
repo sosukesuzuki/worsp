@@ -231,11 +231,11 @@ void parseExpression(char *source, struct ParseState *state, struct ParseResult 
 }
 
 void parseProgram(char *source, struct ParseState *state, struct ParseResult *result) {
-    struct ProgramNode *program = malloc(sizeof(struct ProgramNode));
-    result->program = program;
-    while (state->token->kind != TK_EOF) {
-        parseExpression(source, state, result);
-    }
+    // struct ProgramNode *program = malloc(sizeof(struct ProgramNode));
+    // result->program = program;
+    // while (state->token->kind != TK_EOF) {
+    //     parseExpression(source, state, result);
+    // }
 }
 
 void parse(char *source, struct ParseState *state, struct ParseResult *result) {
