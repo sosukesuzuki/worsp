@@ -1,7 +1,8 @@
 /*
 <program> ::= <expression>*
-<expression> ::= <literal> | <symbol> | <function-call> | <binary-operation> | <conditional> | <list>
+<expression> ::= <literal> | <symbol> | <function-call> | <binary-operation> | <conditional> | <list> | <assignment>
 <list> ::= "(" <expression>* ")"
+<assignment> ::= "(" "set" <symbol> <expression> ")"
 <literal> ::= <number> | <string> | <boolean>
 <symbol> ::= <identifier>
 <function-call> ::= "(" <expression> <expression>* ")"
@@ -47,8 +48,82 @@ struct ParseState {
     int pos;
 };
 
+struct ProgramNode {
+    struct ExpressionNode *expression;
+};
 
-struct ParseResult {};
+enum ExpressionType {
+    EXP_LITERAL,
+    EXP_FUNCTION_CALL,
+    EXP_SYMBOL,
+    EXP_BINARY_OPERATION,
+    EXP_CONDITIONAL,
+    EXP_ASSIGNMENT
+};
+
+struct ExpressionNode {
+    enum ExpressionType type;
+    union {
+        struct LiteralNode *literal;
+        struct FunctionCallNode *function_call;
+        struct SymbolNode *symbol;
+        struct BinaryOperationNode *binary_operation;
+        struct ConditionalNode *conditional;
+        struct AssignmentNode *assignment;
+    } data;
+};
+
+enum LiteralType {
+    LIT_INTERGER,
+    LIT_STRING,
+    LIT_BOOLEAN
+};
+
+struct LiteralNode {
+    enum LiteralType type;
+    union {
+        int int_value;
+        int boolean_value;
+        char *string_value;
+    };
+};
+
+struct FunctionCallNode {
+    struct ExpressionNode *function;
+    struct ExpressionNode *argument;
+};
+
+struct SymbolNode {
+    char *symbol_name;
+};
+
+enum BinaryOperatorType {
+    OP_ADD,
+    OP_SUB,
+    OP_MUL,
+    OP_DIV
+};
+
+struct BinaryOperationNode {
+    enum BinaryOperatorType type;
+    struct ExpressionNode *left;
+    struct ExpressionNode *right;
+};
+
+struct ConditionalNode {
+    struct ExpressionNode *condition;
+    struct ExpressionNode *then_expression;
+    struct ExpressionNode *else_expression;
+};
+
+struct AssignmentNode {
+    struct SymbolNode *symbol;
+    struct ExpressionNode *expression;
+};
+
+struct ParseResult {
+    struct ProgramNode *program;
+};
 
 int match(struct ParseState *state, TokenKind kind) {
     return state->token->kind != kind ? 1 : 0;
@@ -128,32 +203,25 @@ void next(char *source, struct ParseState *state) {
     state->token = current->next = new;
 }
 
+void parseExpression(char *source, struct ParseState *state, struct ParseResult *result) {}
+
+void parseProgram(char *source, struct ParseState *state, struct ParseResult *result) {
+    while (state->token->kind != TK_EOF) {
+        parseExpression(source, state, result);
+    }
+}
+
 void parse(char *source, struct ParseState *state, struct ParseResult *result) {
+    // Set first token
     next(source, state);
-    printf("%s\n", state->token->str);
-    next(source, state);
-    printf("%d\n", state->token->val);
-    next(source, state);
-    printf("%s\n", state->token->str);
-    next(source, state);
-    printf("%s\n", state->token->str);
-    next(source, state);
-    printf("%s\n", state->token->str);
-    next(source, state);
-    printf("%s\n", state->token->str);
-    next(source, state);
-    printf("%s\n", state->token->str);
-    next(source, state);
-    printf("%s\n", state->token->str);
-    next(source, state);
-    printf("%s\n", state->token->str);
+    parseProgram(source, state, result);
 }
 
 int main() {
     char *source = "(   33 i(adsfl) i \"foo\"  )";
 
     struct ParseState state = (struct ParseState){NULL, 0};
-    struct ParseResult result;
+    struct ParseResult result = (struct ParseResult){NULL};
 
     parse(source, &state, &result);
 
