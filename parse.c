@@ -68,6 +68,7 @@ int match(struct ParseState *state, TokenKind kind) {
 void next(char *source, struct ParseState *state) {
     struct Token *current = state->token;
     struct Token *new = malloc(sizeof(struct Token));
+
     if (source[state->pos] == '(') {
         new->kind = TK_LPAREN;
         new->str = "(";
@@ -90,7 +91,24 @@ void next(char *source, struct ParseState *state) {
         new->str = malloc(length + 1);
         strncpy(new->str, &source[start], length);
         new->str[length] = '\0';
+    } else if (isdigit(source[state->pos])) {
+        // tokenize digit
+        int start = state->pos;
+        while (isdigit(source[state->pos])) {
+            state->pos++;
+        }
+        int length = state->pos - start;
+
+        char *str = malloc(length + 1);
+        strncpy(str, &source[start], length);
+        str[length] = '\0';
+        int val = atoi(str);
+        free(str);
+
+        new->kind = TK_DIGIT;
+        new->val = val;
     }
+
     if (current == NULL) {
         state->token = new;
         return;
@@ -100,19 +118,28 @@ void next(char *source, struct ParseState *state) {
 
 void parse(char *source, struct ParseState *state, struct ParseResult *result) {
     next(source, state);
+    printf("%s\n", state->token->str);
     next(source, state);
+    printf("%d\n", state->token->val);
     next(source, state);
+    printf("%s\n", state->token->str);
+    next(source, state);
+    printf("%s\n", state->token->str);
+    next(source, state);
+    printf("%s\n", state->token->str);
+    next(source, state);
+    printf("%d\n", state->token->val);
+    next(source, state);
+    printf("%s\n", state->token->str);
 }
 
 int main() {
-    char *source = "(abcd3n)";
+    char *source = "(33)aaa3uuu(33)";
 
     struct ParseState state = (struct ParseState){NULL, 0};
     struct ParseResult result;
 
     parse(source, &state, &result);
-
-    printf("%s\n", state.token->str);
 
     return 0;
 }
