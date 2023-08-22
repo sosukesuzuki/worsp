@@ -142,14 +142,3 @@ void parse(char *source, struct ParseState *state, struct ParseResult *result) {
   next(source, state);
   parseProgram(source, state, result);
 }
-
-int main() {
-  char *source = "aa";
-
-  struct ParseState state = (struct ParseState){NULL, 0};
-  struct ParseResult result = (struct ParseResult){NULL};
-
-  parse(source, &state, &result);
-
-  return 0;
-}
