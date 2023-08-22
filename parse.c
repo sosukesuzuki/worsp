@@ -112,6 +112,9 @@ void next(char *source, struct ParseState *state) {
 
         new->kind = TK_DIGIT;
         new->val = val;
+    } else {
+        printf("Unexpected token: %c\n", source[state->pos]);
+        exit(1);
     }
 
     if (current == NULL) {
