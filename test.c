@@ -4,20 +4,21 @@
 #include <stdlib.h>
 #include <string.h>
 
-#define TEST_ASSERT(expr) \
-    do { \
-        if (!(expr)) { \
-            fprintf(stderr, "Assertion failed: %s (%s:%d)\n", #expr, __FILE__, __LINE__); \
-            exit(1); \
-        } \
-    } while (0)
+#define TEST_ASSERT(expr)                                                      \
+  do {                                                                         \
+    if (!(expr)) {                                                             \
+      fprintf(stderr, "Assertion failed: %s (%s:%d)\n", #expr, __FILE__,       \
+              __LINE__);                                                       \
+      exit(1);                                                                 \
+    }                                                                          \
+  } while (0)
 
-#define RUN_TEST(test_func) \
-    do { \
-        printf("Running test: %s\n", #test_func); \
-        test_func(); \
-        printf("Test passed.\n\n"); \
-    } while (0)
+#define RUN_TEST(test_func)                                                    \
+  do {                                                                         \
+    printf("Running test: %s\n", #test_func);                                  \
+    test_func();                                                               \
+    printf("Test passed.\n\n");                                                \
+  } while (0)
 
 void next_singleCharSymbol() {
   char *source = "a";
@@ -37,9 +38,23 @@ void next_multipleCharSymbol() {
   TEST_ASSERT(strcmp(state.token->str, "aaaa") == 0);
 }
 
+void next_parenAndDigit() {
+  char *source = "(1)";
+  struct ParseState state = (struct ParseState){NULL, 0};
+  struct ParseResult result = (struct ParseResult){NULL};
+  next(source, &state);
+  TEST_ASSERT(state.token->kind == TK_LPAREN);
+  next(source, &state);
+  TEST_ASSERT(state.token->kind == TK_DIGIT);
+  TEST_ASSERT(state.token->val == 1);
+  next(source, &state);
+  TEST_ASSERT(state.token->kind == TK_RPAREN);
+}
+
 int main() {
   RUN_TEST(next_singleCharSymbol);
   RUN_TEST(next_multipleCharSymbol);
+  RUN_TEST(next_parenAndDigit);
 
   return 0;
 }
