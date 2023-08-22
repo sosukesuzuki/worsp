@@ -112,6 +112,21 @@ void next(char *source, struct ParseState *state) {
 
         new->kind = TK_DIGIT;
         new->val = val;
+    } else if (source[state->pos] == '"') {
+        // tokenize string
+        state->pos++; // skip '"'
+        int start = state->pos;
+        while(source[state->pos] != '"' && source[state->pos] != '\0') {
+            state->pos++;
+        }
+        int length = state->pos - start;
+        new->kind = TK_STRING;
+        new->str = malloc(length + 1);
+        strncpy(new->str, &source[start], length);
+        new->str[length] = '\0';
+        if (source[state->pos] == '"') {
+            state->pos++;  // クオートをスキップ
+        }
     } else {
         printf("Unexpected token: %c\n", source[state->pos]);
         exit(1);
@@ -141,10 +156,12 @@ void parse(char *source, struct ParseState *state, struct ParseResult *result) {
     printf("%s\n", state->token->str);
     next(source, state);
     printf("%s\n", state->token->str);
+    next(source, state);
+    printf("%s\n", state->token->str);
 }
 
 int main() {
-    char *source = "(   33 i(adsfl) i  )";
+    char *source = "(   33 i(adsfl) i \"foo\"  )";
 
     struct ParseState state = (struct ParseState){NULL, 0};
     struct ParseResult result;
