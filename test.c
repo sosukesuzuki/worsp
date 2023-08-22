@@ -19,7 +19,7 @@
         printf("Test passed.\n\n"); \
     } while (0)
 
-void runTest1() {
+void next_singleCharSymbol() {
   char *source = "a";
   struct ParseState state = (struct ParseState){NULL, 0};
   struct ParseResult result = (struct ParseResult){NULL};
@@ -28,7 +28,7 @@ void runTest1() {
   TEST_ASSERT(strcmp(state.token->str, "a") == 0);
 }
 
-void runTest2() {
+void next_multipleCharSymbol() {
   char *source = "aaaa";
   struct ParseState state = (struct ParseState){NULL, 0};
   struct ParseResult result = (struct ParseResult){NULL};
@@ -38,8 +38,8 @@ void runTest2() {
 }
 
 int main() {
-  RUN_TEST(runTest1);
-  RUN_TEST(runTest2);
+  RUN_TEST(next_singleCharSymbol);
+  RUN_TEST(next_multipleCharSymbol);
 
   return 0;
 }
