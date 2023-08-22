@@ -1,34 +1,22 @@
 /*
-
-<program> ::= <expression>
-           | <expression> <program>
-
-<expression> ::= <atom>
-             | <list>
-
-<atom> ::= <symbol>
-        | <number>
-        | <string>
-
-<symbol> ::= <letter> <symbol_chars>
-
-<number> ::= <integer>
-         | <float>
-
-<integer> ::= <digit>+
-<float> ::= <digit>+ "." <digit>+
-
+<program> ::= <expression>*
+<expression> ::= <literal> | <symbol> | <function-call> | <binary-operation> | <conditional> | <list>
 <list> ::= "(" <expression>* ")"
-
-<letter> ::= "A" | "B" | ... | "Z" | "a" | "b" | ... | "z"
+<literal> ::= <number> | <string> | <boolean>
+<symbol> ::= <identifier>
+<function-call> ::= "(" <expression> <expression>* ")"
+<binary-operation> ::= "(" <operator> <expression> <expression> ")"
+<operator> ::= "+" | "-" | "*" | "/"
+<conditional> ::= "(" "if" <expression> <expression> <expression> ")"
+<number> ::= <digit>+
+<string> ::= '"' <character>* '"'
+<boolean> ::= "true" | "false"
+<identifier> ::= <letter> <identifier-character>*
+<letter> ::= "a" | "b" | ... | "z" | "A" | "B" | ... | "Z"
 <digit> ::= "0" | "1" | ... | "9"
-<symbol_chars> ::= <letter> | <digit> | "+" | "-" | "*" | "/" | "=" | ...
-<string> ::= '"' <string_characters> '"'
-<string_characters> ::= <string_character>*
-<string_character> ::= <any_character_except_double_quote>
-                   | '\"'  ; ダブルクォートのエスケープ
-                   | '\\'  ; バックスラッシュのエスケープ
-
+<character> ::= <letter> | <digit> | <special-character>
+<identifier-character> ::= <letter> | <digit> | "_"
+<special-character> ::= "+" | "-" | "*" | "/" | "=" | "<" | ">" | "&" | "|" | "!" | "?" | "$" | "%" | "^" | "~"
 */
 
 #include <stdio.h>
@@ -58,6 +46,7 @@ struct ParseState {
     struct Token *token;
     int pos;
 };
+
 
 struct ParseResult {};
 
