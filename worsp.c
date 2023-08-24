@@ -70,13 +70,7 @@ void next(char *source, struct ParseState *state) {
     strncpy(str, &source[start], length);
     str[length] = '\0';
 
-    if (strcmp(str, "if") == 0) {
-      new->kind = TK_IF;
-      free(str);
-    } else if (strcmp(str, "set") == 0) {
-      new->kind = TK_SET;
-      free(str);
-    } else if (strcmp(str, "true") == 0) {
+    if (strcmp(str, "true") == 0) {
       new->kind = TK_TRUE;
       free(str);
     } else if (strcmp(str, "false") == 0) {

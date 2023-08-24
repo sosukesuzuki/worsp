@@ -54,11 +54,13 @@ void next_ifAndSet() {
   next(source, &state);
   TEST_ASSERT(state.token->kind == TK_LPAREN);
   next(source, &state);
-  TEST_ASSERT(state.token->kind == TK_IF);
+  TEST_ASSERT(state.token->kind == TK_SYMBOL);
+  TEST_ASSERT(strcmp(state.token->str, "if") == 0);
   next(source, &state);
   TEST_ASSERT(state.token->kind == TK_LPAREN);
   next(source, &state);
-  TEST_ASSERT(state.token->kind == TK_SET);
+  TEST_ASSERT(state.token->kind == TK_SYMBOL);
+  TEST_ASSERT(strcmp(state.token->str, "set") == 0);
   next(source, &state);
   TEST_ASSERT(state.token->kind == TK_SYMBOL);
   TEST_ASSERT(strcmp(state.token->str, "a") == 0);
@@ -70,7 +72,8 @@ void next_ifAndSet() {
   next(source, &state);
   TEST_ASSERT(state.token->kind == TK_LPAREN);
   next(source, &state);
-  TEST_ASSERT(state.token->kind == TK_SET);
+  TEST_ASSERT(state.token->kind == TK_SYMBOL);
+  TEST_ASSERT(strcmp(state.token->str, "set") == 0);
   next(source, &state);
   TEST_ASSERT(state.token->kind == TK_SYMBOL);
   TEST_ASSERT(strcmp(state.token->str, "b") == 0);
@@ -82,7 +85,8 @@ void next_ifAndSet() {
   next(source, &state);
   TEST_ASSERT(state.token->kind == TK_LPAREN);
   next(source, &state);
-  TEST_ASSERT(state.token->kind == TK_SET);
+  TEST_ASSERT(state.token->kind == TK_SYMBOL);
+  TEST_ASSERT(strcmp(state.token->str, "set") == 0);
   next(source, &state);
   TEST_ASSERT(state.token->kind == TK_SYMBOL);
   TEST_ASSERT(strcmp(state.token->str, "c") == 0);

@@ -2,15 +2,11 @@
 #define WORST_H
 
 typedef enum {
-  TK_RESERVED,
   TK_DIGIT,
-  TK_LETTER,
   TK_LPAREN, // (
   TK_RPAREN, // )
   TK_SYMBOL,
   TK_STRING,
-  TK_IF,
-  TK_SET,
   TK_TRUE,
   TK_FALSE,
   TK_EOF
@@ -34,11 +30,7 @@ struct ProgramNode {
 
 enum ExpressionType {
   EXP_LITERAL,
-  EXP_FUNCTION_CALL,
   EXP_SYMBOL,
-  EXP_BINARY_OPERATION,
-  EXP_CONDITIONAL,
-  EXP_ASSIGNMENT
 };
 
 struct ExpressionList {
@@ -50,11 +42,7 @@ struct ExpressionNode {
   enum ExpressionType type;
   union {
     struct LiteralNode *literal;
-    struct FunctionCallNode *function_call;
     struct SymbolNode *symbol;
-    struct BinaryOperationNode *binary_operation;
-    struct ConditionalNode *conditional;
-    struct AssignmentNode *assignment;
   } data;
 };
 
@@ -69,32 +57,8 @@ struct LiteralNode {
   };
 };
 
-struct FunctionCallNode {
-  struct ExpressionNode *function;
-  struct ExpressionList *argument;
-};
-
 struct SymbolNode {
   char *symbol_name;
-};
-
-enum BinaryOperatorType { OP_ADD, OP_SUB, OP_MUL, OP_DIV };
-
-struct BinaryOperationNode {
-  enum BinaryOperatorType type;
-  struct ExpressionNode *left;
-  struct ExpressionNode *right;
-};
-
-struct ConditionalNode {
-  struct ExpressionNode *condition;
-  struct ExpressionNode *then_expression;
-  struct ExpressionNode *else_expression;
-};
-
-struct AssignmentNode {
-  struct SymbolNode *symbol;
-  struct ExpressionNode *expression;
 };
 
 struct ParseResult {
