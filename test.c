@@ -128,6 +128,20 @@ void parse_intLiteral() {
       result.program->expressions->expression->data.literal->int_value == 3);
 }
 
+void parse_stringLiteral() {
+  char *source = "\"foo\"";
+  struct ParseState state = (struct ParseState){NULL, 0};
+  struct ParseResult result = (struct ParseResult){NULL};
+  parse(source, &state, &result);
+  TEST_ASSERT(result.program->expressions->expression->type == EXP_LITERAL);
+  TEST_ASSERT(result.program->expressions->expression->data.literal->type ==
+              LIT_STRING);
+  TEST_ASSERT(
+      strcmp(
+          result.program->expressions->expression->data.literal->string_value,
+          "foo") == 0);
+}
+
 int main() {
   RUN_TEST(next_singleCharSymbol);
   RUN_TEST(next_multipleCharSymbol);
@@ -136,6 +150,7 @@ int main() {
   RUN_TEST(next_string);
 
   RUN_TEST(parse_intLiteral);
+  RUN_TEST(parse_stringLiteral);
 
   return 0;
 }
