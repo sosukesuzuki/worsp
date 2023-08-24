@@ -99,11 +99,34 @@ void next_ifAndSet() {
   TEST_ASSERT(state.token->kind == TK_RPAREN);
 }
 
+void next_string() {
+  char *source = "\"hello\" () 1 \"foo\" \"bar\"";
+  struct ParseState state = (struct ParseState){NULL, 0};
+  struct ParseResult result = (struct ParseResult){NULL};
+  next(source, &state);
+  TEST_ASSERT(state.token->kind == TK_STRING);
+  TEST_ASSERT(strcmp(state.token->str, "hello") == 0);
+  next(source, &state);
+  TEST_ASSERT(state.token->kind == TK_LPAREN);
+  next(source, &state);
+  TEST_ASSERT(state.token->kind == TK_RPAREN);
+  next(source, &state);
+  TEST_ASSERT(state.token->kind == TK_DIGIT);
+  TEST_ASSERT(state.token->val == 1);
+  next(source, &state);
+  TEST_ASSERT(state.token->kind == TK_STRING);
+  TEST_ASSERT(strcmp(state.token->str, "foo") == 0);
+  next(source, &state);
+  TEST_ASSERT(state.token->kind == TK_STRING);
+  TEST_ASSERT(strcmp(state.token->str, "bar") == 0);
+}
+
 int main() {
   RUN_TEST(next_singleCharSymbol);
   RUN_TEST(next_multipleCharSymbol);
   RUN_TEST(next_parenAndDigit);
   RUN_TEST(next_ifAndSet);
+  RUN_TEST(next_string);
 
   return 0;
 }
