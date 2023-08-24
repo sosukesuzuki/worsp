@@ -41,12 +41,21 @@ struct ExpressionList {
 struct ExpressionNode {
   enum ExpressionType type;
   union {
+    struct ListNode *list;
     struct LiteralNode *literal;
     struct SymbolNode *symbol;
   } data;
 };
 
-enum LiteralType { LIT_INTERGER, LIT_STRING, LIT_BOOLEAN };
+struct ListNode {
+  struct ExpressionList *expressions;
+}
+
+enum LiteralType {
+  LIT_INTERGER,
+  LIT_STRING,
+  LIT_BOOLEAN
+};
 
 struct LiteralNode {
   enum LiteralType type;
