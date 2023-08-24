@@ -35,7 +35,7 @@
 #include <string.h>
 
 int match(struct ParseState *state, TokenKind kind) {
-  return state->token->kind != kind ? 1 : 0;
+  return state->token->kind == kind ? 1 : 0;
 }
 
 void next(char *source, struct ParseState *state) {
@@ -174,7 +174,6 @@ void parseLiteralExpression(char *source, struct ParseState *state,
 void parseExpression(char *source, struct ParseState *state,
                      struct ParseResult *result,
                      struct ExpressionNode *expression) {
-  next(source, state);
   if (match(state, TK_LPAREN)) {
   } else {
     // expression does not start with '('
@@ -209,10 +208,12 @@ void appendExpressionToProgram(struct ProgramNode *program,
 void parseProgram(char *source, struct ParseState *state,
                   struct ParseResult *result) {
   struct ProgramNode *program = malloc(sizeof(struct ProgramNode));
+  program->expressions = NULL;
+
   result->program = program;
 
   while (!match(state, TK_EOF)) {
-    struct Expression *expression = malloc(sizeof(struct ExpressionNode));
+    struct ExpressionNode *expression = malloc(sizeof(struct ExpressionNode));
     parseExpression(source, state, result, expression);
     appendExpressionToProgram(program, expression);
   }

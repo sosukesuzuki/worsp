@@ -23,7 +23,6 @@
 void next_singleCharSymbol() {
   char *source = "a";
   struct ParseState state = (struct ParseState){NULL, 0};
-  struct ParseResult result = (struct ParseResult){NULL};
   next(source, &state);
   TEST_ASSERT(state.token->kind == TK_SYMBOL);
   TEST_ASSERT(strcmp(state.token->str, "a") == 0);
@@ -32,7 +31,6 @@ void next_singleCharSymbol() {
 void next_multipleCharSymbol() {
   char *source = "aaaa";
   struct ParseState state = (struct ParseState){NULL, 0};
-  struct ParseResult result = (struct ParseResult){NULL};
   next(source, &state);
   TEST_ASSERT(state.token->kind == TK_SYMBOL);
   TEST_ASSERT(strcmp(state.token->str, "aaaa") == 0);
@@ -41,7 +39,6 @@ void next_multipleCharSymbol() {
 void next_parenAndDigit() {
   char *source = "(1)";
   struct ParseState state = (struct ParseState){NULL, 0};
-  struct ParseResult result = (struct ParseResult){NULL};
   next(source, &state);
   TEST_ASSERT(state.token->kind == TK_LPAREN);
   next(source, &state);
@@ -54,7 +51,6 @@ void next_parenAndDigit() {
 void next_ifAndSet() {
   char *source = "(if (set a 1) (set b 2) (set c 3))";
   struct ParseState state = (struct ParseState){NULL, 0};
-  struct ParseResult result = (struct ParseResult){NULL};
   next(source, &state);
   TEST_ASSERT(state.token->kind == TK_LPAREN);
   next(source, &state);
@@ -102,7 +98,6 @@ void next_ifAndSet() {
 void next_string() {
   char *source = "\"hello\" () 1 \"foo\" \"bar\"";
   struct ParseState state = (struct ParseState){NULL, 0};
-  struct ParseResult result = (struct ParseResult){NULL};
   next(source, &state);
   TEST_ASSERT(state.token->kind == TK_STRING);
   TEST_ASSERT(strcmp(state.token->str, "hello") == 0);
@@ -129,6 +124,8 @@ void parse_intLiteral() {
   TEST_ASSERT(result.program->expressions->expression->type == EXP_LITERAL);
   TEST_ASSERT(result.program->expressions->expression->data.literal->type ==
               LIT_INTERGER);
+  TEST_ASSERT(
+      result.program->expressions->expression->data.literal->int_value == 3);
 }
 
 int main() {
@@ -137,6 +134,7 @@ int main() {
   RUN_TEST(next_parenAndDigit);
   RUN_TEST(next_ifAndSet);
   RUN_TEST(next_string);
+
   RUN_TEST(parse_intLiteral);
 
   return 0;
