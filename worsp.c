@@ -254,3 +254,9 @@ void parseProgram(char *source, struct ParseState *state,
 void parse(char *source, struct ParseState *state, struct ParseResult *result) {
   parseProgram(source, state, result);
 }
+
+// =================================================
+//   evaluator
+// =================================================
+
+void evalate(struct ParseResult *result) {}
