@@ -51,11 +51,7 @@ struct ListNode {
   struct ExpressionList *expressions;
 };
 
-enum LiteralType {
-  LIT_INTERGER,
-  LIT_STRING,
-  LIT_BOOLEAN
-};
+enum LiteralType { LIT_INTERGER, LIT_STRING, LIT_BOOLEAN };
 
 struct LiteralNode {
   enum LiteralType type;

@@ -4,6 +4,10 @@
 #include <stdlib.h>
 #include <string.h>
 
+// =================================================
+//   tokenizer
+// =================================================
+
 int match(struct ParseState *state, TokenKind kind) {
   return state->token->kind == kind ? 1 : 0;
 }
@@ -93,6 +97,25 @@ void next(char *source, struct ParseState *state) {
   state->token = current->next = new;
 }
 
+// =================================================
+//   parser
+//     <program>          ::= <expression>*
+//     <expression>       ::=
+//                        | <list>
+//                        | <symbol>
+//                        | <literal>
+//     <list>             ::= "(" <expression>* ")"
+//     <symbol>           ::= <symbol_name>
+//     <literal>          ::=
+//                         | <interger_literal>
+//                         | <string_literal>
+//                         | <boolean_literal>
+//     <interger_literal> ::= '1' | '2' | '3' | ...
+//     <string_literal>   ::= '"' <letter>* '"'
+//     <letter>           ::= 'a' | 'b' | 'c' | ...
+//     <boolean_literal>  ::= 'true' | 'false'
+// =================================================
+
 void parseSymbolExpression(char *source, struct ParseState *state,
                            struct ParseResult *result,
                            struct ExpressionNode *expression) {
@@ -171,6 +194,8 @@ void appendExpressionToProgram(struct ProgramNode *program,
 
 void parseProgram(char *source, struct ParseState *state,
                   struct ParseResult *result) {
+  // Set first token
+  next(source, state);
   struct ProgramNode *program = malloc(sizeof(struct ProgramNode));
   program->expressions = NULL;
 
@@ -183,25 +208,6 @@ void parseProgram(char *source, struct ParseState *state,
   }
 }
 
-/*
-<program>          ::= <expression>*
-<expression>       ::=
-                    | <list>
-                    | <symbol>
-                    | <literal>
-<list>             ::= "(" <expression>* ")"
-<symbol>           ::= <symbol_name>
-<literal>          ::=
-                    | <interger_literal>
-                    | <string_literal>
-                    | <boolean_literal>
-<interger_literal> ::= '1' | '2' | '3' | ...
-<string_literal>   ::= '"' <letter>* '"'
-<letter>           ::= 'a' | 'b' | 'c' | ...
-<boolean_literal>  ::= 'true' | 'false'
-*/
 void parse(char *source, struct ParseState *state, struct ParseResult *result) {
-  // Set first token
-  next(source, state);
   parseProgram(source, state, result);
 }
