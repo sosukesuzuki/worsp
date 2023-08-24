@@ -1,33 +1,3 @@
-/*
-<program> ::= <expression>*
-<expression> ::=
-    | <literal>
-    | <symbol>
-    | <function-call>
-    | <binary-operation>
-    | <conditional>
-    | <list>
-    | <assignment>
-<list> ::= "(" <expression>* ")"
-<assignment> ::= "(" "set" <symbol> <expression> ")"
-<literal> ::= <number> | <string> | <boolean>
-<symbol> ::= <identifier>
-<function-call> ::= "(" <expression> <expression>* ")"
-<binary-operation> ::= "(" <operator> <expression> <expression> ")"
-<operator> ::= "+" | "-" | "*" | "/"
-<conditional> ::= "(" "if" <expression> <expression> <expression> ")"
-<number> ::= <digit>+
-<string> ::= '"' <character>* '"'
-<boolean> ::= "true" | "false"
-<identifier> ::= <letter> <identifier-character>*
-<letter> ::= "a" | "b" | ... | "z" | "A" | "B" | ... | "Z"
-<digit> ::= "0" | "1" | ... | "9"
-<character> ::= <letter> | <digit> | <special-character>
-<identifier-character> ::= <letter> | <digit> | "_"
-<special-character> ::= "+" | "-" | "*" | "/" | "=" | "<" | ">" | "&" | "|" |
-"!" | "?" | "$" | "%" | "^" | "~"
-*/
-
 #include "worsp.h"
 #include <ctype.h>
 #include <stdio.h>
@@ -213,6 +183,23 @@ void parseProgram(char *source, struct ParseState *state,
   }
 }
 
+/*
+<program>          ::= <expression>*
+<expression>       ::=
+                    | <list>
+                    | <symbol>
+                    | <literal>
+<list>             ::= "(" <expression>* ")"
+<symbol>           ::= <symbol_name>
+<literal>          ::=
+                    | <interger_literal>
+                    | <string_literal>
+                    | <boolean_literal>
+<interger_literal> ::= '1' | '2' | '3' | ...
+<string_literal>   ::= '"' <letter>* '"'
+<letter>           ::= 'a' | 'b' | 'c' | ...
+<boolean_literal>  ::= 'true' | 'false'
+*/
 void parse(char *source, struct ParseState *state, struct ParseResult *result) {
   // Set first token
   next(source, state);
