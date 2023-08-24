@@ -49,7 +49,7 @@ struct ExpressionNode {
 
 struct ListNode {
   struct ExpressionList *expressions;
-}
+};
 
 enum LiteralType {
   LIT_INTERGER,
