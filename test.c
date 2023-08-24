@@ -120,6 +120,24 @@ void next_string() {
   TEST_ASSERT(strcmp(state.token->str, "bar") == 0);
 }
 
+void next_addOp() {
+  char *source = "(+ 1 2)";
+  struct ParseState state = (struct ParseState){NULL, 0};
+  next(source, &state);
+  TEST_ASSERT(state.token->kind == TK_LPAREN);
+  next(source, &state);
+  TEST_ASSERT(state.token->kind == TK_SYMBOL);
+  TEST_ASSERT(strcmp(state.token->str, "+") == 0);
+  next(source, &state);
+  TEST_ASSERT(state.token->kind == TK_DIGIT);
+  TEST_ASSERT(state.token->val == 1);
+  next(source, &state);
+  TEST_ASSERT(state.token->kind == TK_DIGIT);
+  TEST_ASSERT(state.token->val == 2);
+  next(source, &state);
+  TEST_ASSERT(state.token->kind == TK_RPAREN);
+}
+
 void parse_intLiteral() {
   char *source = "3";
   struct ParseState state = (struct ParseState){NULL, 0};
@@ -202,6 +220,7 @@ int main() {
   RUN_TEST(next_parenAndDigit);
   RUN_TEST(next_ifAndSet);
   RUN_TEST(next_string);
+  RUN_TEST(next_addOp);
 
   RUN_TEST(parse_intLiteral);
   RUN_TEST(parse_stringLiteral);

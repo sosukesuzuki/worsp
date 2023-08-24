@@ -8,6 +8,10 @@
 //   tokenizer
 // =================================================
 
+int isop(int ch) {
+  return ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == '%';
+}
+
 int match(struct ParseState *state, TokenKind kind) {
   return state->token->kind == kind ? 1 : 0;
 }
@@ -32,10 +36,10 @@ void next(char *source, struct ParseState *state) {
   } else if (source[state->pos] == '\0') {
     new->kind = TK_EOF;
     new->str = "\0";
-  } else if (isalpha(source[state->pos])) {
+  } else if (isalpha(source[state->pos]) || isop(source[state->pos])) {
     // tokenize symbol
     int start = state->pos;
-    while (isalnum(source[state->pos])) {
+    while (isalnum(source[state->pos]) || isop(source[state->pos])) {
       state->pos++;
     }
     int length = state->pos - start;
