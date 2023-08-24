@@ -29,7 +29,7 @@ struct ParseState {
 };
 
 struct ProgramNode {
-  struct ExpressionNode *expression;
+  struct ExpressionList *expressions;
 };
 
 enum ExpressionType {
@@ -39,6 +39,11 @@ enum ExpressionType {
   EXP_BINARY_OPERATION,
   EXP_CONDITIONAL,
   EXP_ASSIGNMENT
+};
+
+struct ExpressionList {
+  struct ExpressionNode *expression;
+  struct ExpressionList *next;
 };
 
 struct ExpressionNode {
@@ -66,7 +71,7 @@ struct LiteralNode {
 
 struct FunctionCallNode {
   struct ExpressionNode *function;
-  struct ExpressionNode *argument;
+  struct ExpressionList *argument;
 };
 
 struct SymbolNode {
@@ -98,5 +103,6 @@ struct ParseResult {
 
 int match(struct ParseState *state, TokenKind kind);
 void next(char *source, struct ParseState *state);
+void parse(char *source, struct ParseState *state, struct ParseResult *result);
 
 #endif

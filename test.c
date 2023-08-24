@@ -121,12 +121,23 @@ void next_string() {
   TEST_ASSERT(strcmp(state.token->str, "bar") == 0);
 }
 
+void parse_intLiteral() {
+  char *source = "3";
+  struct ParseState state = (struct ParseState){NULL, 0};
+  struct ParseResult result = (struct ParseResult){NULL};
+  parse(source, &state, &result);
+  TEST_ASSERT(result.program->expressions->expression->type == EXP_LITERAL);
+  TEST_ASSERT(result.program->expressions->expression->data.literal->type ==
+              LIT_INTERGER);
+}
+
 int main() {
   RUN_TEST(next_singleCharSymbol);
   RUN_TEST(next_multipleCharSymbol);
   RUN_TEST(next_parenAndDigit);
   RUN_TEST(next_ifAndSet);
   RUN_TEST(next_string);
+  RUN_TEST(parse_intLiteral);
 
   return 0;
 }
