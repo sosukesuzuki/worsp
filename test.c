@@ -51,10 +51,59 @@ void next_parenAndDigit() {
   TEST_ASSERT(state.token->kind == TK_RPAREN);
 }
 
+void next_ifAndSet() {
+  char *source = "(if (set a 1) (set b 2) (set c 3))";
+  struct ParseState state = (struct ParseState){NULL, 0};
+  struct ParseResult result = (struct ParseResult){NULL};
+  next(source, &state);
+  TEST_ASSERT(state.token->kind == TK_LPAREN);
+  next(source, &state);
+  TEST_ASSERT(state.token->kind == TK_IF);
+  next(source, &state);
+  TEST_ASSERT(state.token->kind == TK_LPAREN);
+  next(source, &state);
+  TEST_ASSERT(state.token->kind == TK_SET);
+  next(source, &state);
+  TEST_ASSERT(state.token->kind == TK_SYMBOL);
+  TEST_ASSERT(strcmp(state.token->str, "a") == 0);
+  next(source, &state);
+  TEST_ASSERT(state.token->kind == TK_DIGIT);
+  TEST_ASSERT(state.token->val == 1);
+  next(source, &state);
+  TEST_ASSERT(state.token->kind == TK_RPAREN);
+  next(source, &state);
+  TEST_ASSERT(state.token->kind == TK_LPAREN);
+  next(source, &state);
+  TEST_ASSERT(state.token->kind == TK_SET);
+  next(source, &state);
+  TEST_ASSERT(state.token->kind == TK_SYMBOL);
+  TEST_ASSERT(strcmp(state.token->str, "b") == 0);
+  next(source, &state);
+  TEST_ASSERT(state.token->kind == TK_DIGIT);
+  TEST_ASSERT(state.token->val == 2);
+  next(source, &state);
+  TEST_ASSERT(state.token->kind == TK_RPAREN);
+  next(source, &state);
+  TEST_ASSERT(state.token->kind == TK_LPAREN);
+  next(source, &state);
+  TEST_ASSERT(state.token->kind == TK_SET);
+  next(source, &state);
+  TEST_ASSERT(state.token->kind == TK_SYMBOL);
+  TEST_ASSERT(strcmp(state.token->str, "c") == 0);
+  next(source, &state);
+  TEST_ASSERT(state.token->kind == TK_DIGIT);
+  TEST_ASSERT(state.token->val == 3);
+  next(source, &state);
+  TEST_ASSERT(state.token->kind == TK_RPAREN);
+  next(source, &state);
+  TEST_ASSERT(state.token->kind == TK_RPAREN);
+}
+
 int main() {
   RUN_TEST(next_singleCharSymbol);
   RUN_TEST(next_multipleCharSymbol);
   RUN_TEST(next_parenAndDigit);
+  RUN_TEST(next_ifAndSet);
 
   return 0;
 }
