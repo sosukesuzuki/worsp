@@ -1,6 +1,10 @@
 #ifndef WORST_H
 #define WORST_H
 
+// =================================================
+//   tokenizer & parser
+// =================================================
+
 typedef enum {
   TK_DIGIT,
   TK_LPAREN, // (
