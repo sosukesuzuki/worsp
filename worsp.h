@@ -31,6 +31,7 @@ struct ProgramNode {
 enum ExpressionType {
   EXP_LITERAL,
   EXP_SYMBOL,
+  EXP_LIST,
 };
 
 struct ExpressionList {

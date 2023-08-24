@@ -167,6 +167,35 @@ void parse_multipleLiteralExpressions() {
                      "foo") == 0);
 }
 
+void parse_integersList() {
+  char *source = "(1 2 3)";
+  struct ParseState state = (struct ParseState){NULL, 0};
+  struct ParseResult result = (struct ParseResult){NULL};
+  parse(source, &state, &result);
+
+  TEST_ASSERT(result.program->expressions->expression->type == EXP_LIST);
+
+  struct ExpressionNode *expr1 = result.program->expressions->expression->data
+                                     .list->expressions->expression;
+  TEST_ASSERT(expr1->type == EXP_LITERAL);
+  TEST_ASSERT(expr1->data.literal->type == LIT_INTERGER);
+  TEST_ASSERT(expr1->data.literal->int_value == 1);
+
+  struct ExpressionNode *expr2 = result.program->expressions->expression->data
+                                     .list->expressions->next->expression;
+  TEST_ASSERT(expr2->type == EXP_LITERAL);
+  TEST_ASSERT(expr2->data.literal->type == LIT_INTERGER);
+  TEST_ASSERT(expr2->data.literal->int_value == 2);
+
+  struct ExpressionNode *expr3 = result.program->expressions->expression->data
+                                     .list->expressions->next->next->expression;
+  TEST_ASSERT(expr3->type == EXP_LITERAL);
+  TEST_ASSERT(expr3->data.literal->type == LIT_INTERGER);
+  TEST_ASSERT(expr3->data.literal->int_value == 3);
+
+  TEST_ASSERT(match(&state, TK_EOF));
+}
+
 int main() {
   RUN_TEST(next_singleCharSymbol);
   RUN_TEST(next_multipleCharSymbol);
@@ -177,6 +206,7 @@ int main() {
   RUN_TEST(parse_intLiteral);
   RUN_TEST(parse_stringLiteral);
   RUN_TEST(parse_multipleLiteralExpressions);
+  RUN_TEST(parse_integersList);
 
   return 0;
 }

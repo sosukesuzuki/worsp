@@ -83,7 +83,7 @@ void next(char *source, struct ParseState *state) {
     strncpy(new->str, &source[start], length);
     new->str[length] = '\0';
     if (source[state->pos] == '"') {
-      state->pos++; // クオートをスキップ
+      state->pos++; // Skip quote
     }
   } else {
     printf("Unexpected token: %c\n", source[state->pos]);
@@ -115,6 +115,44 @@ void next(char *source, struct ParseState *state) {
 //     <letter>           ::= 'a' | 'b' | 'c' | ...
 //     <boolean_literal>  ::= 'true' | 'false'
 // =================================================
+
+void appendExpressionToListExpression(struct ListNode *listNode,
+                                      struct ExpressioNode *expression) {
+  struct ExpressionList *expressions = malloc(sizeof(struct ExpressionList));
+  expressions->expression = expression;
+  expressions->next = NULL;
+  if (listNode->expressions == NULL) {
+    listNode->expressions = expressions;
+    return;
+  }
+  struct ExpressionList *current = listNode->expressions;
+  while (current->next != NULL) {
+    current = current->next;
+  }
+  current->next = expressions;
+}
+
+void parseExpression(char *source, struct ParseState *state,
+                     struct ParseResult *result,
+                     struct ExpressionNode *expression);
+
+void parseListExpression(char *source, struct ParseState *state,
+                         struct ParseResult *result,
+                         struct ExpressionNode *expression) {
+  struct ListNode *list = malloc(sizeof(struct ListNode));
+
+  expression->type = EXP_LIST;
+  expression->data.list = list;
+  expression->data.list->expressions = NULL;
+  next(source, state); // eat '('
+  while (!match(state, TK_RPAREN)) {
+    struct ExpressionNode *expressionItem =
+        malloc(sizeof(struct ExpressionNode));
+    parseExpression(source, state, result, expressionItem);
+    appendExpressionToListExpression(list, expressionItem);
+  }
+  next(source, state); // eat ')'
+}
 
 void parseSymbolExpression(char *source, struct ParseState *state,
                            struct ParseResult *result,
@@ -162,6 +200,7 @@ void parseExpression(char *source, struct ParseState *state,
                      struct ParseResult *result,
                      struct ExpressionNode *expression) {
   if (match(state, TK_LPAREN)) {
+    parseListExpression(source, state, result, expression);
   } else {
     // expression does not start with '('
     if (match(state, TK_SYMBOL)) {
