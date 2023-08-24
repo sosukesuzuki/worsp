@@ -259,4 +259,73 @@ void parse(char *source, struct ParseState *state, struct ParseResult *result) {
 //   evaluator
 // =================================================
 
+typedef enum {
+  OBJ_INTERGER,
+  OBJ_STRING,
+  OBJ_BOOL,
+} ObjectType;
+
+struct Object {
+  ObjectType type;
+  union {
+    int int_value;
+    char *string_value;
+    int bool_value;
+  };
+};
+
+void evaluateExpression(struct ExpressionNode *expression,
+                        struct Object *evaluated) {
+  if (expression->type == EXP_LIST) {
+    struct ExpressionList *expressions = expression->data.list->expressions;
+    if (expressions != NULL) {
+      struct ExpressionNode *expr = expressions->expression;
+      if (expr->type == EXP_SYMBOL) {
+        if (strcmp(expr->data.symbol->symbol_name, "if") == 0) {
+          // if
+        } else if (strcmp(expr->data.symbol->symbol_name, "while") == 0) {
+          // while
+        } else if (strcmp(expr->data.symbol->symbol_name, "=") == 0) {
+          // assignment
+        } else if ((strcmp(expr->data.symbol->symbol_name, "defun") == 0)) {
+          // define function
+        } else {
+          // function call
+        }
+      } else {
+        // list as data
+        printf("List as data is not implemented yet.\n");
+        exit(1);
+      }
+    } else {
+      // empty list
+      printf("(empty) List as data is not implemented yet.\n");
+      exit(1);
+    }
+  } else if (expression->type == EXP_LITERAL) {
+    if (expression->data.literal->type == LIT_INTERGER) {
+      evaluated->type = OBJ_INTERGER;
+      evaluated->int_value = expression->data.literal->int_value;
+    } else if (expression->data.literal->type == LIT_STRING) {
+      evaluated->type = OBJ_STRING;
+      evaluated->string_value = expression->data.literal->string_value;
+    } else if (expression->data.literal->type == LIT_BOOLEAN) {
+      evaluated->type = OBJ_BOOL;
+      evaluated->bool_value = expression->data.literal->boolean_value;
+    }
+  } else if (expression->type == EXP_SYMBOL) {
+    // get value from symbol table
+    printf("variable is not implemented yet.\n");
+    exit(1);
+  }
+}
+
+void evaluateProgram(struct ProgramNode *program) {
+  struct ExpressionList *expressions = program->expressions;
+  while (expressions != NULL) {
+    evaluateExpression(expressions->expression, NULL);
+    expressions = expressions->next;
+  }
+}
+
 void evalate(struct ParseResult *result) {}
