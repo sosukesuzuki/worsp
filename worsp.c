@@ -290,6 +290,8 @@ typedef enum {
   OBJ_INTERGER,
   OBJ_STRING,
   OBJ_BOOL,
+  OBJ_LIST,
+  OBJ_NIL,
 } ObjectType;
 
 struct Object {
@@ -298,12 +300,15 @@ struct Object {
     int int_value;
     char *string_value;
     int bool_value;
+    struct Object *list_value;
   };
 };
 
 void evaluateExpression(struct ExpressionNode *expression,
                         struct Object *evaluated) {
   if (expression->type == EXP_LIST) {
+    // TODO: evaluate each expression in list
+  } else if (expression->type == EXP_SYMBOLIC_EXP) {
     struct ExpressionList *expressions = expression->data.list->expressions;
     if (expressions != NULL) {
       struct ExpressionNode *expr = expressions->expression;
@@ -320,13 +325,13 @@ void evaluateExpression(struct ExpressionNode *expression,
           // function call
         }
       } else {
-        // list as data
-        printf("List as data is not implemented yet.\n");
+        // worsp does not allow S-expr thats first element is not symbol
+        printf("invalid s-exp.\n");
         exit(1);
       }
     } else {
-      // empty list
-      printf("(empty) List as data is not implemented yet.\n");
+      // empty symbol expression
+      printf("empty s-exp is not implemented yet.\n");
       exit(1);
     }
   } else if (expression->type == EXP_LITERAL) {
@@ -341,9 +346,13 @@ void evaluateExpression(struct ExpressionNode *expression,
       evaluated->bool_value = expression->data.literal->boolean_value;
     }
   } else if (expression->type == EXP_SYMBOL) {
-    // get value from symbol table
-    printf("variable is not implemented yet.\n");
-    exit(1);
+    if (expression->data.symbol->symbol_name == "nil") {
+      evaluated->type = OBJ_NIL;
+    } else {
+      // get value from symbol table
+      printf("variable is not implemented yet.\n");
+      exit(1);
+    }
   }
 }
 
