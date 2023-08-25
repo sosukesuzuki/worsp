@@ -33,6 +33,10 @@ void next(char *source, struct ParseState *state) {
     new->kind = TK_RPAREN;
     new->str = ")";
     state->pos++;
+  } else if (source[state->pos] == '\'') {
+    new->kind = TK_QUOTE;
+    new->str = "'";
+    state->pos++;
   } else if (source[state->pos] == '\0') {
     new->kind = TK_EOF;
     new->str = "\0";
@@ -105,10 +109,12 @@ void next(char *source, struct ParseState *state) {
 //   parser
 //     <program>          ::= <expression>*
 //     <expression>       ::=
+//                        | <s_expression>
 //                        | <list>
 //                        | <symbol>
 //                        | <literal>
-//     <list>             ::= "(" <expression>* ")"
+//     <s_expression>     ::= "(" <expression>* ")"
+//     <list>             ::= "'(" <expression>* ")"
 //     <symbol>           ::= <symbol_name>
 //     <literal>          ::=
 //                         | <interger_literal>
@@ -140,6 +146,24 @@ void parseExpression(char *source, struct ParseState *state,
                      struct ParseResult *result,
                      struct ExpressionNode *expression);
 
+void parseSymbolicExpression(char *source, struct ParseState *state,
+                             struct ParseResult *result,
+                             struct ExpressionNode *expression) {
+  struct SymbolicExpNode *symbolicExp = malloc(sizeof(struct SymbolicExpNode));
+
+  expression->type = EXP_SYMBOLIC_EXP;
+  expression->data.symbolic_exp = symbolicExp;
+  expression->data.symbolic_exp->expressions = NULL;
+  next(source, state); // eat '('
+  while (!match(state, TK_RPAREN)) {
+    struct ExpressionNode *expressionItem =
+        malloc(sizeof(struct ExpressionNode));
+    parseExpression(source, state, result, expressionItem);
+    appendExpressionToListExpression(symbolicExp, expressionItem);
+  }
+  next(source, state); // eat ')'
+}
+
 void parseListExpression(char *source, struct ParseState *state,
                          struct ParseResult *result,
                          struct ExpressionNode *expression) {
@@ -148,6 +172,7 @@ void parseListExpression(char *source, struct ParseState *state,
   expression->type = EXP_LIST;
   expression->data.list = list;
   expression->data.list->expressions = NULL;
+  next(source, state); // eat quote
   next(source, state); // eat '('
   while (!match(state, TK_RPAREN)) {
     struct ExpressionNode *expressionItem =
@@ -204,6 +229,8 @@ void parseExpression(char *source, struct ParseState *state,
                      struct ParseResult *result,
                      struct ExpressionNode *expression) {
   if (match(state, TK_LPAREN)) {
+    parseSymbolicExpression(source, state, result, expression);
+  } else if (match(state, TK_QUOTE)) {
     parseListExpression(source, state, result, expression);
   } else {
     // expression does not start with '('

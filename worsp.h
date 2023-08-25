@@ -13,7 +13,8 @@ typedef enum {
   TK_STRING,
   TK_TRUE,
   TK_FALSE,
-  TK_EOF
+  TK_EOF,
+  TK_QUOTE, // '
 } TokenKind;
 
 struct Token {
@@ -36,6 +37,7 @@ enum ExpressionType {
   EXP_LITERAL,
   EXP_SYMBOL,
   EXP_LIST,
+  EXP_SYMBOLIC_EXP,
 };
 
 struct ExpressionList {
@@ -46,10 +48,15 @@ struct ExpressionList {
 struct ExpressionNode {
   enum ExpressionType type;
   union {
+    struct SymbolicExpNode *symbolic_exp;
     struct ListNode *list;
     struct LiteralNode *literal;
     struct SymbolNode *symbol;
   } data;
+};
+
+struct SymbolicExpNode {
+  struct ExpressionList *expressions;
 };
 
 struct ListNode {
