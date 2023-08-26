@@ -23,13 +23,13 @@ int main() {
     }
 
     struct ParseState state = (struct ParseState){NULL, 0};
-    struct ParseResult result = (struct ParseResult){NULL};
-    struct Object evaluated = (struct Object){};
-    parse(input, &state, &result);
-    evaluateExpression(result.program->expressions->expression, &evaluated,
+    struct ParseResult *result = malloc(sizeof(struct ParseResult));
+    struct Object *evaluated = malloc(sizeof(struct Object));
+    parse(input, &state, result);
+    evaluateExpression(result->program->expressions->expression, evaluated,
                        &env);
 
-    char *stringified = stringifyObject(&evaluated);
+    char *stringified = stringifyObject(evaluated);
 
     printf("%s\n", stringified);
 
