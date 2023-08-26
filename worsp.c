@@ -142,6 +142,23 @@ void appendExpressionToListExpression(struct ListNode *listNode,
   current->next = expressions;
 }
 
+void appendExpressionToSymbolicExpression(
+    struct SymbolicExpNode *symbolicExpNode,
+    struct ExpressionNode *expression) {
+  struct ExpressionList *expressions = malloc(sizeof(struct ExpressionList));
+  expressions->expression = expression;
+  expressions->next = NULL;
+  if (symbolicExpNode->expressions == NULL) {
+    symbolicExpNode->expressions = expressions;
+    return;
+  }
+  struct ExpressionList *current = symbolicExpNode->expressions;
+  while (current->next != NULL) {
+    current = current->next;
+  }
+  current->next = expressions;
+}
+
 void parseExpression(char *source, struct ParseState *state,
                      struct ExpressionNode *expression);
 
@@ -157,7 +174,7 @@ void parseSymbolicExpression(char *source, struct ParseState *state,
     struct ExpressionNode *expressionItem =
         malloc(sizeof(struct ExpressionNode));
     parseExpression(source, state, expressionItem);
-    appendExpressionToListExpression(symbolicExp, expressionItem);
+    appendExpressionToSymbolicExpression(symbolicExp, expressionItem);
   }
   next(source, state); // eat ')'
 }
@@ -318,7 +335,7 @@ void evaluateExpression(struct ExpressionNode *expression,
       evaluated->bool_value = expression->data.literal->boolean_value;
     }
   } else if (expression->type == EXP_SYMBOL) {
-    if (expression->data.symbol->symbol_name == "nil") {
+    if (strcmp(expression->data.symbol->symbol_name, "nil") == 0) {
       evaluated->type = OBJ_NIL;
     } else {
       // get value from symbol table
