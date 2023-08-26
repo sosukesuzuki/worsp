@@ -314,7 +314,7 @@ void evaluateExpression(struct ExpressionNode *expression,
         } else {
           // function call
           // note: default defined functions:
-          //   +, -, *, /, %, print, println
+          //   +, -, *, /, %, print, println, car, cdr, cons
         }
       } else {
         printf("S-exp must be started with symbol.\n");
