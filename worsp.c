@@ -461,6 +461,14 @@ void definedFunctionEq(struct Object *op1, struct Object *op2,
   }
 }
 
+void definedFunctionCar(struct Object *op, struct Object *evaluated) {
+  if (op->type != OBJ_LIST) {
+    printf("Type error: car operand must be list.\n");
+    exit(1);
+  }
+  *evaluated = *(op->list_value->car);
+}
+
 // =================================================
 //   evaluator
 // =================================================
@@ -531,7 +539,8 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
           evaluateExpression(then, evaluated);
         } else {
           if (expressions->next->next->next != NULL) {
-            struct ExpressionNode *els = expressions->next->next->next->expression;
+            struct ExpressionNode *els =
+                expressions->next->next->next->expression;
             evaluateExpression(els, evaluated);
           } else {
             evaluated->type = OBJ_NIL;
@@ -628,6 +637,10 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
           evaluated->type = OBJ_NIL;
         } else if (strcmp(expr->data.symbol->symbol_name, "car") == 0) {
           // car
+          struct Object *operand = malloc(sizeof(struct Object));
+          evaluateExpression(expressions->next->expression, operand);
+          definedFunctionCar(operand, evaluated);
+          free(operand);
         } else if (strcmp(expr->data.symbol->symbol_name, "cdr") == 0) {
           // cdr
         } else if (strcmp(expr->data.symbol->symbol_name, "cons") == 0) {

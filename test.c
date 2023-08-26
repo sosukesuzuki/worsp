@@ -788,6 +788,17 @@ void evaluate_complexIf() {
   TEST_ASSERT(evaluated.int_value == 1);
 }
 
+void evaluate_car() {
+  char *source = "(car '(1 2 3))";
+  struct ParseState state = (struct ParseState){NULL, 0};
+  struct ParseResult result = (struct ParseResult){NULL};
+  struct Object evaluated = (struct Object){};
+  parse(source, &state, &result);
+  evaluateExpression(result.program->expressions->expression, &evaluated);
+  TEST_ASSERT(evaluated.type == OBJ_INTEGER);
+  TEST_ASSERT(evaluated.int_value == 1);
+}
+
 int main() {
   RUN_TEST(next_singleCharSymbol);
   RUN_TEST(next_multipleCharSymbol);
@@ -838,6 +849,7 @@ int main() {
   RUN_TEST(evaluate_ifThen);
   RUN_TEST(evaluate_ifThenElse);
   RUN_TEST(evaluate_complexIf);
+  RUN_TEST(evaluate_car);
 
   return 0;
 }
