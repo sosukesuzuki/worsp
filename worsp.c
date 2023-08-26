@@ -9,7 +9,8 @@
 // =================================================
 
 int isop(int ch) {
-  return ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == '%';
+  return ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == '%' ||
+         ch == '|' || ch == '&';
 }
 
 int match(struct ParseState *state, TokenKind kind) {
