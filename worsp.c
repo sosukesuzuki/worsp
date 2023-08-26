@@ -858,7 +858,6 @@ void evaluateProgram(struct ProgramNode *program) {
     struct Object *evaluated = malloc(sizeof(struct Object));
     evaluateExpression(expressions->expression, evaluated, env);
     expressions = expressions->next;
-    free(evaluated);
   }
 }
 
