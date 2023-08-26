@@ -989,6 +989,28 @@ void evaluate_defun() {
   TEST_ASSERT(evaluated.list_value->cdr.cdr_cell->car->int_value == 2);
 }
 
+void evaluate_defunClosure() {
+  struct Env env = (struct Env){};
+  initEnv(&env);
+  char *source = "'((= a 2) (= b 3) (defun fn (c) (+(+ a b) c)) (fn 1))";
+  struct ParseState state = (struct ParseState){NULL, 0};
+  struct ParseResult result = (struct ParseResult){NULL};
+  struct Object evaluated = (struct Object){};
+  parse(source, &state, &result);
+  evaluateExpression(result.program->expressions->expression, &evaluated, &env);
+  TEST_ASSERT(evaluated.type == OBJ_LIST);
+  TEST_ASSERT(evaluated.list_value->car->type == OBJ_INTEGER);
+  TEST_ASSERT(evaluated.list_value->car->int_value == 2);
+  TEST_ASSERT(evaluated.list_value->cdr.cdr_cell->car->type == OBJ_INTEGER);
+  TEST_ASSERT(evaluated.list_value->cdr.cdr_cell->car->int_value == 3);
+  TEST_ASSERT(evaluated.list_value->cdr.cdr_cell->cdr.cdr_cell->car->type ==
+              OBJ_FUNCTION);
+  TEST_ASSERT(evaluated.list_value->cdr.cdr_cell->cdr.cdr_cell->cdr.cdr_cell
+                  ->car->type == OBJ_INTEGER);
+  TEST_ASSERT(evaluated.list_value->cdr.cdr_cell->cdr.cdr_cell->cdr.cdr_cell
+                  ->car->int_value == 6);
+}
+
 int main() {
   RUN_TEST(next_singleCharSymbol);
   RUN_TEST(next_multipleCharSymbol);
@@ -1047,6 +1069,7 @@ int main() {
   RUN_TEST(evaluate_assignment);
   RUN_TEST(evaluate_assignmentComplex);
   RUN_TEST(evaluate_defun);
+  RUN_TEST(evaluate_defunClosure);
 
   return 0;
 }
