@@ -669,6 +669,78 @@ void evaluate_andOpTrueInt() {
   TEST_ASSERT(evaluated.bool_value == 1);
 }
 
+void evaluate_ltOpTrue() {
+  struct Env env = (struct Env){};
+  initEnv(&env);
+  char *source = "(< 1 2)";
+  struct ParseState state = (struct ParseState){NULL, 0};
+  struct ParseResult result = (struct ParseResult){NULL};
+  parse(source, &state, &result);
+
+  struct ExpressionNode *expr = result.program->expressions->expression;
+  TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
+
+  struct Object evaluated = (struct Object){};
+  evaluateExpression(expr, &evaluated, &env);
+
+  TEST_ASSERT(evaluated.type == OBJ_BOOL);
+  TEST_ASSERT(evaluated.bool_value == 1);
+}
+
+void evaluate_ltOpFalse() {
+  struct Env env = (struct Env){};
+  initEnv(&env);
+  char *source = "(< 2 1)";
+  struct ParseState state = (struct ParseState){NULL, 0};
+  struct ParseResult result = (struct ParseResult){NULL};
+  parse(source, &state, &result);
+
+  struct ExpressionNode *expr = result.program->expressions->expression;
+  TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
+
+  struct Object evaluated = (struct Object){};
+  evaluateExpression(expr, &evaluated, &env);
+
+  TEST_ASSERT(evaluated.type == OBJ_BOOL);
+  TEST_ASSERT(evaluated.bool_value == 0);
+}
+
+void evaluate_gtOpTrue() {
+  struct Env env = (struct Env){};
+  initEnv(&env);
+  char *source = "(> 2 1)";
+  struct ParseState state = (struct ParseState){NULL, 0};
+  struct ParseResult result = (struct ParseResult){NULL};
+  parse(source, &state, &result);
+
+  struct ExpressionNode *expr = result.program->expressions->expression;
+  TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
+
+  struct Object evaluated = (struct Object){};
+  evaluateExpression(expr, &evaluated, &env);
+
+  TEST_ASSERT(evaluated.type == OBJ_BOOL);
+  TEST_ASSERT(evaluated.bool_value == 1);
+}
+
+void evaluate_gtOpFalse() {
+  struct Env env = (struct Env){};
+  initEnv(&env);
+  char *source = "(> 1 2)";
+  struct ParseState state = (struct ParseState){NULL, 0};
+  struct ParseResult result = (struct ParseResult){NULL};
+  parse(source, &state, &result);
+
+  struct ExpressionNode *expr = result.program->expressions->expression;
+  TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
+
+  struct Object evaluated = (struct Object){};
+  evaluateExpression(expr, &evaluated, &env);
+
+  TEST_ASSERT(evaluated.type == OBJ_BOOL);
+  TEST_ASSERT(evaluated.bool_value == 0);
+}
+
 void evaluate_eqTrue() {
   struct Env env = (struct Env){};
   initEnv(&env);
@@ -1048,6 +1120,10 @@ int main() {
   RUN_TEST(evaluate_andOpFalseNil);
   RUN_TEST(evaluate_andOpTrue);
   RUN_TEST(evaluate_andOpTrueInt);
+  RUN_TEST(evaluate_ltOpTrue);
+  RUN_TEST(evaluate_ltOpFalse);
+  RUN_TEST(evaluate_gtOpTrue);
+  RUN_TEST(evaluate_gtOpFalse);
   RUN_TEST(evaluate_eqTrue);
   RUN_TEST(evaluate_eqFalse);
   RUN_TEST(evaluate_eqTrueNil);

@@ -11,7 +11,7 @@
 
 int isop(int ch) {
   return ch == '+' || ch == '-' || ch == '*' || ch == '/' || ch == '%' ||
-         ch == '|' || ch == '&' || ch == '=';
+         ch == '|' || ch == '&' || ch == '=' || ch == '<' || ch == '>';
 }
 
 int match(struct ParseState *state, TokenKind kind) {
@@ -454,6 +454,38 @@ void definedFunctionAnd(struct Object *op1, struct Object *op2,
   }
 }
 
+void definedFunctionLt(struct Object *op1, struct Object *op2,
+                       struct Object *evaluated) {
+  if (op1->type == OBJ_INTEGER && op2->type == OBJ_INTEGER) {
+    if (op1->int_value < op2->int_value) {
+      evaluated->type = OBJ_BOOL;
+      evaluated->bool_value = 1;
+    } else {
+      evaluated->type = OBJ_BOOL;
+      evaluated->bool_value = 0;
+    }
+  } else {
+    printf("Type error: operands for < must be integers.\n");
+    exit(1);
+  }
+}
+
+void definedFunctionGt(struct Object *op1, struct Object *op2,
+                       struct Object *evaluated) {
+  if (op1->type == OBJ_INTEGER && op2->type == OBJ_INTEGER) {
+    if (op1->int_value > op2->int_value) {
+      evaluated->type = OBJ_BOOL;
+      evaluated->bool_value = 1;
+    } else {
+      evaluated->type = OBJ_BOOL;
+      evaluated->bool_value = 0;
+    }
+  } else {
+    printf("Type error: operands for < must be integers.\n");
+    exit(1);
+  }
+}
+
 void definedFunctionEq(struct Object *op1, struct Object *op2,
                        struct Object *evaluated) {
   if (eq(op1, op2)) {
@@ -720,6 +752,22 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
           evaluateExpression(expressions->next->next->expression, operand2,
                              env);
           definedFunctionAnd(operand1, operand2, evaluated);
+        } else if (strcmp(expr->data.symbol->symbol_name, "<") == 0) {
+          // <
+          struct Object *operand1 = malloc(sizeof(struct Object));
+          struct Object *operand2 = malloc(sizeof(struct Object));
+          evaluateExpression(expressions->next->expression, operand1, env);
+          evaluateExpression(expressions->next->next->expression, operand2,
+                             env);
+          definedFunctionLt(operand1, operand2, evaluated);
+        } else if (strcmp(expr->data.symbol->symbol_name, ">") == 0) {
+          // >
+          struct Object *operand1 = malloc(sizeof(struct Object));
+          struct Object *operand2 = malloc(sizeof(struct Object));
+          evaluateExpression(expressions->next->expression, operand1, env);
+          evaluateExpression(expressions->next->next->expression, operand2,
+                             env);
+          definedFunctionGt(operand1, operand2, evaluated);
         } else if (strcmp(expr->data.symbol->symbol_name, "eq") == 0) {
           // eq
           struct Object *operand1 = malloc(sizeof(struct Object));
