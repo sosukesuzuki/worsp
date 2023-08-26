@@ -143,11 +143,9 @@ void appendExpressionToListExpression(struct ListNode *listNode,
 }
 
 void parseExpression(char *source, struct ParseState *state,
-                     struct ParseResult *result,
                      struct ExpressionNode *expression);
 
 void parseSymbolicExpression(char *source, struct ParseState *state,
-                             struct ParseResult *result,
                              struct ExpressionNode *expression) {
   struct SymbolicExpNode *symbolicExp = malloc(sizeof(struct SymbolicExpNode));
 
@@ -158,14 +156,13 @@ void parseSymbolicExpression(char *source, struct ParseState *state,
   while (!match(state, TK_RPAREN)) {
     struct ExpressionNode *expressionItem =
         malloc(sizeof(struct ExpressionNode));
-    parseExpression(source, state, result, expressionItem);
+    parseExpression(source, state, expressionItem);
     appendExpressionToListExpression(symbolicExp, expressionItem);
   }
   next(source, state); // eat ')'
 }
 
 void parseListExpression(char *source, struct ParseState *state,
-                         struct ParseResult *result,
                          struct ExpressionNode *expression) {
   struct ListNode *list = malloc(sizeof(struct ListNode));
 
@@ -177,14 +174,13 @@ void parseListExpression(char *source, struct ParseState *state,
   while (!match(state, TK_RPAREN)) {
     struct ExpressionNode *expressionItem =
         malloc(sizeof(struct ExpressionNode));
-    parseExpression(source, state, result, expressionItem);
+    parseExpression(source, state, expressionItem);
     appendExpressionToListExpression(list, expressionItem);
   }
   next(source, state); // eat ')'
 }
 
 void parseSymbolExpression(char *source, struct ParseState *state,
-                           struct ParseResult *result,
                            struct ExpressionNode *expression) {
   expression->type = EXP_SYMBOL;
   expression->data.symbol = malloc(sizeof(struct SymbolNode));
@@ -193,7 +189,6 @@ void parseSymbolExpression(char *source, struct ParseState *state,
 }
 
 void parseLiteralExpression(char *source, struct ParseState *state,
-                            struct ParseResult *result,
                             struct ExpressionNode *expression) {
   if (match(state, TK_DIGIT)) {
     expression->type = EXP_LITERAL;
@@ -226,17 +221,16 @@ void parseLiteralExpression(char *source, struct ParseState *state,
 }
 
 void parseExpression(char *source, struct ParseState *state,
-                     struct ParseResult *result,
                      struct ExpressionNode *expression) {
   if (match(state, TK_LPAREN)) {
-    parseSymbolicExpression(source, state, result, expression);
+    parseSymbolicExpression(source, state, expression);
   } else if (match(state, TK_QUOTE)) {
-    parseListExpression(source, state, result, expression);
+    parseListExpression(source, state, expression);
   } else if (match(state, TK_SYMBOL)) {
-    parseSymbolExpression(source, state, result, expression);
+    parseSymbolExpression(source, state, expression);
   } else if (match(state, TK_DIGIT) || match(state, TK_STRING) ||
              match(state, TK_TRUE) || match(state, TK_FALSE)) {
-    parseLiteralExpression(source, state, result, expression);
+    parseLiteralExpression(source, state, expression);
   } else {
     printf("Unexpected token: %s\n", state->token->str);
     exit(1);
@@ -270,7 +264,7 @@ void parseProgram(char *source, struct ParseState *state,
 
   while (!match(state, TK_EOF)) {
     struct ExpressionNode *expression = malloc(sizeof(struct ExpressionNode));
-    parseExpression(source, state, result, expression);
+    parseExpression(source, state, expression);
     appendExpressionToProgram(program, expression);
   }
 }
