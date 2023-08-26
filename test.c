@@ -264,7 +264,7 @@ void parse_integersList() {
   TEST_ASSERT(match(&state, TK_EOF));
 }
 
-void evaluate_literalExpression() {
+void evaluate_literalExpressionInt() {
   char *source = "3";
   struct ParseState state = (struct ParseState){NULL, 0};
   struct ParseResult result = (struct ParseResult){NULL};
@@ -278,6 +278,22 @@ void evaluate_literalExpression() {
 
   TEST_ASSERT(evaluated.type == OBJ_INTEGER);
   TEST_ASSERT(evaluated.int_value == 3);
+}
+
+void evaluate_literalExpressionString() {
+  char *source = "\"foo\"";
+  struct ParseState state = (struct ParseState){NULL, 0};
+  struct ParseResult result = (struct ParseResult){NULL};
+  parse(source, &state, &result);
+
+  struct ExpressionNode *expr = result.program->expressions->expression;
+  TEST_ASSERT(strcmp(expr->data.literal->string_value, "foo") == 0);
+
+  struct Object evaluated = (struct Object){};
+  evaluateExpression(expr, &evaluated);
+
+  TEST_ASSERT(evaluated.type == OBJ_STRING);
+  TEST_ASSERT(strcmp(evaluated.string_value, "foo") == 0);
 }
 
 int main() {
@@ -295,7 +311,8 @@ int main() {
   RUN_TEST(parse_integersSymbolicExpr);
   RUN_TEST(parse_integersList);
 
-  RUN_TEST(evaluate_literalExpression);
+  RUN_TEST(evaluate_literalExpressionInt);
+  RUN_TEST(evaluate_literalExpressionString);
 
   return 0;
 }
