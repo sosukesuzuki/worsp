@@ -478,6 +478,24 @@ void definedFunctionCdr(struct Object *op, struct Object *evaluated) {
   evaluated->list_value = op->list_value->cdr.cdr_cell;
 }
 
+void definedFunctionCons(struct Object *op1, struct Object *op2,
+                         struct Object *evaluated) {
+  evaluated->type = OBJ_LIST;
+  evaluated->list_value = malloc(sizeof(struct ConsCell));
+  evaluated->list_value->car = op1;
+  if (op2->type == OBJ_LIST) {
+    evaluated->list_value->cdr.cdr_cell = op2->list_value;
+  } else if (op2->type == OBJ_NIL) {
+    evaluated->list_value->cdr.cdr_nil = op2;
+  } else {
+    struct ConsCell *new_conscell = malloc(sizeof(struct ConsCell));
+    new_conscell->car = op2;
+    new_conscell->cdr.cdr_nil = malloc(sizeof(struct Object));
+    new_conscell->cdr.cdr_nil->type = OBJ_NIL;
+    evaluated->list_value->cdr.cdr_cell = new_conscell;
+  }
+}
+
 // =================================================
 //   evaluator
 // =================================================
@@ -658,6 +676,11 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
           free(operand);
         } else if (strcmp(expr->data.symbol->symbol_name, "cons") == 0) {
           // cons
+          struct Object *operand1 = malloc(sizeof(struct Object));
+          struct Object *operand2 = malloc(sizeof(struct Object));
+          evaluateExpression(expressions->next->expression, operand1);
+          evaluateExpression(expressions->next->next->expression, operand2);
+          definedFunctionCons(operand1, operand2, evaluated);
         } else {
           printf("Undefined function: %s\n", expr->data.symbol->symbol_name);
           exit(1);
