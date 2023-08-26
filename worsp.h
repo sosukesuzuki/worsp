@@ -119,5 +119,6 @@ struct Object {
 
 void evaluateExpression(struct ExpressionNode *expression,
                         struct Object *result);
+char *stringifyObject(struct Object *obj);
 
 #endif

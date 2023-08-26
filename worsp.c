@@ -1,9 +1,9 @@
 #include "worsp.h"
 #include <ctype.h>
+#include <math.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <math.h>
 
 // =================================================
 //   tokenizer
@@ -450,7 +450,8 @@ void definedFunctionAnd(struct Object *op1, struct Object *op2,
   }
 }
 
-void definedFunctionEq(struct Object *op1, struct Object *op2, struct Object *evaluated) {
+void definedFunctionEq(struct Object *op1, struct Object *op2,
+                       struct Object *evaluated) {
   if (eq(op1, op2)) {
     evaluated->type = OBJ_BOOL;
     evaluated->bool_value = 1;
