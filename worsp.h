@@ -104,7 +104,7 @@ struct Object {
     int int_value;
     char *string_value;
     int bool_value;
-    struct Object *list_value;
+    struct Object *left, *right;
   };
 };
 
