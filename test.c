@@ -296,6 +296,21 @@ void evaluate_literalExpressionString() {
   TEST_ASSERT(strcmp(evaluated.string_value, "foo") == 0);
 }
 
+void evaluate_nil() {
+  char *source = "nil";
+  struct ParseState state = (struct ParseState){NULL, 0};
+  struct ParseResult result = (struct ParseResult){NULL};
+  parse(source, &state, &result);
+
+  struct ExpressionNode *expr = result.program->expressions->expression;
+  TEST_ASSERT(strcmp(expr->data.symbol->symbol_name, "nil") == 0);
+
+  struct Object evaluated = (struct Object){};
+  evaluateExpression(expr, &evaluated);
+
+  TEST_ASSERT(evaluated.type == OBJ_NIL);
+}
+
 int main() {
   RUN_TEST(next_singleCharSymbol);
   RUN_TEST(next_multipleCharSymbol);
@@ -313,6 +328,7 @@ int main() {
 
   RUN_TEST(evaluate_literalExpressionInt);
   RUN_TEST(evaluate_literalExpressionString);
+  RUN_TEST(evaluate_nil);
 
   return 0;
 }
