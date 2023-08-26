@@ -385,6 +385,22 @@ void evaluate_emptySymbolicExp() {
   TEST_ASSERT(evaluated.type == OBJ_NIL);
 }
 
+void evaluate_plusOp() {
+  char *source = "(+ 1222 21)";
+  struct ParseState state = (struct ParseState){NULL, 0};
+  struct ParseResult result = (struct ParseResult){NULL};
+  parse(source, &state, &result);
+
+  struct ExpressionNode *expr = result.program->expressions->expression;
+  TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
+
+  struct Object evaluated = (struct Object){};
+  evaluateExpression(expr, &evaluated);
+
+  TEST_ASSERT(evaluated.type == OBJ_INTEGER);
+  TEST_ASSERT(evaluated.int_value == 1243);
+}
+
 int main() {
   RUN_TEST(next_singleCharSymbol);
   RUN_TEST(next_multipleCharSymbol);
@@ -407,6 +423,7 @@ int main() {
   RUN_TEST(evaluate_listWithMultipleInt);
   RUN_TEST(evaluate_emptyList);
   RUN_TEST(evaluate_emptySymbolicExp);
+  RUN_TEST(evaluate_plusOp);
 
   return 0;
 }

@@ -353,7 +353,41 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
       } else {
         // function call
         // note: default defined functions:
-        //   +, -, *, /, %, print, println, car, cdr, cons
+        if (strcmp(expr->data.symbol->symbol_name, "+") == 0) {
+          // +
+          struct Object *operand1 = malloc(sizeof(struct Object));
+          struct Object *operand2 = malloc(sizeof(struct Object));
+          evaluateExpression(expressions->next->expression, operand1);
+          evaluateExpression(expressions->next->next->expression, operand2);
+          if (operand1->type == OBJ_INTEGER && operand2->type == OBJ_INTEGER) {
+            evaluated->type = OBJ_INTEGER;
+            evaluated->int_value = operand1->int_value + operand2->int_value;
+          } else {
+            printf("Type error: operands for + must be integers.\n");
+            exit(1);
+          }
+        } else if (strcmp(expr->data.symbol->symbol_name, "-") == 0) {
+          // -
+        } else if (strcmp(expr->data.symbol->symbol_name, "*") == 0) {
+          // *
+        } else if (strcmp(expr->data.symbol->symbol_name, "/") == 0) {
+          // /
+        } else if (strcmp(expr->data.symbol->symbol_name, "%") == 0) {
+          // %
+        } else if (strcmp(expr->data.symbol->symbol_name, "print") == 0) {
+          // print
+        } else if (strcmp(expr->data.symbol->symbol_name, "println") == 0) {
+          // println
+        } else if (strcmp(expr->data.symbol->symbol_name, "car") == 0) {
+          // car
+        } else if (strcmp(expr->data.symbol->symbol_name, "cdr") == 0) {
+          // cdr
+        } else if (strcmp(expr->data.symbol->symbol_name, "cons") == 0) {
+          // cons
+        } else {
+          printf("Undefined function: %s\n", expr->data.symbol->symbol_name);
+          exit(1);
+        }
       }
     } else {
       printf("S-exp must be started with symbol.\n");
