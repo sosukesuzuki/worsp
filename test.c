@@ -465,6 +465,70 @@ void evaluate_modOp() {
   TEST_ASSERT(evaluated.int_value == 4);
 }
 
+void evaluate_orOpTrue() {
+  char *source = "(|| true false)";
+  struct ParseState state = (struct ParseState){NULL, 0};
+  struct ParseResult result = (struct ParseResult){NULL};
+  parse(source, &state, &result);
+
+  struct ExpressionNode *expr = result.program->expressions->expression;
+  TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
+
+  struct Object evaluated = (struct Object){};
+  evaluateExpression(expr, &evaluated);
+
+  TEST_ASSERT(evaluated.type == OBJ_BOOL);
+  TEST_ASSERT(evaluated.bool_value == 1);
+}
+
+void evaluate_orOpFalse() {
+  char *source = "(|| false false)";
+  struct ParseState state = (struct ParseState){NULL, 0};
+  struct ParseResult result = (struct ParseResult){NULL};
+  parse(source, &state, &result);
+
+  struct ExpressionNode *expr = result.program->expressions->expression;
+  TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
+
+  struct Object evaluated = (struct Object){};
+  evaluateExpression(expr, &evaluated);
+
+  TEST_ASSERT(evaluated.type == OBJ_BOOL);
+  TEST_ASSERT(evaluated.bool_value == 0);
+}
+
+void evaluate_orOpTrueInt() {
+  char *source = "(|| 1 false)";
+  struct ParseState state = (struct ParseState){NULL, 0};
+  struct ParseResult result = (struct ParseResult){NULL};
+  parse(source, &state, &result);
+
+  struct ExpressionNode *expr = result.program->expressions->expression;
+  TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
+
+  struct Object evaluated = (struct Object){};
+  evaluateExpression(expr, &evaluated);
+
+  TEST_ASSERT(evaluated.type == OBJ_BOOL);
+  TEST_ASSERT(evaluated.bool_value == 1);
+}
+
+void evaluate_orOpTrueNil() {
+  char *source = "(|| 1 nil)";
+  struct ParseState state = (struct ParseState){NULL, 0};
+  struct ParseResult result = (struct ParseResult){NULL};
+  parse(source, &state, &result);
+
+  struct ExpressionNode *expr = result.program->expressions->expression;
+  TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
+
+  struct Object evaluated = (struct Object){};
+  evaluateExpression(expr, &evaluated);
+
+  TEST_ASSERT(evaluated.type == OBJ_BOOL);
+  TEST_ASSERT(evaluated.bool_value == 1);
+}
+
 int main() {
   RUN_TEST(next_singleCharSymbol);
   RUN_TEST(next_multipleCharSymbol);
@@ -492,6 +556,10 @@ int main() {
   RUN_TEST(evaluate_mulOp);
   RUN_TEST(evaluate_divOp);
   RUN_TEST(evaluate_modOp);
+  RUN_TEST(evaluate_orOpTrue);
+  RUN_TEST(evaluate_orOpFalse);
+  RUN_TEST(evaluate_orOpTrueInt);
+  RUN_TEST(evaluate_orOpTrueNil);
 
   return 0;
 }

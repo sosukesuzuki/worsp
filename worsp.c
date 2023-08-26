@@ -295,6 +295,16 @@ void parse(char *source, struct ParseState *state, struct ParseResult *result) {
 //   defined functions
 // =================================================
 
+int boolVal(struct Object *obj) {
+  if (obj->type == OBJ_BOOL) {
+    return obj->bool_value;
+  } else if (obj->type == OBJ_NIL) {
+    return 0;
+  } else {
+    return 1;
+  }
+}
+
 void definedFunctionAdd(struct Object *op1, struct Object *op2,
                         struct Object *evaluated) {
   if (op1->type == OBJ_INTEGER && op2->type == OBJ_INTEGER) {
@@ -347,6 +357,17 @@ void definedFunctionMod(struct Object *op1, struct Object *op2,
   } else {
     printf("Type error: operands for % must be integers.\n");
     exit(1);
+  }
+}
+
+void definedFunctionOr(struct Object *op1, struct Object *op2,
+                       struct Object *evaluated) {
+  if (boolVal(op1) || boolVal(op2)) {
+    evaluated->type = OBJ_BOOL;
+    evaluated->bool_value = 1;
+  } else {
+    evaluated->type = OBJ_BOOL;
+    evaluated->bool_value = 0;
   }
 }
 
@@ -460,6 +481,13 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
           free(operand2);
         } else if (strcmp(expr->data.symbol->symbol_name, "||") == 0) {
           // ||
+          struct Object *operand1 = malloc(sizeof(struct Object));
+          struct Object *operand2 = malloc(sizeof(struct Object));
+          evaluateExpression(expressions->next->expression, operand1);
+          evaluateExpression(expressions->next->next->expression, operand2);
+          definedFunctionOr(operand1, operand2, evaluated);
+          free(operand1);
+          free(operand2);
         } else if (strcmp(expr->data.symbol->symbol_name, "&&") == 0) {
           // &&
         } else if (strcmp(expr->data.symbol->symbol_name, "==") == 0) {
