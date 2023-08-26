@@ -265,19 +265,19 @@ void parse_integersList() {
 }
 
 void evaluate_literalExpression() {
-    char *source = "3";
-    struct ParseState state = (struct ParseState){NULL, 0};
-    struct ParseResult result = (struct ParseResult){NULL};
-    parse(source, &state, &result);
+  char *source = "3";
+  struct ParseState state = (struct ParseState){NULL, 0};
+  struct ParseResult result = (struct ParseResult){NULL};
+  parse(source, &state, &result);
 
-    struct ExpressionNode *expr = result.program->expressions->expression;
-    TEST_ASSERT(expr->data.literal->int_value == 3);
+  struct ExpressionNode *expr = result.program->expressions->expression;
+  TEST_ASSERT(expr->data.literal->int_value == 3);
 
-    struct Object evaluated = (struct Object){NULL};
-    evaluateExpression(expr, &evaluated);
+  struct Object evaluated = (struct Object){NULL};
+  evaluateExpression(expr, &evaluated);
 
-    TEST_ASSERT(evaluated.type == OBJ_INTEGER);
-    TEST_ASSERT(evaluated.int_value == 3);
+  TEST_ASSERT(evaluated.type == OBJ_INTEGER);
+  TEST_ASSERT(evaluated.int_value == 3);
 }
 
 int main() {

@@ -127,7 +127,7 @@ void next(char *source, struct ParseState *state) {
 // =================================================
 
 void appendExpressionToListExpression(struct ListNode *listNode,
-                                      struct ExpressioNode *expression) {
+                                      struct ExpressionNode *expression) {
   struct ExpressionList *expressions = malloc(sizeof(struct ExpressionList));
   expressions->expression = expression;
   expressions->next = NULL;
