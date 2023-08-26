@@ -292,6 +292,65 @@ void parse(char *source, struct ParseState *state, struct ParseResult *result) {
 }
 
 // =================================================
+//   defined functions
+// =================================================
+
+void definedFunctionAdd(struct Object *op1, struct Object *op2,
+                        struct Object *evaluated) {
+  if (op1->type == OBJ_INTEGER && op2->type == OBJ_INTEGER) {
+    evaluated->type = OBJ_INTEGER;
+    evaluated->int_value = op1->int_value + op2->int_value;
+  } else {
+    printf("Type error: operands for + must be integers.\n");
+    exit(1);
+  }
+}
+
+void definedFunctionSub(struct Object *op1, struct Object *op2,
+                        struct Object *evaluated) {
+  if (op1->type == OBJ_INTEGER && op2->type == OBJ_INTEGER) {
+    evaluated->type = OBJ_INTEGER;
+    evaluated->int_value = op1->int_value - op2->int_value;
+  } else {
+    printf("Type error: operands for - must be integers.\n");
+    exit(1);
+  }
+}
+
+void definedFunctionMul(struct Object *op1, struct Object *op2,
+                        struct Object *evaluated) {
+  if (op1->type == OBJ_INTEGER && op2->type == OBJ_INTEGER) {
+    evaluated->type = OBJ_INTEGER;
+    evaluated->int_value = op1->int_value * op2->int_value;
+  } else {
+    printf("Type error: operands for * must be integers.\n");
+    exit(1);
+  }
+}
+
+void definedFunctionDiv(struct Object *op1, struct Object *op2,
+                        struct Object *evaluated) {
+  if (op1->type == OBJ_INTEGER && op2->type == OBJ_INTEGER) {
+    evaluated->type = OBJ_INTEGER;
+    evaluated->int_value = op1->int_value / op2->int_value;
+  } else {
+    printf("Type error: operands for / must be integers.\n");
+    exit(1);
+  }
+}
+
+void definedFunctionMod(struct Object *op1, struct Object *op2,
+                        struct Object *evaluated) {
+  if (op1->type == OBJ_INTEGER && op2->type == OBJ_INTEGER) {
+    evaluated->type = OBJ_INTEGER;
+    evaluated->int_value = op1->int_value % op2->int_value;
+  } else {
+    printf("Type error: operands for % must be integers.\n");
+    exit(1);
+  }
+}
+
+// =================================================
 //   evaluator
 // =================================================
 
@@ -360,13 +419,7 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
           struct Object *operand2 = malloc(sizeof(struct Object));
           evaluateExpression(expressions->next->expression, operand1);
           evaluateExpression(expressions->next->next->expression, operand2);
-          if (operand1->type == OBJ_INTEGER && operand2->type == OBJ_INTEGER) {
-            evaluated->type = OBJ_INTEGER;
-            evaluated->int_value = operand1->int_value + operand2->int_value;
-          } else {
-            printf("Type error: operands for + must be integers.\n");
-            exit(1);
-          }
+          definedFunctionAdd(operand1, operand2, evaluated);
           free(operand1);
           free(operand2);
         } else if (strcmp(expr->data.symbol->symbol_name, "-") == 0) {
@@ -375,13 +428,7 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
           struct Object *operand2 = malloc(sizeof(struct Object));
           evaluateExpression(expressions->next->expression, operand1);
           evaluateExpression(expressions->next->next->expression, operand2);
-          if (operand1->type == OBJ_INTEGER && operand2->type == OBJ_INTEGER) {
-            evaluated->type = OBJ_INTEGER;
-            evaluated->int_value = operand1->int_value - operand2->int_value;
-          } else {
-            printf("Type error: operands for - must be integers.\n");
-            exit(1);
-          }
+          definedFunctionSub(operand1, operand2, evaluated);
           free(operand1);
           free(operand2);
         } else if (strcmp(expr->data.symbol->symbol_name, "*") == 0) {
@@ -390,13 +437,7 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
           struct Object *operand2 = malloc(sizeof(struct Object));
           evaluateExpression(expressions->next->expression, operand1);
           evaluateExpression(expressions->next->next->expression, operand2);
-          if (operand1->type == OBJ_INTEGER && operand2->type == OBJ_INTEGER) {
-            evaluated->type = OBJ_INTEGER;
-            evaluated->int_value = operand1->int_value * operand2->int_value;
-          } else {
-            printf("Type error: operands for - must be integers.\n");
-            exit(1);
-          }
+          definedFunctionMul(operand1, operand2, evaluated);
           free(operand1);
           free(operand2);
         } else if (strcmp(expr->data.symbol->symbol_name, "/") == 0) {
@@ -405,13 +446,7 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
           struct Object *operand2 = malloc(sizeof(struct Object));
           evaluateExpression(expressions->next->expression, operand1);
           evaluateExpression(expressions->next->next->expression, operand2);
-          if (operand1->type == OBJ_INTEGER && operand2->type == OBJ_INTEGER) {
-            evaluated->type = OBJ_INTEGER;
-            evaluated->int_value = operand1->int_value / operand2->int_value;
-          } else {
-            printf("Type error: operands for - must be integers.\n");
-            exit(1);
-          }
+          definedFunctionDiv(operand1, operand2, evaluated);
           free(operand1);
           free(operand2);
         } else if (strcmp(expr->data.symbol->symbol_name, "%") == 0) {
@@ -420,13 +455,7 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
           struct Object *operand2 = malloc(sizeof(struct Object));
           evaluateExpression(expressions->next->expression, operand1);
           evaluateExpression(expressions->next->next->expression, operand2);
-          if (operand1->type == OBJ_INTEGER && operand2->type == OBJ_INTEGER) {
-            evaluated->type = OBJ_INTEGER;
-            evaluated->int_value = operand1->int_value % operand2->int_value;
-          } else {
-            printf("Type error: operands for - must be integers.\n");
-            exit(1);
-          }
+          definedFunctionMod(operand1, operand2, evaluated);
           free(operand1);
           free(operand2);
         } else if (strcmp(expr->data.symbol->symbol_name, "||") == 0) {
