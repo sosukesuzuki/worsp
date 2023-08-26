@@ -757,9 +757,11 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
         } else {
           // function call
           int i = 0;
-          while(env->bindings[i].symbol_name != NULL) {
-            if (strcmp(env->bindings[i].symbol_name, expr->data.symbol->symbol_name) == 0) {
-              struct Function *function = env->bindings[i].value->function_value;
+          while (env->bindings[i].symbol_name != NULL) {
+            if (strcmp(env->bindings[i].symbol_name,
+                       expr->data.symbol->symbol_name) == 0) {
+              struct Function *function =
+                  env->bindings[i].value->function_value;
               struct Env *new_env = malloc(sizeof(struct Env));
               new_env->parent = env;
               int j = 0;
