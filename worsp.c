@@ -532,6 +532,19 @@ void definedFunctionCons(struct Object *op1, struct Object *op2,
   }
 }
 
+void definedFunctionNot(struct Object *op, struct Object *evaluated) {
+  if (op->type != OBJ_BOOL) {
+    printf("Type error: not operand must be boolean.\n");
+    exit(1);
+  }
+  evaluated->type = OBJ_BOOL;
+  if (op->bool_value) {
+    evaluated->bool_value = 0;
+  } else {
+    evaluated->bool_value = 1;
+  }
+}
+
 // =================================================
 //   evaluator
 // =================================================
@@ -776,6 +789,11 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
           evaluateExpression(expressions->next->next->expression, operand2,
                              env);
           definedFunctionEq(operand1, operand2, evaluated);
+        } else if (strcmp(expr->data.symbol->symbol_name, "not") == 0) {
+          // not
+          struct Object *operand = malloc(sizeof(struct Object));
+          evaluateExpression(expressions->next->expression, operand, env);
+          definedFunctionNot(operand, evaluated);
         } else if (strcmp(expr->data.symbol->symbol_name, "print") == 0) {
           // print
           struct Object *operand = malloc(sizeof(struct Object));

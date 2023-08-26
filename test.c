@@ -741,6 +741,60 @@ void evaluate_gtOpFalse() {
   TEST_ASSERT(evaluated.bool_value == 0);
 }
 
+void evaluate_notTrue() {
+  struct Env env = (struct Env){};
+  initEnv(&env);
+  char *source = "(not false)";
+  struct ParseState state = (struct ParseState){NULL, 0};
+  struct ParseResult result = (struct ParseResult){NULL};
+  parse(source, &state, &result);
+
+  struct ExpressionNode *expr = result.program->expressions->expression;
+  TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
+
+  struct Object evaluated = (struct Object){};
+  evaluateExpression(expr, &evaluated, &env);
+
+  TEST_ASSERT(evaluated.type == OBJ_BOOL);
+  TEST_ASSERT(evaluated.bool_value == 1);
+}
+
+void evaluate_notFalse() {
+  struct Env env = (struct Env){};
+  initEnv(&env);
+  char *source = "(not true)";
+  struct ParseState state = (struct ParseState){NULL, 0};
+  struct ParseResult result = (struct ParseResult){NULL};
+  parse(source, &state, &result);
+
+  struct ExpressionNode *expr = result.program->expressions->expression;
+  TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
+
+  struct Object evaluated = (struct Object){};
+  evaluateExpression(expr, &evaluated, &env);
+
+  TEST_ASSERT(evaluated.type == OBJ_BOOL);
+  TEST_ASSERT(evaluated.bool_value == 0);
+}
+
+void evaluate_notFalseEq() {
+  struct Env env = (struct Env){};
+  initEnv(&env);
+  char *source = "(not (eq 1 1))";
+  struct ParseState state = (struct ParseState){NULL, 0};
+  struct ParseResult result = (struct ParseResult){NULL};
+  parse(source, &state, &result);
+
+  struct ExpressionNode *expr = result.program->expressions->expression;
+  TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
+
+  struct Object evaluated = (struct Object){};
+  evaluateExpression(expr, &evaluated, &env);
+
+  TEST_ASSERT(evaluated.type == OBJ_BOOL);
+  TEST_ASSERT(evaluated.bool_value == 0);
+}
+
 void evaluate_eqTrue() {
   struct Env env = (struct Env){};
   initEnv(&env);
@@ -1146,6 +1200,9 @@ int main() {
   RUN_TEST(evaluate_assignmentComplex);
   RUN_TEST(evaluate_defun);
   RUN_TEST(evaluate_defunClosure);
+  RUN_TEST(evaluate_notTrue);
+  RUN_TEST(evaluate_notFalse);
+  RUN_TEST(evaluate_notFalseEq);
 
   return 0;
 }
