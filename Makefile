@@ -10,7 +10,7 @@ CFLAGS := -Wall -Wextra
 FORMAT_FILES := $(wildcard *.c) $(wildcard *.h)
 CLANG_FORMAT := clang-format
 
-.PHONY: format test clean
+.PHONY: format clean run-test
 
 $(EXECUTABLE_TEST): $(TEST_SRC_FILES)
 	$(CC) $(CFLAGS) $(TEST_SRC_FILES) -o $(EXECUTABLE_TEST) -lm
@@ -26,3 +26,6 @@ run-repl: $(EXECUTABLE_REPL)
 
 format:
 	$(CLANG_FORMAT) -i $(FORMAT_FILES)
+
+clean:
+	rm -f $(EXECUTABLE_TEST) $(EXECUTABLE_REPL)
