@@ -720,4 +720,4 @@ void evaluateProgram(struct ProgramNode *program) {
   }
 }
 
-void evalate(struct ParseResult *result) {}
+void evalate(struct ParseResult *result) { evaluateProgram(result->program); }
