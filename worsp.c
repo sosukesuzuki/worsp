@@ -390,6 +390,12 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
           // /
         } else if (strcmp(expr->data.symbol->symbol_name, "%") == 0) {
           // %
+        } else if (strcmp(expr->data.symbol->symbol_name, "||") == 0) {
+          // ||
+        } else if (strcmp(expr->data.symbol->symbol_name, "&&") == 0) {
+          // &&
+        } else if (strcmp(expr->data.symbol->symbol_name, "==") == 0) {
+          // ==
         } else if (strcmp(expr->data.symbol->symbol_name, "print") == 0) {
           // print
         } else if (strcmp(expr->data.symbol->symbol_name, "println") == 0) {
