@@ -545,6 +545,86 @@ void evaluted_nestedOps() {
   TEST_ASSERT(evaluated.int_value == -3);
 }
 
+void evaluate_andOpFalse() {
+  char *source = "(&& false false)";
+  struct ParseState state = (struct ParseState){NULL, 0};
+  struct ParseResult result = (struct ParseResult){NULL};
+  parse(source, &state, &result);
+
+  struct ExpressionNode *expr = result.program->expressions->expression;
+  TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
+
+  struct Object evaluated = (struct Object){};
+  evaluateExpression(expr, &evaluated);
+
+  TEST_ASSERT(evaluated.type == OBJ_BOOL);
+  TEST_ASSERT(evaluated.bool_value == 0);
+}
+
+void evaluate_andOpFalseInt() {
+  char *source = "(&& 1 false)";
+  struct ParseState state = (struct ParseState){NULL, 0};
+  struct ParseResult result = (struct ParseResult){NULL};
+  parse(source, &state, &result);
+
+  struct ExpressionNode *expr = result.program->expressions->expression;
+  TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
+
+  struct Object evaluated = (struct Object){};
+  evaluateExpression(expr, &evaluated);
+
+  TEST_ASSERT(evaluated.type == OBJ_BOOL);
+  TEST_ASSERT(evaluated.bool_value == 0);
+}
+
+void evaluate_andOpFalseNil() {
+  char *source = "(&& 1 nil)";
+  struct ParseState state = (struct ParseState){NULL, 0};
+  struct ParseResult result = (struct ParseResult){NULL};
+  parse(source, &state, &result);
+
+  struct ExpressionNode *expr = result.program->expressions->expression;
+  TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
+
+  struct Object evaluated = (struct Object){};
+  evaluateExpression(expr, &evaluated);
+
+  TEST_ASSERT(evaluated.type == OBJ_BOOL);
+  TEST_ASSERT(evaluated.bool_value == 0);
+}
+
+void evaluate_andOpTrue() {
+  char *source = "(&& true true)";
+  struct ParseState state = (struct ParseState){NULL, 0};
+  struct ParseResult result = (struct ParseResult){NULL};
+  parse(source, &state, &result);
+
+  struct ExpressionNode *expr = result.program->expressions->expression;
+  TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
+
+  struct Object evaluated = (struct Object){};
+  evaluateExpression(expr, &evaluated);
+
+  TEST_ASSERT(evaluated.type == OBJ_BOOL);
+  TEST_ASSERT(evaluated.bool_value == 1);
+}
+
+void evaluate_andOpTrueInt() {
+  char *source = "(&& 1 2)";
+  struct ParseState state = (struct ParseState){NULL, 0};
+  struct ParseResult result = (struct ParseResult){NULL};
+  parse(source, &state, &result);
+
+  struct ExpressionNode *expr = result.program->expressions->expression;
+  TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
+
+  struct Object evaluated = (struct Object){};
+  evaluateExpression(expr, &evaluated);
+
+  TEST_ASSERT(evaluated.type == OBJ_BOOL);
+  TEST_ASSERT(evaluated.bool_value == 1);
+}
+
 int main() {
   RUN_TEST(next_singleCharSymbol);
   RUN_TEST(next_multipleCharSymbol);
@@ -577,6 +657,11 @@ int main() {
   RUN_TEST(evaluate_orOpTrueInt);
   RUN_TEST(evaluate_orOpTrueNil);
   RUN_TEST(evaluted_nestedOps);
+  RUN_TEST(evaluate_andOpFalse);
+  RUN_TEST(evaluate_andOpFalseInt);
+  RUN_TEST(evaluate_andOpFalseNil);
+  RUN_TEST(evaluate_andOpTrue);
+  RUN_TEST(evaluate_andOpTrueInt);
 
   return 0;
 }
