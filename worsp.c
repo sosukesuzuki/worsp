@@ -366,6 +366,8 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
             printf("Type error: operands for + must be integers.\n");
             exit(1);
           }
+          free(operand1);
+          free(operand2);
         } else if (strcmp(expr->data.symbol->symbol_name, "-") == 0) {
           // -
         } else if (strcmp(expr->data.symbol->symbol_name, "*") == 0) {
