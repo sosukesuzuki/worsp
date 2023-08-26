@@ -633,7 +633,9 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
         struct ExpressionList *params =
             paramsExpr->data.symbolic_exp->expressions;
         // check all elements are symbol and get symbol names
-        char *param_symbol_names[MAX_BINDINGS];
+
+        char **param_symbol_names = malloc(sizeof(char *) * MAX_BINDINGS);
+
         int i = 0;
         while (params != NULL) {
           if (params->expression->type != EXP_SYMBOL) {
@@ -653,7 +655,7 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
         }
 
         struct Function *function = malloc(sizeof(struct Function));
-        function->param_symbol_names = &symbol_name;
+        function->param_symbol_names = param_symbol_names;
         function->body = bodyExpr;
 
         evaluated->type = OBJ_FUNCTION;
@@ -753,6 +755,27 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
                              env);
           definedFunctionCons(operand1, operand2, evaluated);
         } else {
+          // function call
+          int i = 0;
+          while(env->bindings[i].symbol_name != NULL) {
+            if (strcmp(env->bindings[i].symbol_name, expr->data.symbol->symbol_name) == 0) {
+              struct Function *function = env->bindings[i].value->function_value;
+              struct Env *new_env = malloc(sizeof(struct Env));
+              new_env->parent = env;
+              int j = 0;
+              struct ExpressionList *param_expr = expressions->next;
+              while (function->param_symbol_names[j] != NULL) {
+                struct Object *param = malloc(sizeof(struct Object));
+                evaluateExpression(param_expr->expression, param, env);
+                param_expr = param_expr->next;
+                setObjectToEnv(new_env, function->param_symbol_names[j], param);
+                j++;
+              }
+              evaluateExpression(function->body, evaluated, new_env);
+              return;
+            }
+            i++;
+          }
           printf("Undefined function: %s\n", expr->data.symbol->symbol_name);
           exit(1);
         }

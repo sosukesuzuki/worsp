@@ -125,6 +125,7 @@ struct Object {
 };
 
 #define MAX_BINDINGS 10
+#define MAX_SYMBOL_NAME_LENGTH 20
 
 struct Binding {
   char *symbol_name;
