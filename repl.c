@@ -10,6 +10,9 @@ void handleCtrlC() {
 int main() {
   signal(SIGINT, handleCtrlC);
 
+  struct Env env = (struct Env){};
+  initEnv(&env);
+
   while (1) {
     char input[1024];
     printf("> ");
@@ -23,8 +26,6 @@ int main() {
     struct ParseResult result = (struct ParseResult){NULL};
     struct Object evaluated = (struct Object){};
     parse(input, &state, &result);
-    struct Env env = (struct Env){};
-    initEnv(&env);
     evaluateExpression(result.program->expressions->expression, &evaluated,
                        &env);
 

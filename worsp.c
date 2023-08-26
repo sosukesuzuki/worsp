@@ -577,9 +577,14 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
         // while
       } else if (strcmp(expr->data.symbol->symbol_name, "=") == 0) {
         // assignment
-        char *symbol_name =
-            expressions->next->expression->data.symbol->symbol_name;
+        struct ExpressionNode symbolExpr = *expressions->next->expression;
+        if (symbolExpr.type != EXP_SYMBOL) {
+          printf("Variable name must be symbol.\n");
+          exit(1);
+        }
+        char *symbol_name = symbolExpr.data.symbol->symbol_name;
         struct ExpressionNode *expr = expressions->next->next->expression;
+
         if (expr == NULL) {
           printf("assignment must have expression.\n");
           exit(1);
@@ -587,6 +592,8 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
         struct Object *evaluatedExpr = malloc(sizeof(struct Object));
         evaluateExpression(expr, evaluatedExpr, env);
         *evaluated = *evaluatedExpr;
+
+        // set value to current env
         struct Binding *binding = malloc(sizeof(struct Binding));
         binding->symbol_name = symbol_name;
         binding->value = evaluatedExpr;
@@ -737,13 +744,26 @@ void evaluateLiteralExpression(struct ExpressionNode *expression,
 }
 
 void evaluateSymbolExpression(struct ExpressionNode *expression,
-                              struct Object *evaluated) {
+                              struct Object *evaluated, struct Env *env) {
   if (strcmp(expression->data.symbol->symbol_name, "nil") == 0) {
     evaluated->type = OBJ_NIL;
   } else {
-    // get value from symbol table
-    printf("variable is not implemented yet.\n");
-    exit(1);
+    // get symbol value from env
+    int i = 0;
+    while (env->bindings[i].symbol_name != NULL) {
+      if (strcmp(env->bindings[i].symbol_name,
+                 expression->data.symbol->symbol_name) == 0) {
+        *evaluated = *(env->bindings[i].value);
+        return;
+      }
+      i++;
+    }
+    if (env->parent != NULL) {
+      evaluateSymbolExpression(expression, evaluated, env->parent);
+    } else {
+      printf("Undefined symbol: %s\n", expression->data.symbol->symbol_name);
+      exit(1);
+    }
   }
 }
 
@@ -756,7 +776,7 @@ void evaluateExpression(struct ExpressionNode *expression,
   } else if (expression->type == EXP_LITERAL) {
     evaluateLiteralExpression(expression, evaluated);
   } else if (expression->type == EXP_SYMBOL) {
-    evaluateSymbolExpression(expression, evaluated);
+    evaluateSymbolExpression(expression, evaluated, env);
   }
 }
 
