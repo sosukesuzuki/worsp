@@ -294,91 +294,111 @@ void parse(char *source, struct ParseState *state, struct ParseResult *result) {
 //   evaluator
 // =================================================
 
+void evalateListExpression(struct ExpressionNode *expression,
+                           struct Object *evaluated) {
+  struct ExpressionList *expressions = expression->data.list->expressions;
+
+  // empty data list is evaluated as nil
+  if (expressions == NULL) {
+    evaluated->type = OBJ_NIL;
+    return;
+  }
+
+  evaluated->type = OBJ_LIST;
+
+  struct ConsCell *car_conscell = NULL;
+  struct ConsCell *prev_conscell = NULL;
+
+  while (expressions != NULL) {
+    struct ConsCell *new_conscell = malloc(sizeof(struct ConsCell));
+    if (car_conscell == NULL) {
+      car_conscell = new_conscell;
+    }
+
+    struct Object *evaluatedItem = malloc(sizeof(struct Object));
+    new_conscell->car = evaluatedItem;
+    evaluateExpression(expressions->expression, evaluatedItem);
+
+    expressions = expressions->next;
+
+    if (prev_conscell != NULL) {
+      prev_conscell->cdr.cdr_cell = new_conscell;
+    }
+    prev_conscell = new_conscell;
+
+    if (expressions == NULL) {
+      struct Object *nilObj = malloc(sizeof(struct Object));
+      nilObj->type = OBJ_NIL;
+      prev_conscell->cdr.cdr_nil = nilObj;
+    }
+  }
+
+  evaluated->list_value = car_conscell;
+}
+
+void evaluateSymbolicExpression(struct ExpressionNode *expression,
+                                struct Object *evaluated) {
+  struct ExpressionList *expressions = expression->data.list->expressions;
+  if (expressions != NULL) {
+    struct ExpressionNode *expr = expressions->expression;
+    if (expr != NULL && expr->type == EXP_SYMBOL) {
+      if (strcmp(expr->data.symbol->symbol_name, "if") == 0) {
+        // if
+      } else if (strcmp(expr->data.symbol->symbol_name, "while") == 0) {
+        // while
+      } else if (strcmp(expr->data.symbol->symbol_name, "=") == 0) {
+        // assignment
+      } else if ((strcmp(expr->data.symbol->symbol_name, "defun") == 0)) {
+        // define function
+      } else {
+        // function call
+        // note: default defined functions:
+        //   +, -, *, /, %, print, println, car, cdr, cons
+      }
+    } else {
+      printf("S-exp must be started with symbol.\n");
+      exit(1);
+    }
+  } else {
+    evaluated->type = OBJ_NIL;
+  }
+}
+
+void evaluateLiteralExpression(struct ExpressionNode *expression,
+                               struct Object *evaluated) {
+  if (expression->data.literal->type == LIT_INTERGER) {
+    evaluated->type = OBJ_INTEGER;
+    evaluated->int_value = expression->data.literal->int_value;
+  } else if (expression->data.literal->type == LIT_STRING) {
+    evaluated->type = OBJ_STRING;
+    evaluated->string_value = expression->data.literal->string_value;
+  } else if (expression->data.literal->type == LIT_BOOLEAN) {
+    evaluated->type = OBJ_BOOL;
+    evaluated->bool_value = expression->data.literal->boolean_value;
+  }
+}
+
+void evaluateSymbolExpression(struct ExpressionNode *expression,
+                              struct Object *evaluated) {
+  if (strcmp(expression->data.symbol->symbol_name, "nil") == 0) {
+    evaluated->type = OBJ_NIL;
+  } else {
+    // get value from symbol table
+    printf("variable is not implemented yet.\n");
+    exit(1);
+  }
+}
+
 void evaluateExpression(struct ExpressionNode *expression,
                         struct Object *evaluated) {
   if (expression->type == EXP_LIST) {
-    struct ExpressionList *expressions = expression->data.list->expressions;
-
-    // empty data list is evaluated as nil
-    if (expressions == NULL) {
-      evaluated->type = OBJ_NIL;
-      return;
-    }
-
-    evaluated->type = OBJ_LIST;
-
-    struct ConsCell *car_conscell = NULL;
-    struct ConsCell *prev_conscell = NULL;
-
-    while (expressions != NULL) {
-      struct ConsCell *new_conscell = malloc(sizeof(struct ConsCell));
-      if (car_conscell == NULL) {
-        car_conscell = new_conscell;
-      }
-
-      struct Object *evaluatedItem = malloc(sizeof(struct Object));
-      new_conscell->car = evaluatedItem;
-      evaluateExpression(expressions->expression, evaluatedItem);
-
-      expressions = expressions->next;
-
-      if (prev_conscell != NULL) {
-        prev_conscell->cdr.cdr_cell = new_conscell;
-      }
-      prev_conscell = new_conscell;
-
-      if (expressions == NULL) {
-        struct Object *nilObj = malloc(sizeof(struct Object));
-        nilObj->type = OBJ_NIL;
-        prev_conscell->cdr.cdr_nil = nilObj;
-      }
-    }
-
-    evaluated->list_value = car_conscell;
+    evalateListExpression(expression, evaluated);
   } else if (expression->type == EXP_SYMBOLIC_EXP) {
-    struct ExpressionList *expressions = expression->data.list->expressions;
-    if (expressions != NULL) {
-      struct ExpressionNode *expr = expressions->expression;
-      if (expr != NULL && expr->type == EXP_SYMBOL) {
-        if (strcmp(expr->data.symbol->symbol_name, "if") == 0) {
-          // if
-        } else if (strcmp(expr->data.symbol->symbol_name, "while") == 0) {
-          // while
-        } else if (strcmp(expr->data.symbol->symbol_name, "=") == 0) {
-          // assignment
-        } else if ((strcmp(expr->data.symbol->symbol_name, "defun") == 0)) {
-          // define function
-        } else {
-          // function call
-          // note: default defined functions:
-          //   +, -, *, /, %, print, println, car, cdr, cons
-        }
-      } else {
-        printf("S-exp must be started with symbol.\n");
-        exit(1);
-      }
-    } else {
-      evaluated->type = OBJ_NIL;
-    }
+    evaluateSymbolicExpression(expression, evaluated);
   } else if (expression->type == EXP_LITERAL) {
-    if (expression->data.literal->type == LIT_INTERGER) {
-      evaluated->type = OBJ_INTEGER;
-      evaluated->int_value = expression->data.literal->int_value;
-    } else if (expression->data.literal->type == LIT_STRING) {
-      evaluated->type = OBJ_STRING;
-      evaluated->string_value = expression->data.literal->string_value;
-    } else if (expression->data.literal->type == LIT_BOOLEAN) {
-      evaluated->type = OBJ_BOOL;
-      evaluated->bool_value = expression->data.literal->boolean_value;
-    }
+    evaluateLiteralExpression(expression, evaluated);
   } else if (expression->type == EXP_SYMBOL) {
-    if (strcmp(expression->data.symbol->symbol_name, "nil") == 0) {
-      evaluated->type = OBJ_NIL;
-    } else {
-      // get value from symbol table
-      printf("variable is not implemented yet.\n");
-      exit(1);
-    }
+    evaluateSymbolExpression(expression, evaluated);
   }
 }
 
