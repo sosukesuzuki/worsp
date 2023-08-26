@@ -469,6 +469,15 @@ void definedFunctionCar(struct Object *op, struct Object *evaluated) {
   *evaluated = *(op->list_value->car);
 }
 
+void definedFunctionCdr(struct Object *op, struct Object *evaluated) {
+  if (op->type != OBJ_LIST) {
+    printf("Type error: cdr operand must be list.\n");
+    exit(1);
+  }
+  evaluated->type = OBJ_LIST;
+  evaluated->list_value = op->list_value->cdr.cdr_cell;
+}
+
 // =================================================
 //   evaluator
 // =================================================
@@ -643,6 +652,10 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
           free(operand);
         } else if (strcmp(expr->data.symbol->symbol_name, "cdr") == 0) {
           // cdr
+          struct Object *operand = malloc(sizeof(struct Object));
+          evaluateExpression(expressions->next->expression, operand);
+          definedFunctionCdr(operand, evaluated);
+          free(operand);
         } else if (strcmp(expr->data.symbol->symbol_name, "cons") == 0) {
           // cons
         } else {

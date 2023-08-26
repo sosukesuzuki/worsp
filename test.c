@@ -799,6 +799,21 @@ void evaluate_car() {
   TEST_ASSERT(evaluated.int_value == 1);
 }
 
+void evaluate_cdr() {
+  char *source = "(cdr '(1 2 3))";
+  struct ParseState state = (struct ParseState){NULL, 0};
+  struct ParseResult result = (struct ParseResult){NULL};
+  struct Object evaluated = (struct Object){};
+  parse(source, &state, &result);
+  evaluateExpression(result.program->expressions->expression, &evaluated);
+  TEST_ASSERT(evaluated.type == OBJ_LIST);
+  TEST_ASSERT(evaluated.list_value->car->type == OBJ_INTEGER);
+  TEST_ASSERT(evaluated.list_value->car->int_value == 2);
+  TEST_ASSERT(evaluated.list_value->cdr.cdr_cell->car->type == OBJ_INTEGER);
+  TEST_ASSERT(evaluated.list_value->cdr.cdr_cell->car->int_value == 3);
+  TEST_ASSERT(evaluated.list_value->cdr.cdr_cell->cdr.cdr_nil->type == OBJ_NIL);
+}
+
 int main() {
   RUN_TEST(next_singleCharSymbol);
   RUN_TEST(next_multipleCharSymbol);
@@ -850,6 +865,7 @@ int main() {
   RUN_TEST(evaluate_ifThenElse);
   RUN_TEST(evaluate_complexIf);
   RUN_TEST(evaluate_car);
+  RUN_TEST(evaluate_cdr);
 
   return 0;
 }
