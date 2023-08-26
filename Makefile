@@ -5,7 +5,7 @@ REPL_SRC_FILES := worsp.c repl.c
 EXECUTABLE_REPL := repl
 
 CC := gcc
-CFLAGS := -Wall -Wextra -lm
+CFLAGS := -Wall -Wextra
 
 FORMAT_FILES := $(wildcard *.c) $(wildcard *.h)
 CLANG_FORMAT := clang-format
@@ -13,10 +13,10 @@ CLANG_FORMAT := clang-format
 .PHONY: format test clean
 
 $(EXECUTABLE_TEST): $(TEST_SRC_FILES)
-	$(CC) $(CFLAGS) $(TEST_SRC_FILES) -o $(EXECUTABLE_TEST)
+	$(CC) $(CFLAGS) $(TEST_SRC_FILES) -o $(EXECUTABLE_TEST) -lm
 
 $(EXECUTABLE_REPL): $(REPL_SRC_FILES)
-	$(CC) $(CFLAGS) $(REPL_SRC_FILES) -o $(EXECUTABLE_REPL)
+	$(CC) $(CFLAGS) $(REPL_SRC_FILES) -o $(EXECUTABLE_REPL) -lm
 
 run-test: $(EXECUTABLE_TEST)
 	./$(EXECUTABLE_TEST)
