@@ -367,6 +367,10 @@ char *stringifyObject(struct Object *obj) {
     char *str = (char *)malloc(4 * sizeof(char));
     strncpy(str, "nil", 4);
     return str;
+  } else if (obj->type == OBJ_FUNCTION) {
+    char *str = (char *)malloc(9 * sizeof(char));
+    strncpy(str, "<function>", 10);
+    return str;
   } else {
     printf("Unexpected object type: %d\n", obj->type);
     exit(1);
@@ -542,6 +546,17 @@ void evalateListExpression(struct ExpressionNode *expression,
   evaluated->list_value = car_conscell;
 }
 
+void setObjectToEnv(struct Env *env, char *symbolName, struct Object *obj) {
+  struct Binding *binding = malloc(sizeof(struct Binding));
+  binding->symbol_name = symbolName;
+  binding->value = obj;
+  int i = 0;
+  while (env->bindings[i].symbol_name != NULL) {
+    i++;
+  }
+  env->bindings[i] = *binding;
+}
+
 void evaluateSymbolicExpression(struct ExpressionNode *expression,
                                 struct Object *evaluated, struct Env *env) {
   struct ExpressionList *expressions = expression->data.list->expressions;
@@ -594,16 +609,57 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
         *evaluated = *evaluatedExpr;
 
         // set value to current env
-        struct Binding *binding = malloc(sizeof(struct Binding));
-        binding->symbol_name = symbol_name;
-        binding->value = evaluatedExpr;
-        int i = 0;
-        while (env->bindings[i].symbol_name != NULL) {
-          i++;
-        }
-        env->bindings[i] = *binding;
+        setObjectToEnv(env, symbol_name, evaluatedExpr);
       } else if ((strcmp(expr->data.symbol->symbol_name, "defun") == 0)) {
         // define function
+        // (defun fn (n) (+ n 1))
+        struct ExpressionNode symbolExpr = *expressions->next->expression;
+        if (symbolExpr.type != EXP_SYMBOL) {
+          printf("Function name must be symbol.\n");
+          exit(1);
+        }
+        char *symbol_name = symbolExpr.data.symbol->symbol_name;
+
+        struct ExpressionNode *paramsExpr = expressions->next->next->expression;
+        if (paramsExpr == NULL) {
+          printf("Function must have parameter.\n");
+          exit(1);
+        }
+        if (paramsExpr->type != EXP_SYMBOLIC_EXP) {
+          printf("Function parameter must be list.\n");
+          exit(1);
+        }
+
+        struct ExpressionList *params =
+            paramsExpr->data.symbolic_exp->expressions;
+        // check all elements are symbol and get symbol names
+        char *param_symbol_names[MAX_BINDINGS];
+        int i = 0;
+        while (params != NULL) {
+          if (params->expression->type != EXP_SYMBOL) {
+            printf("Function parameter must be symbol.\n");
+            exit(1);
+          }
+          param_symbol_names[i] = params->expression->data.symbol->symbol_name;
+          i++;
+          params = params->next;
+        }
+
+        struct ExpressionNode *bodyExpr =
+            expressions->next->next->next->expression;
+        if (bodyExpr == NULL) {
+          printf("Function must have body.\n");
+          exit(1);
+        }
+
+        struct Function *function = malloc(sizeof(struct Function));
+        function->param_symbol_names = &symbol_name;
+        function->body = bodyExpr;
+
+        evaluated->type = OBJ_FUNCTION;
+        evaluated->function_value = function;
+
+        setObjectToEnv(env, symbol_name, evaluated);
       } else {
         // function call
         if (strcmp(expr->data.symbol->symbol_name, "+") == 0) {
