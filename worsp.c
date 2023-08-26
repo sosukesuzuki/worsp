@@ -309,7 +309,7 @@ void evaluateExpression(struct ExpressionNode *expression,
     struct ExpressionList *expressions = expression->data.list->expressions;
     if (expressions != NULL) {
       struct ExpressionNode *expr = expressions->expression;
-      if (expr->type == EXP_SYMBOL) {
+      if (expr != NULL && expr->type == EXP_SYMBOL) {
         if (strcmp(expr->data.symbol->symbol_name, "if") == 0) {
           // if
         } else if (strcmp(expr->data.symbol->symbol_name, "while") == 0) {
@@ -322,13 +322,12 @@ void evaluateExpression(struct ExpressionNode *expression,
           // function call
         }
       } else {
-        // worsp does not allow S-expr thats first element is not symbol
-        printf("invalid s-exp.\n");
+        printf("S-exp must be started with symbol.\n");
         exit(1);
       }
     } else {
       // empty symbol expression
-      printf("empty s-exp is not implemented yet.\n");
+      printf("S-exp must be started with symbol.\n");
       exit(1);
     }
   } else if (expression->type == EXP_LITERAL) {
