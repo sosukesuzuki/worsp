@@ -501,7 +501,7 @@ void definedFunctionCons(struct Object *op1, struct Object *op2,
 // =================================================
 
 void evalateListExpression(struct ExpressionNode *expression,
-                           struct Object *evaluated) {
+                           struct Object *evaluated, struct Env *env) {
   struct ExpressionList *expressions = expression->data.list->expressions;
 
   // empty data list is evaluated as nil
@@ -523,7 +523,7 @@ void evalateListExpression(struct ExpressionNode *expression,
 
     struct Object *evaluatedItem = malloc(sizeof(struct Object));
     new_conscell->car = evaluatedItem;
-    evaluateExpression(expressions->expression, evaluatedItem);
+    evaluateExpression(expressions->expression, evaluatedItem, env);
 
     expressions = expressions->next;
 
@@ -543,7 +543,7 @@ void evalateListExpression(struct ExpressionNode *expression,
 }
 
 void evaluateSymbolicExpression(struct ExpressionNode *expression,
-                                struct Object *evaluated) {
+                                struct Object *evaluated, struct Env *env) {
   struct ExpressionList *expressions = expression->data.list->expressions;
   if (expressions != NULL) {
     struct ExpressionNode *expr = expressions->expression;
@@ -561,14 +561,14 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
           exit(1);
         }
         struct Object *condObj = malloc(sizeof(struct Object));
-        evaluateExpression(cond, condObj);
+        evaluateExpression(cond, condObj, env);
         if (boolVal(condObj)) {
-          evaluateExpression(then, evaluated);
+          evaluateExpression(then, evaluated, env);
         } else {
           if (expressions->next->next->next != NULL) {
             struct ExpressionNode *els =
                 expressions->next->next->next->expression;
-            evaluateExpression(els, evaluated);
+            evaluateExpression(els, evaluated, env);
           } else {
             evaluated->type = OBJ_NIL;
           }
@@ -577,6 +577,24 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
         // while
       } else if (strcmp(expr->data.symbol->symbol_name, "=") == 0) {
         // assignment
+        char *symbol_name =
+            expressions->next->expression->data.symbol->symbol_name;
+        struct ExpressionNode *expr = expressions->next->next->expression;
+        if (expr == NULL) {
+          printf("assignment must have expression.\n");
+          exit(1);
+        }
+        struct Object *evaluatedExpr = malloc(sizeof(struct Object));
+        evaluateExpression(expr, evaluatedExpr, env);
+        *evaluated = *evaluatedExpr;
+        struct Binding *binding = malloc(sizeof(struct Binding));
+        binding->symbol_name = symbol_name;
+        binding->value = evaluatedExpr;
+        int i = 0;
+        while (env->bindings[i].symbol_name != NULL) {
+          i++;
+        }
+        env->bindings[i] = *binding;
       } else if ((strcmp(expr->data.symbol->symbol_name, "defun") == 0)) {
         // define function
       } else {
@@ -586,8 +604,9 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
           // +
           struct Object *operand1 = malloc(sizeof(struct Object));
           struct Object *operand2 = malloc(sizeof(struct Object));
-          evaluateExpression(expressions->next->expression, operand1);
-          evaluateExpression(expressions->next->next->expression, operand2);
+          evaluateExpression(expressions->next->expression, operand1, env);
+          evaluateExpression(expressions->next->next->expression, operand2,
+                             env);
           definedFunctionAdd(operand1, operand2, evaluated);
           free(operand1);
           free(operand2);
@@ -595,8 +614,9 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
           // -
           struct Object *operand1 = malloc(sizeof(struct Object));
           struct Object *operand2 = malloc(sizeof(struct Object));
-          evaluateExpression(expressions->next->expression, operand1);
-          evaluateExpression(expressions->next->next->expression, operand2);
+          evaluateExpression(expressions->next->expression, operand1, env);
+          evaluateExpression(expressions->next->next->expression, operand2,
+                             env);
           definedFunctionSub(operand1, operand2, evaluated);
           free(operand1);
           free(operand2);
@@ -604,8 +624,9 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
           // *
           struct Object *operand1 = malloc(sizeof(struct Object));
           struct Object *operand2 = malloc(sizeof(struct Object));
-          evaluateExpression(expressions->next->expression, operand1);
-          evaluateExpression(expressions->next->next->expression, operand2);
+          evaluateExpression(expressions->next->expression, operand1, env);
+          evaluateExpression(expressions->next->next->expression, operand2,
+                             env);
           definedFunctionMul(operand1, operand2, evaluated);
           free(operand1);
           free(operand2);
@@ -613,8 +634,9 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
           // /
           struct Object *operand1 = malloc(sizeof(struct Object));
           struct Object *operand2 = malloc(sizeof(struct Object));
-          evaluateExpression(expressions->next->expression, operand1);
-          evaluateExpression(expressions->next->next->expression, operand2);
+          evaluateExpression(expressions->next->expression, operand1, env);
+          evaluateExpression(expressions->next->next->expression, operand2,
+                             env);
           definedFunctionDiv(operand1, operand2, evaluated);
           free(operand1);
           free(operand2);
@@ -622,8 +644,9 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
           // %
           struct Object *operand1 = malloc(sizeof(struct Object));
           struct Object *operand2 = malloc(sizeof(struct Object));
-          evaluateExpression(expressions->next->expression, operand1);
-          evaluateExpression(expressions->next->next->expression, operand2);
+          evaluateExpression(expressions->next->expression, operand1, env);
+          evaluateExpression(expressions->next->next->expression, operand2,
+                             env);
           definedFunctionMod(operand1, operand2, evaluated);
           free(operand1);
           free(operand2);
@@ -631,8 +654,9 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
           // ||
           struct Object *operand1 = malloc(sizeof(struct Object));
           struct Object *operand2 = malloc(sizeof(struct Object));
-          evaluateExpression(expressions->next->expression, operand1);
-          evaluateExpression(expressions->next->next->expression, operand2);
+          evaluateExpression(expressions->next->expression, operand1, env);
+          evaluateExpression(expressions->next->next->expression, operand2,
+                             env);
           definedFunctionOr(operand1, operand2, evaluated);
           free(operand1);
           free(operand2);
@@ -640,8 +664,9 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
           // &&
           struct Object *operand1 = malloc(sizeof(struct Object));
           struct Object *operand2 = malloc(sizeof(struct Object));
-          evaluateExpression(expressions->next->expression, operand1);
-          evaluateExpression(expressions->next->next->expression, operand2);
+          evaluateExpression(expressions->next->expression, operand1, env);
+          evaluateExpression(expressions->next->next->expression, operand2,
+                             env);
           definedFunctionAnd(operand1, operand2, evaluated);
           free(operand1);
           free(operand2);
@@ -649,15 +674,16 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
           // eq
           struct Object *operand1 = malloc(sizeof(struct Object));
           struct Object *operand2 = malloc(sizeof(struct Object));
-          evaluateExpression(expressions->next->expression, operand1);
-          evaluateExpression(expressions->next->next->expression, operand2);
+          evaluateExpression(expressions->next->expression, operand1, env);
+          evaluateExpression(expressions->next->next->expression, operand2,
+                             env);
           definedFunctionEq(operand1, operand2, evaluated);
           free(operand1);
           free(operand2);
         } else if (strcmp(expr->data.symbol->symbol_name, "print") == 0) {
           // print
           struct Object *operand = malloc(sizeof(struct Object));
-          evaluateExpression(expressions->next->expression, operand);
+          evaluateExpression(expressions->next->expression, operand, env);
           char *str = stringifyObject(operand);
           printf("%s\n", str);
           free(str);
@@ -665,21 +691,22 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
         } else if (strcmp(expr->data.symbol->symbol_name, "car") == 0) {
           // car
           struct Object *operand = malloc(sizeof(struct Object));
-          evaluateExpression(expressions->next->expression, operand);
+          evaluateExpression(expressions->next->expression, operand, env);
           definedFunctionCar(operand, evaluated);
           free(operand);
         } else if (strcmp(expr->data.symbol->symbol_name, "cdr") == 0) {
           // cdr
           struct Object *operand = malloc(sizeof(struct Object));
-          evaluateExpression(expressions->next->expression, operand);
+          evaluateExpression(expressions->next->expression, operand, env);
           definedFunctionCdr(operand, evaluated);
           free(operand);
         } else if (strcmp(expr->data.symbol->symbol_name, "cons") == 0) {
           // cons
           struct Object *operand1 = malloc(sizeof(struct Object));
           struct Object *operand2 = malloc(sizeof(struct Object));
-          evaluateExpression(expressions->next->expression, operand1);
-          evaluateExpression(expressions->next->next->expression, operand2);
+          evaluateExpression(expressions->next->expression, operand1, env);
+          evaluateExpression(expressions->next->next->expression, operand2,
+                             env);
           definedFunctionCons(operand1, operand2, evaluated);
         } else {
           printf("Undefined function: %s\n", expr->data.symbol->symbol_name);
@@ -721,11 +748,11 @@ void evaluateSymbolExpression(struct ExpressionNode *expression,
 }
 
 void evaluateExpression(struct ExpressionNode *expression,
-                        struct Object *evaluated) {
+                        struct Object *evaluated, struct Env *env) {
   if (expression->type == EXP_LIST) {
-    evalateListExpression(expression, evaluated);
+    evalateListExpression(expression, evaluated, env);
   } else if (expression->type == EXP_SYMBOLIC_EXP) {
-    evaluateSymbolicExpression(expression, evaluated);
+    evaluateSymbolicExpression(expression, evaluated, env);
   } else if (expression->type == EXP_LITERAL) {
     evaluateLiteralExpression(expression, evaluated);
   } else if (expression->type == EXP_SYMBOL) {
@@ -733,11 +760,21 @@ void evaluateExpression(struct ExpressionNode *expression,
   }
 }
 
+void initEnv(struct Env *env) {
+  env->parent = NULL;
+  env->bindings[0].symbol_name = NULL;
+  env->bindings[0].value = NULL;
+}
+
 void evaluateProgram(struct ProgramNode *program) {
   struct ExpressionList *expressions = program->expressions;
+
+  struct Env *env = malloc(sizeof(struct Env));
+  initEnv(env);
+
   while (expressions != NULL) {
     struct Object *evaluated = malloc(sizeof(struct Object));
-    evaluateExpression(expressions->expression, evaluated);
+    evaluateExpression(expressions->expression, evaluated, env);
     expressions = expressions->next;
     free(evaluated);
   }

@@ -265,6 +265,8 @@ void parse_integersList() {
 }
 
 void evaluate_literalExpressionInt() {
+  struct Env env = (struct Env){};
+  initEnv(&env);
   char *source = "3";
   struct ParseState state = (struct ParseState){NULL, 0};
   struct ParseResult result = (struct ParseResult){NULL};
@@ -274,13 +276,15 @@ void evaluate_literalExpressionInt() {
   TEST_ASSERT(expr->data.literal->int_value == 3);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated);
+  evaluateExpression(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_INTEGER);
   TEST_ASSERT(evaluated.int_value == 3);
 }
 
 void evaluate_literalExpressionString() {
+  struct Env env = (struct Env){};
+  initEnv(&env);
   char *source = "\"foo\"";
   struct ParseState state = (struct ParseState){NULL, 0};
   struct ParseResult result = (struct ParseResult){NULL};
@@ -290,13 +294,15 @@ void evaluate_literalExpressionString() {
   TEST_ASSERT(strcmp(expr->data.literal->string_value, "foo") == 0);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated);
+  evaluateExpression(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_STRING);
   TEST_ASSERT(strcmp(evaluated.string_value, "foo") == 0);
 }
 
 void evaluate_nil() {
+  struct Env env = (struct Env){};
+  initEnv(&env);
   char *source = "nil";
   struct ParseState state = (struct ParseState){NULL, 0};
   struct ParseResult result = (struct ParseResult){NULL};
@@ -306,12 +312,14 @@ void evaluate_nil() {
   TEST_ASSERT(strcmp(expr->data.symbol->symbol_name, "nil") == 0);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated);
+  evaluateExpression(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_NIL);
 }
 
 void evaluate_listWithInt() {
+  struct Env env = (struct Env){};
+  initEnv(&env);
   char *source = "'(133)";
   struct ParseState state = (struct ParseState){NULL, 0};
   struct ParseResult result = (struct ParseResult){NULL};
@@ -321,7 +329,7 @@ void evaluate_listWithInt() {
   TEST_ASSERT(expr->type == EXP_LIST);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated);
+  evaluateExpression(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_LIST);
   TEST_ASSERT(evaluated.list_value->car->type == OBJ_INTEGER);
@@ -330,6 +338,8 @@ void evaluate_listWithInt() {
 }
 
 void evaluate_listWithMultipleInt() {
+  struct Env env = (struct Env){};
+  initEnv(&env);
   char *source = "'(133 234 345)";
   struct ParseState state = (struct ParseState){NULL, 0};
   struct ParseResult result = (struct ParseResult){NULL};
@@ -339,7 +349,7 @@ void evaluate_listWithMultipleInt() {
   TEST_ASSERT(expr->type == EXP_LIST);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated);
+  evaluateExpression(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_LIST);
   TEST_ASSERT(evaluated.list_value->car->type == OBJ_INTEGER);
@@ -356,6 +366,8 @@ void evaluate_listWithMultipleInt() {
 }
 
 void evaluate_emptyList() {
+  struct Env env = (struct Env){};
+  initEnv(&env);
   char *source = "'()";
   struct ParseState state = (struct ParseState){NULL, 0};
   struct ParseResult result = (struct ParseResult){NULL};
@@ -365,12 +377,14 @@ void evaluate_emptyList() {
   TEST_ASSERT(expr->type == EXP_LIST);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated);
+  evaluateExpression(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_NIL);
 }
 
 void evaluate_emptySymbolicExp() {
+  struct Env env = (struct Env){};
+  initEnv(&env);
   char *source = "()";
   struct ParseState state = (struct ParseState){NULL, 0};
   struct ParseResult result = (struct ParseResult){NULL};
@@ -380,12 +394,14 @@ void evaluate_emptySymbolicExp() {
   TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated);
+  evaluateExpression(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_NIL);
 }
 
 void evaluate_addOp() {
+  struct Env env = (struct Env){};
+  initEnv(&env);
   char *source = "(+ 1222 21)";
   struct ParseState state = (struct ParseState){NULL, 0};
   struct ParseResult result = (struct ParseResult){NULL};
@@ -395,13 +411,15 @@ void evaluate_addOp() {
   TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated);
+  evaluateExpression(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_INTEGER);
   TEST_ASSERT(evaluated.int_value == 1243);
 }
 
 void evaluate_subOp() {
+  struct Env env = (struct Env){};
+  initEnv(&env);
   char *source = "(- 1222 21)";
   struct ParseState state = (struct ParseState){NULL, 0};
   struct ParseResult result = (struct ParseResult){NULL};
@@ -411,13 +429,15 @@ void evaluate_subOp() {
   TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated);
+  evaluateExpression(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_INTEGER);
   TEST_ASSERT(evaluated.int_value == 1201);
 }
 
 void evaluate_mulOp() {
+  struct Env env = (struct Env){};
+  initEnv(&env);
   char *source = "(* 1222 21)";
   struct ParseState state = (struct ParseState){NULL, 0};
   struct ParseResult result = (struct ParseResult){NULL};
@@ -427,13 +447,15 @@ void evaluate_mulOp() {
   TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated);
+  evaluateExpression(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_INTEGER);
   TEST_ASSERT(evaluated.int_value == 25662);
 }
 
 void evaluate_divOp() {
+  struct Env env = (struct Env){};
+  initEnv(&env);
   char *source = "(/ 1222 21)";
   struct ParseState state = (struct ParseState){NULL, 0};
   struct ParseResult result = (struct ParseResult){NULL};
@@ -443,13 +465,15 @@ void evaluate_divOp() {
   TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated);
+  evaluateExpression(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_INTEGER);
   TEST_ASSERT(evaluated.int_value == 58);
 }
 
 void evaluate_modOp() {
+  struct Env env = (struct Env){};
+  initEnv(&env);
   char *source = "(% 1222 21)";
   struct ParseState state = (struct ParseState){NULL, 0};
   struct ParseResult result = (struct ParseResult){NULL};
@@ -459,13 +483,15 @@ void evaluate_modOp() {
   TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated);
+  evaluateExpression(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_INTEGER);
   TEST_ASSERT(evaluated.int_value == 4);
 }
 
 void evaluate_orOpTrue() {
+  struct Env env = (struct Env){};
+  initEnv(&env);
   char *source = "(|| true false)";
   struct ParseState state = (struct ParseState){NULL, 0};
   struct ParseResult result = (struct ParseResult){NULL};
@@ -475,13 +501,15 @@ void evaluate_orOpTrue() {
   TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated);
+  evaluateExpression(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_BOOL);
   TEST_ASSERT(evaluated.bool_value == 1);
 }
 
 void evaluate_orOpFalse() {
+  struct Env env = (struct Env){};
+  initEnv(&env);
   char *source = "(|| false false)";
   struct ParseState state = (struct ParseState){NULL, 0};
   struct ParseResult result = (struct ParseResult){NULL};
@@ -491,13 +519,15 @@ void evaluate_orOpFalse() {
   TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated);
+  evaluateExpression(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_BOOL);
   TEST_ASSERT(evaluated.bool_value == 0);
 }
 
 void evaluate_orOpTrueInt() {
+  struct Env env = (struct Env){};
+  initEnv(&env);
   char *source = "(|| 1 false)";
   struct ParseState state = (struct ParseState){NULL, 0};
   struct ParseResult result = (struct ParseResult){NULL};
@@ -507,13 +537,15 @@ void evaluate_orOpTrueInt() {
   TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated);
+  evaluateExpression(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_BOOL);
   TEST_ASSERT(evaluated.bool_value == 1);
 }
 
 void evaluate_orOpTrueNil() {
+  struct Env env = (struct Env){};
+  initEnv(&env);
   char *source = "(|| 1 nil)";
   struct ParseState state = (struct ParseState){NULL, 0};
   struct ParseResult result = (struct ParseResult){NULL};
@@ -523,13 +555,15 @@ void evaluate_orOpTrueNil() {
   TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated);
+  evaluateExpression(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_BOOL);
   TEST_ASSERT(evaluated.bool_value == 1);
 }
 
 void evaluted_nestedOps() {
+  struct Env env = (struct Env){};
+  initEnv(&env);
   char *source = "(+ 1 (- 2 (* 3 (/ 4 2))))";
   struct ParseState state = (struct ParseState){NULL, 0};
   struct ParseResult result = (struct ParseResult){NULL};
@@ -539,13 +573,15 @@ void evaluted_nestedOps() {
   TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated);
+  evaluateExpression(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_INTEGER);
   TEST_ASSERT(evaluated.int_value == -3);
 }
 
 void evaluate_andOpFalse() {
+  struct Env env = (struct Env){};
+  initEnv(&env);
   char *source = "(&& false false)";
   struct ParseState state = (struct ParseState){NULL, 0};
   struct ParseResult result = (struct ParseResult){NULL};
@@ -555,13 +591,15 @@ void evaluate_andOpFalse() {
   TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated);
+  evaluateExpression(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_BOOL);
   TEST_ASSERT(evaluated.bool_value == 0);
 }
 
 void evaluate_andOpFalseInt() {
+  struct Env env = (struct Env){};
+  initEnv(&env);
   char *source = "(&& 1 false)";
   struct ParseState state = (struct ParseState){NULL, 0};
   struct ParseResult result = (struct ParseResult){NULL};
@@ -571,13 +609,15 @@ void evaluate_andOpFalseInt() {
   TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated);
+  evaluateExpression(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_BOOL);
   TEST_ASSERT(evaluated.bool_value == 0);
 }
 
 void evaluate_andOpFalseNil() {
+  struct Env env = (struct Env){};
+  initEnv(&env);
   char *source = "(&& 1 nil)";
   struct ParseState state = (struct ParseState){NULL, 0};
   struct ParseResult result = (struct ParseResult){NULL};
@@ -587,13 +627,15 @@ void evaluate_andOpFalseNil() {
   TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated);
+  evaluateExpression(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_BOOL);
   TEST_ASSERT(evaluated.bool_value == 0);
 }
 
 void evaluate_andOpTrue() {
+  struct Env env = (struct Env){};
+  initEnv(&env);
   char *source = "(&& true true)";
   struct ParseState state = (struct ParseState){NULL, 0};
   struct ParseResult result = (struct ParseResult){NULL};
@@ -603,13 +645,15 @@ void evaluate_andOpTrue() {
   TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated);
+  evaluateExpression(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_BOOL);
   TEST_ASSERT(evaluated.bool_value == 1);
 }
 
 void evaluate_andOpTrueInt() {
+  struct Env env = (struct Env){};
+  initEnv(&env);
   char *source = "(&& 1 2)";
   struct ParseState state = (struct ParseState){NULL, 0};
   struct ParseResult result = (struct ParseResult){NULL};
@@ -619,13 +663,15 @@ void evaluate_andOpTrueInt() {
   TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated);
+  evaluateExpression(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_BOOL);
   TEST_ASSERT(evaluated.bool_value == 1);
 }
 
 void evaluate_eqTrue() {
+  struct Env env = (struct Env){};
+  initEnv(&env);
   char *source = "(eq 1 1)";
   struct ParseState state = (struct ParseState){NULL, 0};
   struct ParseResult result = (struct ParseResult){NULL};
@@ -635,13 +681,15 @@ void evaluate_eqTrue() {
   TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated);
+  evaluateExpression(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_BOOL);
   TEST_ASSERT(evaluated.bool_value == 1);
 }
 
 void evaluate_eqFalse() {
+  struct Env env = (struct Env){};
+  initEnv(&env);
   char *source = "(eq 2 1)";
   struct ParseState state = (struct ParseState){NULL, 0};
   struct ParseResult result = (struct ParseResult){NULL};
@@ -651,13 +699,15 @@ void evaluate_eqFalse() {
   TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated);
+  evaluateExpression(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_BOOL);
   TEST_ASSERT(evaluated.bool_value == 0);
 }
 
 void evaluate_eqTrueNil() {
+  struct Env env = (struct Env){};
+  initEnv(&env);
   char *source = "(eq nil nil)";
   struct ParseState state = (struct ParseState){NULL, 0};
   struct ParseResult result = (struct ParseResult){NULL};
@@ -667,13 +717,15 @@ void evaluate_eqTrueNil() {
   TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated);
+  evaluateExpression(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_BOOL);
   TEST_ASSERT(evaluated.bool_value == 1);
 }
 
 void evaluate_eqTrueNilList() {
+  struct Env env = (struct Env){};
+  initEnv(&env);
   char *source = "(eq '() nil)";
   struct ParseState state = (struct ParseState){NULL, 0};
   struct ParseResult result = (struct ParseResult){NULL};
@@ -683,13 +735,15 @@ void evaluate_eqTrueNilList() {
   TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated);
+  evaluateExpression(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_BOOL);
   TEST_ASSERT(evaluated.bool_value == 1);
 }
 
 void evaluate_eqTrueNilSExp() {
+  struct Env env = (struct Env){};
+  initEnv(&env);
   char *source = "(eq () nil)";
   struct ParseState state = (struct ParseState){NULL, 0};
   struct ParseResult result = (struct ParseResult){NULL};
@@ -699,113 +753,134 @@ void evaluate_eqTrueNilSExp() {
   TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated);
+  evaluateExpression(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_BOOL);
   TEST_ASSERT(evaluated.bool_value == 1);
 }
 
 void evaluate_printString() {
+  struct Env env = (struct Env){};
+  initEnv(&env);
   char *source = "(print \"hello\")";
   struct ParseState state = (struct ParseState){NULL, 0};
   struct ParseResult result = (struct ParseResult){NULL};
   struct Object evaluated = (struct Object){};
   parse(source, &state, &result);
-  evaluateExpression(result.program->expressions->expression, &evaluated);
+  evaluateExpression(result.program->expressions->expression, &evaluated, &env);
   TEST_ASSERT(evaluated.type == OBJ_NIL);
 }
 
 void evaluate_printInt() {
+  struct Env env = (struct Env){};
+  initEnv(&env);
   char *source = "(print 3)";
   struct ParseState state = (struct ParseState){NULL, 0};
   struct ParseResult result = (struct ParseResult){NULL};
   struct Object evaluated = (struct Object){};
   parse(source, &state, &result);
-  evaluateExpression(result.program->expressions->expression, &evaluated);
+  evaluateExpression(result.program->expressions->expression, &evaluated, &env);
   TEST_ASSERT(evaluated.type == OBJ_NIL);
 }
 
 void evaluate_printBooleanT() {
+  struct Env env = (struct Env){};
+  initEnv(&env);
   char *source = "(print true)";
   struct ParseState state = (struct ParseState){NULL, 0};
   struct ParseResult result = (struct ParseResult){NULL};
   struct Object evaluated = (struct Object){};
   parse(source, &state, &result);
-  evaluateExpression(result.program->expressions->expression, &evaluated);
+  evaluateExpression(result.program->expressions->expression, &evaluated, &env);
   TEST_ASSERT(evaluated.type == OBJ_NIL);
 }
 
 void evaluate_printBooleanF() {
+  struct Env env = (struct Env){};
+  initEnv(&env);
   char *source = "(print false)";
   struct ParseState state = (struct ParseState){NULL, 0};
   struct ParseResult result = (struct ParseResult){NULL};
   struct Object evaluated = (struct Object){};
   parse(source, &state, &result);
-  evaluateExpression(result.program->expressions->expression, &evaluated);
+  evaluateExpression(result.program->expressions->expression, &evaluated, &env);
   TEST_ASSERT(evaluated.type == OBJ_NIL);
 }
 
 void evaluate_printList() {
+  struct Env env = (struct Env){};
+  initEnv(&env);
   char *source = "(print '(1 2 3))";
   struct ParseState state = (struct ParseState){NULL, 0};
   struct ParseResult result = (struct ParseResult){NULL};
   struct Object evaluated = (struct Object){};
   parse(source, &state, &result);
-  evaluateExpression(result.program->expressions->expression, &evaluated);
+  evaluateExpression(result.program->expressions->expression, &evaluated, &env);
   TEST_ASSERT(evaluated.type == OBJ_NIL);
 }
 
 void evaluate_ifThen() {
+  struct Env env = (struct Env){};
+  initEnv(&env);
   char *source = "(if true 1)";
   struct ParseState state = (struct ParseState){NULL, 0};
   struct ParseResult result = (struct ParseResult){NULL};
   struct Object evaluated = (struct Object){};
   parse(source, &state, &result);
-  evaluateExpression(result.program->expressions->expression, &evaluated);
+  evaluateExpression(result.program->expressions->expression, &evaluated, &env);
   TEST_ASSERT(evaluated.type == OBJ_INTEGER);
   TEST_ASSERT(evaluated.int_value == 1);
 }
 
 void evaluate_ifThenElse() {
+  struct Env env = (struct Env){};
+  initEnv(&env);
   char *source = "(if false 1 2)";
   struct ParseState state = (struct ParseState){NULL, 0};
   struct ParseResult result = (struct ParseResult){NULL};
   struct Object evaluated = (struct Object){};
   parse(source, &state, &result);
-  evaluateExpression(result.program->expressions->expression, &evaluated);
+  evaluateExpression(result.program->expressions->expression, &evaluated, &env);
   TEST_ASSERT(evaluated.type == OBJ_INTEGER);
   TEST_ASSERT(evaluated.int_value == 2);
 }
 
 void evaluate_complexIf() {
+  struct Env env = (struct Env){};
+  initEnv(&env);
   char *source = "(if (|| (eq 1 1) false) (if true 1 2) 2)";
   struct ParseState state = (struct ParseState){NULL, 0};
   struct ParseResult result = (struct ParseResult){NULL};
   struct Object evaluated = (struct Object){};
   parse(source, &state, &result);
-  evaluateExpression(result.program->expressions->expression, &evaluated);
+  evaluateExpression(result.program->expressions->expression, &evaluated, &env);
   TEST_ASSERT(evaluated.type == OBJ_INTEGER);
   TEST_ASSERT(evaluated.int_value == 1);
 }
 
 void evaluate_car() {
+  struct Env env = (struct Env){};
+  initEnv(&env);
   char *source = "(car '(1 2 3))";
   struct ParseState state = (struct ParseState){NULL, 0};
   struct ParseResult result = (struct ParseResult){NULL};
   struct Object evaluated = (struct Object){};
   parse(source, &state, &result);
-  evaluateExpression(result.program->expressions->expression, &evaluated);
+  evaluateExpression(result.program->expressions->expression, &evaluated, &env);
   TEST_ASSERT(evaluated.type == OBJ_INTEGER);
   TEST_ASSERT(evaluated.int_value == 1);
 }
 
 void evaluate_cdr() {
+  struct Env env = (struct Env){};
+  initEnv(&env);
+
   char *source = "(cdr '(1 2 3))";
   struct ParseState state = (struct ParseState){NULL, 0};
   struct ParseResult result = (struct ParseResult){NULL};
   struct Object evaluated = (struct Object){};
   parse(source, &state, &result);
-  evaluateExpression(result.program->expressions->expression, &evaluated);
+  evaluateExpression(result.program->expressions->expression, &evaluated, &env);
   TEST_ASSERT(evaluated.type == OBJ_LIST);
   TEST_ASSERT(evaluated.list_value->car->type == OBJ_INTEGER);
   TEST_ASSERT(evaluated.list_value->car->int_value == 2);
@@ -815,12 +890,14 @@ void evaluate_cdr() {
 }
 
 void evaluate_consIntList() {
+  struct Env env = (struct Env){};
+  initEnv(&env);
   char *source = "(cons 1 '(2 3))";
   struct ParseState state = (struct ParseState){NULL, 0};
   struct ParseResult result = (struct ParseResult){NULL};
   struct Object evaluated = (struct Object){};
   parse(source, &state, &result);
-  evaluateExpression(result.program->expressions->expression, &evaluated);
+  evaluateExpression(result.program->expressions->expression, &evaluated, &env);
   TEST_ASSERT(evaluated.type == OBJ_LIST);
   TEST_ASSERT(evaluated.list_value->car->int_value == 1);
   TEST_ASSERT(evaluated.list_value->cdr.cdr_cell->car->int_value == 2);
@@ -832,12 +909,14 @@ void evaluate_consIntList() {
 }
 
 void evaluate_consInt() {
+  struct Env env = (struct Env){};
+  initEnv(&env);
   char *source = "(cons 1 2)";
   struct ParseState state = (struct ParseState){NULL, 0};
   struct ParseResult result = (struct ParseResult){NULL};
   struct Object evaluated = (struct Object){};
   parse(source, &state, &result);
-  evaluateExpression(result.program->expressions->expression, &evaluated);
+  evaluateExpression(result.program->expressions->expression, &evaluated, &env);
   TEST_ASSERT(evaluated.type == OBJ_LIST);
   TEST_ASSERT(evaluated.list_value->car->int_value == 1);
   TEST_ASSERT(evaluated.list_value->cdr.cdr_cell->car->int_value == 2);
@@ -845,12 +924,14 @@ void evaluate_consInt() {
 }
 
 void evaluate_consListList() {
+  struct Env env = (struct Env){};
+  initEnv(&env);
   char *source = "(cons '(1 2) '(3 4))";
   struct ParseState state = (struct ParseState){NULL, 0};
   struct ParseResult result = (struct ParseResult){NULL};
   struct Object evaluated = (struct Object){};
   parse(source, &state, &result);
-  evaluateExpression(result.program->expressions->expression, &evaluated);
+  evaluateExpression(result.program->expressions->expression, &evaluated, &env);
   TEST_ASSERT(evaluated.type == OBJ_LIST);
   TEST_ASSERT(evaluated.list_value->car->type == OBJ_LIST);
   TEST_ASSERT(evaluated.list_value->car->list_value->car->int_value == 1);

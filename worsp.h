@@ -96,6 +96,7 @@ typedef enum {
   OBJ_BOOL,
   OBJ_LIST,
   OBJ_NIL,
+  OBJ_FUNCTION,
 } ObjectType;
 
 struct ConsCell {
@@ -107,6 +108,11 @@ struct ConsCell {
   } cdr;
 };
 
+struct Function {
+  char **param_symbol_names;
+  struct ExpressionNode *body;
+};
+
 struct Object {
   ObjectType type;
   union {
@@ -114,11 +120,25 @@ struct Object {
     char *string_value;
     int bool_value;
     struct ConsCell *list_value;
+    struct Function *function_value;
   };
 };
 
+#define MAX_BINDINGS 10
+
+struct Binding {
+  char *symbol_name;
+  struct Object *value;
+};
+
+struct Env {
+  struct Binding bindings[MAX_BINDINGS];
+  struct Env *parent;
+};
+
 void evaluateExpression(struct ExpressionNode *expression,
-                        struct Object *result);
+                        struct Object *result, struct Env *env);
 char *stringifyObject(struct Object *obj);
+void initEnv(struct Env *env);
 
 #endif
