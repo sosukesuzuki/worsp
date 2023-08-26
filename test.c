@@ -355,6 +355,36 @@ void evaluate_listWithMultipleInt() {
       OBJ_NIL);
 }
 
+void evaluate_emptyList() {
+  char *source = "'()";
+  struct ParseState state = (struct ParseState){NULL, 0};
+  struct ParseResult result = (struct ParseResult){NULL};
+  parse(source, &state, &result);
+
+  struct ExpressionNode *expr = result.program->expressions->expression;
+  TEST_ASSERT(expr->type == EXP_LIST);
+
+  struct Object evaluated = (struct Object){};
+  evaluateExpression(expr, &evaluated);
+
+  TEST_ASSERT(evaluated.type == OBJ_NIL);
+}
+
+void evaluate_emptySymbolicExp() {
+  char *source = "()";
+  struct ParseState state = (struct ParseState){NULL, 0};
+  struct ParseResult result = (struct ParseResult){NULL};
+  parse(source, &state, &result);
+
+  struct ExpressionNode *expr = result.program->expressions->expression;
+  TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
+
+  struct Object evaluated = (struct Object){};
+  evaluateExpression(expr, &evaluated);
+
+  TEST_ASSERT(evaluated.type == OBJ_NIL);
+}
+
 int main() {
   RUN_TEST(next_singleCharSymbol);
   RUN_TEST(next_multipleCharSymbol);
@@ -375,6 +405,8 @@ int main() {
   RUN_TEST(evaluate_nil);
   RUN_TEST(evaluate_listWithInt);
   RUN_TEST(evaluate_listWithMultipleInt);
+  RUN_TEST(evaluate_emptyList);
+  RUN_TEST(evaluate_emptySymbolicExp);
 
   return 0;
 }

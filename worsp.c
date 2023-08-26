@@ -299,6 +299,12 @@ void evaluateExpression(struct ExpressionNode *expression,
   if (expression->type == EXP_LIST) {
     struct ExpressionList *expressions = expression->data.list->expressions;
 
+    // empty data list is evaluated as nil
+    if (expressions == NULL) {
+      evaluated->type = OBJ_NIL;
+      return;
+    }
+
     evaluated->type = OBJ_LIST;
 
     struct ConsCell *car_conscell = NULL;
@@ -324,7 +330,7 @@ void evaluateExpression(struct ExpressionNode *expression,
       if (expressions == NULL) {
         struct Object *nilObj = malloc(sizeof(struct Object));
         nilObj->type = OBJ_NIL;
-        prev_conscell->cdr.cdr_cell = nilObj;
+        prev_conscell->cdr.cdr_nil = nilObj;
       }
     }
 
@@ -352,9 +358,7 @@ void evaluateExpression(struct ExpressionNode *expression,
         exit(1);
       }
     } else {
-      // empty symbol expression
-      printf("S-exp must be started with symbol.\n");
-      exit(1);
+      evaluated->type = OBJ_NIL;
     }
   } else if (expression->type == EXP_LITERAL) {
     if (expression->data.literal->type == LIT_INTERGER) {
