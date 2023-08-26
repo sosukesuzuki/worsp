@@ -755,6 +755,39 @@ void evaluate_printList() {
   TEST_ASSERT(evaluated.type == OBJ_NIL);
 }
 
+void evaluate_ifThen() {
+  char *source = "(if true 1)";
+  struct ParseState state = (struct ParseState){NULL, 0};
+  struct ParseResult result = (struct ParseResult){NULL};
+  struct Object evaluated = (struct Object){};
+  parse(source, &state, &result);
+  evaluateExpression(result.program->expressions->expression, &evaluated);
+  TEST_ASSERT(evaluated.type == OBJ_INTEGER);
+  TEST_ASSERT(evaluated.int_value == 1);
+}
+
+void evaluate_ifThenElse() {
+  char *source = "(if false 1 2)";
+  struct ParseState state = (struct ParseState){NULL, 0};
+  struct ParseResult result = (struct ParseResult){NULL};
+  struct Object evaluated = (struct Object){};
+  parse(source, &state, &result);
+  evaluateExpression(result.program->expressions->expression, &evaluated);
+  TEST_ASSERT(evaluated.type == OBJ_INTEGER);
+  TEST_ASSERT(evaluated.int_value == 2);
+}
+
+void evaluate_complexIf() {
+  char *source = "(if (|| (eq 1 1) false) (if true 1 2) 2)";
+  struct ParseState state = (struct ParseState){NULL, 0};
+  struct ParseResult result = (struct ParseResult){NULL};
+  struct Object evaluated = (struct Object){};
+  parse(source, &state, &result);
+  evaluateExpression(result.program->expressions->expression, &evaluated);
+  TEST_ASSERT(evaluated.type == OBJ_INTEGER);
+  TEST_ASSERT(evaluated.int_value == 1);
+}
+
 int main() {
   RUN_TEST(next_singleCharSymbol);
   RUN_TEST(next_multipleCharSymbol);
@@ -802,6 +835,9 @@ int main() {
   RUN_TEST(evaluate_printBooleanT);
   RUN_TEST(evaluate_printBooleanF);
   RUN_TEST(evaluate_printList);
+  RUN_TEST(evaluate_ifThen);
+  RUN_TEST(evaluate_ifThenElse);
+  RUN_TEST(evaluate_complexIf);
 
   return 0;
 }

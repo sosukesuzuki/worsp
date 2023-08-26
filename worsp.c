@@ -515,6 +515,28 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
     if (expr != NULL && expr->type == EXP_SYMBOL) {
       if (strcmp(expr->data.symbol->symbol_name, "if") == 0) {
         // if
+        struct ExpressionNode *cond = expressions->next->expression;
+        if (cond == NULL) {
+          printf("if must have condition.\n");
+          exit(1);
+        }
+        struct ExpressionNode *then = expressions->next->next->expression;
+        if (then == NULL) {
+          printf("if must have then clause.\n");
+          exit(1);
+        }
+        struct Object *condObj = malloc(sizeof(struct Object));
+        evaluateExpression(cond, condObj);
+        if (boolVal(condObj)) {
+          evaluateExpression(then, evaluated);
+        } else {
+          if (expressions->next->next->next != NULL) {
+            struct ExpressionNode *els = expressions->next->next->next->expression;
+            evaluateExpression(els, evaluated);
+          } else {
+            evaluated->type = OBJ_NIL;
+          }
+        }
       } else if (strcmp(expr->data.symbol->symbol_name, "while") == 0) {
         // while
       } else if (strcmp(expr->data.symbol->symbol_name, "=") == 0) {
