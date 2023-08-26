@@ -372,7 +372,7 @@ void definedFunctionOr(struct Object *op1, struct Object *op2,
 }
 
 void definedFunctionAnd(struct Object *op1, struct Object *op2,
-                       struct Object *evaluated) {
+                        struct Object *evaluated) {
   if (boolVal(op1) && boolVal(op2)) {
     evaluated->type = OBJ_BOOL;
     evaluated->bool_value = 1;
