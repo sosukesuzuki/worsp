@@ -273,7 +273,7 @@ void evaluate_literalExpression() {
   struct ExpressionNode *expr = result.program->expressions->expression;
   TEST_ASSERT(expr->data.literal->int_value == 3);
 
-  struct Object evaluated = (struct Object){NULL};
+  struct Object evaluated = (struct Object){};
   evaluateExpression(expr, &evaluated);
 
   TEST_ASSERT(evaluated.type == OBJ_INTEGER);
