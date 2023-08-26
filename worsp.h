@@ -86,4 +86,29 @@ int match(struct ParseState *state, TokenKind kind);
 void next(char *source, struct ParseState *state);
 void parse(char *source, struct ParseState *state, struct ParseResult *result);
 
+// =================================================
+//   evaluator
+// =================================================
+
+typedef enum {
+  OBJ_INTEGER,
+  OBJ_STRING,
+  OBJ_BOOL,
+  OBJ_LIST,
+  OBJ_NIL,
+} ObjectType;
+
+struct Object {
+  ObjectType type;
+  union {
+    int int_value;
+    char *string_value;
+    int bool_value;
+    struct Object *list_value;
+  };
+};
+
+void evaluateExpression(struct ExpressionNode *expression,
+                        struct Object *result);
+
 #endif

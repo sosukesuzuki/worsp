@@ -283,24 +283,6 @@ void parse(char *source, struct ParseState *state, struct ParseResult *result) {
 //   evaluator
 // =================================================
 
-typedef enum {
-  OBJ_INTERGER,
-  OBJ_STRING,
-  OBJ_BOOL,
-  OBJ_LIST,
-  OBJ_NIL,
-} ObjectType;
-
-struct Object {
-  ObjectType type;
-  union {
-    int int_value;
-    char *string_value;
-    int bool_value;
-    struct Object *list_value;
-  };
-};
-
 void evaluateExpression(struct ExpressionNode *expression,
                         struct Object *evaluated) {
   if (expression->type == EXP_LIST) {
@@ -332,7 +314,7 @@ void evaluateExpression(struct ExpressionNode *expression,
     }
   } else if (expression->type == EXP_LITERAL) {
     if (expression->data.literal->type == LIT_INTERGER) {
-      evaluated->type = OBJ_INTERGER;
+      evaluated->type = OBJ_INTEGER;
       evaluated->int_value = expression->data.literal->int_value;
     } else if (expression->data.literal->type == LIT_STRING) {
       evaluated->type = OBJ_STRING;
@@ -355,8 +337,10 @@ void evaluateExpression(struct ExpressionNode *expression,
 void evaluateProgram(struct ProgramNode *program) {
   struct ExpressionList *expressions = program->expressions;
   while (expressions != NULL) {
-    evaluateExpression(expressions->expression, NULL);
+    struct Object *evaluated = malloc(sizeof(struct Object));
+    evaluateExpression(expressions->expression, evaluated);
     expressions = expressions->next;
+    free(evaluated);
   }
 }
 
