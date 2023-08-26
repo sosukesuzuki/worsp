@@ -98,13 +98,22 @@ typedef enum {
   OBJ_NIL,
 } ObjectType;
 
+struct ConsCell {
+  struct Object *car;
+  union {
+    struct ConsCell *cdr_cell;
+    // only nil
+    struct Object *cdr_nil;
+  } cdr;
+};
+
 struct Object {
   ObjectType type;
   union {
     int int_value;
     char *string_value;
     int bool_value;
-    struct Object *left, *right;
+    struct ConsCell *list_value;
   };
 };
 

@@ -297,7 +297,38 @@ void parse(char *source, struct ParseState *state, struct ParseResult *result) {
 void evaluateExpression(struct ExpressionNode *expression,
                         struct Object *evaluated) {
   if (expression->type == EXP_LIST) {
-    // TODO: evaluate each expression in list
+    struct ExpressionList *expressions = expression->data.list->expressions;
+
+    evaluated->type = OBJ_LIST;
+
+    struct ConsCell *car_conscell = NULL;
+    struct ConsCell *prev_conscell = NULL;
+
+    while (expressions != NULL) {
+      struct ConsCell *new_conscell = malloc(sizeof(struct ConsCell));
+      if (car_conscell == NULL) {
+        car_conscell = new_conscell;
+      }
+
+      struct Object *evaluatedItem = malloc(sizeof(struct Object));
+      new_conscell->car = evaluatedItem;
+      evaluateExpression(expressions->expression, evaluatedItem);
+
+      expressions = expressions->next;
+
+      if (prev_conscell != NULL) {
+        prev_conscell->cdr.cdr_cell = new_conscell;
+      }
+      prev_conscell = new_conscell;
+
+      if (expressions == NULL) {
+        struct Object *nilObj = malloc(sizeof(struct Object));
+        nilObj->type = OBJ_NIL;
+        prev_conscell->cdr.cdr_cell = nilObj;
+      }
+    }
+
+    evaluated->list_value = car_conscell;
   } else if (expression->type == EXP_SYMBOLIC_EXP) {
     struct ExpressionList *expressions = expression->data.list->expressions;
     if (expressions != NULL) {

@@ -311,6 +311,50 @@ void evaluate_nil() {
   TEST_ASSERT(evaluated.type == OBJ_NIL);
 }
 
+void evaluate_listWithInt() {
+  char *source = "'(133)";
+  struct ParseState state = (struct ParseState){NULL, 0};
+  struct ParseResult result = (struct ParseResult){NULL};
+  parse(source, &state, &result);
+
+  struct ExpressionNode *expr = result.program->expressions->expression;
+  TEST_ASSERT(expr->type == EXP_LIST);
+
+  struct Object evaluated = (struct Object){};
+  evaluateExpression(expr, &evaluated);
+
+  TEST_ASSERT(evaluated.type == OBJ_LIST);
+  TEST_ASSERT(evaluated.list_value->car->type == OBJ_INTEGER);
+  TEST_ASSERT(evaluated.list_value->car->int_value == 133);
+  TEST_ASSERT(evaluated.list_value->cdr.cdr_nil->type == OBJ_NIL);
+}
+
+void evaluate_listWithMultipleInt() {
+  char *source = "'(133 234 345)";
+  struct ParseState state = (struct ParseState){NULL, 0};
+  struct ParseResult result = (struct ParseResult){NULL};
+  parse(source, &state, &result);
+
+  struct ExpressionNode *expr = result.program->expressions->expression;
+  TEST_ASSERT(expr->type == EXP_LIST);
+
+  struct Object evaluated = (struct Object){};
+  evaluateExpression(expr, &evaluated);
+
+  TEST_ASSERT(evaluated.type == OBJ_LIST);
+  TEST_ASSERT(evaluated.list_value->car->type == OBJ_INTEGER);
+  TEST_ASSERT(evaluated.list_value->car->int_value == 133);
+  TEST_ASSERT(evaluated.list_value->cdr.cdr_cell->car->type == OBJ_INTEGER);
+  TEST_ASSERT(evaluated.list_value->cdr.cdr_cell->car->int_value == 234);
+  TEST_ASSERT(evaluated.list_value->cdr.cdr_cell->cdr.cdr_cell->car->type ==
+              OBJ_INTEGER);
+  TEST_ASSERT(
+      evaluated.list_value->cdr.cdr_cell->cdr.cdr_cell->car->int_value == 345);
+  TEST_ASSERT(
+      evaluated.list_value->cdr.cdr_cell->cdr.cdr_cell->cdr.cdr_nil->type ==
+      OBJ_NIL);
+}
+
 int main() {
   RUN_TEST(next_singleCharSymbol);
   RUN_TEST(next_multipleCharSymbol);
@@ -329,6 +373,8 @@ int main() {
   RUN_TEST(evaluate_literalExpressionInt);
   RUN_TEST(evaluate_literalExpressionString);
   RUN_TEST(evaluate_nil);
+  RUN_TEST(evaluate_listWithInt);
+  RUN_TEST(evaluate_listWithMultipleInt);
 
   return 0;
 }
