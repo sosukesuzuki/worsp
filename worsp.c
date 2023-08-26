@@ -370,6 +370,19 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
           free(operand2);
         } else if (strcmp(expr->data.symbol->symbol_name, "-") == 0) {
           // -
+          struct Object *operand1 = malloc(sizeof(struct Object));
+          struct Object *operand2 = malloc(sizeof(struct Object));
+          evaluateExpression(expressions->next->expression, operand1);
+          evaluateExpression(expressions->next->next->expression, operand2);
+          if (operand1->type == OBJ_INTEGER && operand2->type == OBJ_INTEGER) {
+            evaluated->type = OBJ_INTEGER;
+            evaluated->int_value = operand1->int_value - operand2->int_value;
+          } else {
+            printf("Type error: operands for - must be integers.\n");
+            exit(1);
+          }
+          free(operand1);
+          free(operand2);
         } else if (strcmp(expr->data.symbol->symbol_name, "*") == 0) {
           // *
         } else if (strcmp(expr->data.symbol->symbol_name, "/") == 0) {
