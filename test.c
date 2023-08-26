@@ -705,6 +705,56 @@ void evaluate_eqTrueNilSExp() {
   TEST_ASSERT(evaluated.bool_value == 1);
 }
 
+void evaluate_printString() {
+  char *source = "(print \"hello\")";
+  struct ParseState state = (struct ParseState){NULL, 0};
+  struct ParseResult result = (struct ParseResult){NULL};
+  struct Object evaluated = (struct Object){};
+  parse(source, &state, &result);
+  evaluateExpression(result.program->expressions->expression, &evaluated);
+  TEST_ASSERT(evaluated.type == OBJ_NIL);
+}
+
+void evaluate_printInt() {
+  char *source = "(print 3)";
+  struct ParseState state = (struct ParseState){NULL, 0};
+  struct ParseResult result = (struct ParseResult){NULL};
+  struct Object evaluated = (struct Object){};
+  parse(source, &state, &result);
+  evaluateExpression(result.program->expressions->expression, &evaluated);
+  TEST_ASSERT(evaluated.type == OBJ_NIL);
+}
+
+void evaluate_printBooleanT() {
+  char *source = "(print true)";
+  struct ParseState state = (struct ParseState){NULL, 0};
+  struct ParseResult result = (struct ParseResult){NULL};
+  struct Object evaluated = (struct Object){};
+  parse(source, &state, &result);
+  evaluateExpression(result.program->expressions->expression, &evaluated);
+  TEST_ASSERT(evaluated.type == OBJ_NIL);
+}
+
+void evaluate_printBooleanF() {
+  char *source = "(print false)";
+  struct ParseState state = (struct ParseState){NULL, 0};
+  struct ParseResult result = (struct ParseResult){NULL};
+  struct Object evaluated = (struct Object){};
+  parse(source, &state, &result);
+  evaluateExpression(result.program->expressions->expression, &evaluated);
+  TEST_ASSERT(evaluated.type == OBJ_NIL);
+}
+
+void evaluate_printList() {
+  char *source = "(print '(1 2 3))";
+  struct ParseState state = (struct ParseState){NULL, 0};
+  struct ParseResult result = (struct ParseResult){NULL};
+  struct Object evaluated = (struct Object){};
+  parse(source, &state, &result);
+  evaluateExpression(result.program->expressions->expression, &evaluated);
+  TEST_ASSERT(evaluated.type == OBJ_NIL);
+}
+
 int main() {
   RUN_TEST(next_singleCharSymbol);
   RUN_TEST(next_multipleCharSymbol);
@@ -747,6 +797,11 @@ int main() {
   RUN_TEST(evaluate_eqTrueNil);
   RUN_TEST(evaluate_eqTrueNilList);
   RUN_TEST(evaluate_eqTrueNilSExp);
+  RUN_TEST(evaluate_printString);
+  RUN_TEST(evaluate_printInt);
+  RUN_TEST(evaluate_printBooleanT);
+  RUN_TEST(evaluate_printBooleanF);
+  RUN_TEST(evaluate_printList);
 
   return 0;
 }

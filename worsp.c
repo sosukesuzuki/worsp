@@ -3,6 +3,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <math.h>
 
 // =================================================
 //   tokenizer
@@ -324,6 +325,54 @@ int eq(struct Object *op1, struct Object *op2) {
   return 0;
 }
 
+char *stringifyObject(struct Object *obj) {
+  if (obj->type == OBJ_INTEGER) {
+    int digits = (int)log10(obj->int_value) + 1;
+    char *str = (char *)malloc((digits + 1) * sizeof(char));
+    sprintf(str, "%d", obj->int_value);
+    return str;
+  } else if (obj->type == OBJ_STRING) {
+    char *str = (char *)malloc((strlen(obj->string_value) + 1) * sizeof(char));
+    strncpy(str, obj->string_value, strlen(obj->string_value) + 1);
+    return str;
+  } else if (obj->type == OBJ_BOOL) {
+    char *str = (char *)malloc(1 * sizeof(char));
+    if (obj->bool_value) {
+      strncpy(str, "T", 2);
+    } else {
+      strncpy(str, "F", 2);
+    }
+    return str;
+  } else if (obj->type == OBJ_LIST) {
+    int length = 2; // '(' and ')'
+    char *str = (char *)malloc(length + 1 * sizeof(char));
+    str[0] = '(';
+    struct ConsCell *current = obj->list_value;
+    while (current->cdr.cdr_nil != NULL) {
+      char *serialized = stringifyObject(current->car);
+      length += strlen(serialized);
+      str = realloc(str, length + 1);
+      strncat(str, serialized, strlen(serialized));
+      current = current->cdr.cdr_cell;
+      if (current->cdr.cdr_nil != NULL) {
+        length += 1; // " "
+        str = realloc(str, length + 1);
+        strncat(str, " ", 1);
+      }
+    }
+    str[length - 1] = ')';
+    str[length] = '\0';
+    return str;
+  } else if (obj->type == OBJ_NIL) {
+    char *str = (char *)malloc(4 * sizeof(char));
+    strncpy(str, "nil", 4);
+    return str;
+  } else {
+    printf("Unexpected object type: %d\n", obj->type);
+    exit(1);
+  }
+}
+
 void definedFunctionAdd(struct Object *op1, struct Object *op2,
                         struct Object *evaluated) {
   if (op1->type == OBJ_INTEGER && op2->type == OBJ_INTEGER) {
@@ -548,8 +597,12 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
           free(operand2);
         } else if (strcmp(expr->data.symbol->symbol_name, "print") == 0) {
           // print
-        } else if (strcmp(expr->data.symbol->symbol_name, "println") == 0) {
-          // println
+          struct Object *operand = malloc(sizeof(struct Object));
+          evaluateExpression(expressions->next->expression, operand);
+          char *str = stringifyObject(operand);
+          printf("%s\n", str);
+          free(str);
+          evaluated->type = OBJ_NIL;
         } else if (strcmp(expr->data.symbol->symbol_name, "car") == 0) {
           // car
         } else if (strcmp(expr->data.symbol->symbol_name, "cdr") == 0) {
