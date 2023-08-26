@@ -5,7 +5,7 @@ REPL_SRC_FILES := worsp.c repl.c
 EXECUTABLE_REPL := repl
 
 CC := gcc
-CFLAGS := -Wall -Wextra
+CFLAGS := -Wall -Wextra -lm
 
 FORMAT_FILES := $(wildcard *.c) $(wildcard *.h)
 CLANG_FORMAT := clang-format
