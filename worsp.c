@@ -305,6 +305,25 @@ int boolVal(struct Object *obj) {
   }
 }
 
+int eq(struct Object *op1, struct Object *op2) {
+  if (op1->type != op2->type) {
+    return 0;
+  } else {
+    if (op1->type == OBJ_INTEGER) {
+      return op1->int_value == op2->int_value;
+    } else if (op1->type == OBJ_STRING) {
+      return strcmp(op1->string_value, op2->string_value) == 0;
+    } else if (op1->type == OBJ_BOOL) {
+      return op1->bool_value == op2->bool_value;
+    } else if (op1->type == OBJ_LIST) {
+      return op1->list_value == op2->list_value;
+    } else if (op1->type == OBJ_NIL) {
+      return 1;
+    }
+  }
+  return 0;
+}
+
 void definedFunctionAdd(struct Object *op1, struct Object *op2,
                         struct Object *evaluated) {
   if (op1->type == OBJ_INTEGER && op2->type == OBJ_INTEGER) {
@@ -374,6 +393,16 @@ void definedFunctionOr(struct Object *op1, struct Object *op2,
 void definedFunctionAnd(struct Object *op1, struct Object *op2,
                         struct Object *evaluated) {
   if (boolVal(op1) && boolVal(op2)) {
+    evaluated->type = OBJ_BOOL;
+    evaluated->bool_value = 1;
+  } else {
+    evaluated->type = OBJ_BOOL;
+    evaluated->bool_value = 0;
+  }
+}
+
+void definedFunctionEq(struct Object *op1, struct Object *op2, struct Object *evaluated) {
+  if (eq(op1, op2)) {
     evaluated->type = OBJ_BOOL;
     evaluated->bool_value = 1;
   } else {
@@ -510,6 +539,13 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
           free(operand2);
         } else if (strcmp(expr->data.symbol->symbol_name, "eq") == 0) {
           // eq
+          struct Object *operand1 = malloc(sizeof(struct Object));
+          struct Object *operand2 = malloc(sizeof(struct Object));
+          evaluateExpression(expressions->next->expression, operand1);
+          evaluateExpression(expressions->next->next->expression, operand2);
+          definedFunctionEq(operand1, operand2, evaluated);
+          free(operand1);
+          free(operand2);
         } else if (strcmp(expr->data.symbol->symbol_name, "print") == 0) {
           // print
         } else if (strcmp(expr->data.symbol->symbol_name, "println") == 0) {

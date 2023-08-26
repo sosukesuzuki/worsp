@@ -625,6 +625,86 @@ void evaluate_andOpTrueInt() {
   TEST_ASSERT(evaluated.bool_value == 1);
 }
 
+void evaluate_eqTrue() {
+  char *source = "(eq 1 1)";
+  struct ParseState state = (struct ParseState){NULL, 0};
+  struct ParseResult result = (struct ParseResult){NULL};
+  parse(source, &state, &result);
+
+  struct ExpressionNode *expr = result.program->expressions->expression;
+  TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
+
+  struct Object evaluated = (struct Object){};
+  evaluateExpression(expr, &evaluated);
+
+  TEST_ASSERT(evaluated.type == OBJ_BOOL);
+  TEST_ASSERT(evaluated.bool_value == 1);
+}
+
+void evaluate_eqFalse() {
+  char *source = "(eq 2 1)";
+  struct ParseState state = (struct ParseState){NULL, 0};
+  struct ParseResult result = (struct ParseResult){NULL};
+  parse(source, &state, &result);
+
+  struct ExpressionNode *expr = result.program->expressions->expression;
+  TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
+
+  struct Object evaluated = (struct Object){};
+  evaluateExpression(expr, &evaluated);
+
+  TEST_ASSERT(evaluated.type == OBJ_BOOL);
+  TEST_ASSERT(evaluated.bool_value == 0);
+}
+
+void evaluate_eqTrueNil() {
+  char *source = "(eq nil nil)";
+  struct ParseState state = (struct ParseState){NULL, 0};
+  struct ParseResult result = (struct ParseResult){NULL};
+  parse(source, &state, &result);
+
+  struct ExpressionNode *expr = result.program->expressions->expression;
+  TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
+
+  struct Object evaluated = (struct Object){};
+  evaluateExpression(expr, &evaluated);
+
+  TEST_ASSERT(evaluated.type == OBJ_BOOL);
+  TEST_ASSERT(evaluated.bool_value == 1);
+}
+
+void evaluate_eqTrueNilList() {
+  char *source = "(eq '() nil)";
+  struct ParseState state = (struct ParseState){NULL, 0};
+  struct ParseResult result = (struct ParseResult){NULL};
+  parse(source, &state, &result);
+
+  struct ExpressionNode *expr = result.program->expressions->expression;
+  TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
+
+  struct Object evaluated = (struct Object){};
+  evaluateExpression(expr, &evaluated);
+
+  TEST_ASSERT(evaluated.type == OBJ_BOOL);
+  TEST_ASSERT(evaluated.bool_value == 1);
+}
+
+void evaluate_eqTrueNilSExp() {
+  char *source = "(eq () nil)";
+  struct ParseState state = (struct ParseState){NULL, 0};
+  struct ParseResult result = (struct ParseResult){NULL};
+  parse(source, &state, &result);
+
+  struct ExpressionNode *expr = result.program->expressions->expression;
+  TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
+
+  struct Object evaluated = (struct Object){};
+  evaluateExpression(expr, &evaluated);
+
+  TEST_ASSERT(evaluated.type == OBJ_BOOL);
+  TEST_ASSERT(evaluated.bool_value == 1);
+}
+
 int main() {
   RUN_TEST(next_singleCharSymbol);
   RUN_TEST(next_multipleCharSymbol);
@@ -662,6 +742,11 @@ int main() {
   RUN_TEST(evaluate_andOpFalseNil);
   RUN_TEST(evaluate_andOpTrue);
   RUN_TEST(evaluate_andOpTrueInt);
+  RUN_TEST(evaluate_eqTrue);
+  RUN_TEST(evaluate_eqFalse);
+  RUN_TEST(evaluate_eqTrueNil);
+  RUN_TEST(evaluate_eqTrueNilList);
+  RUN_TEST(evaluate_eqTrueNilSExp);
 
   return 0;
 }
