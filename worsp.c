@@ -232,17 +232,14 @@ void parseExpression(char *source, struct ParseState *state,
     parseSymbolicExpression(source, state, result, expression);
   } else if (match(state, TK_QUOTE)) {
     parseListExpression(source, state, result, expression);
+  } else if (match(state, TK_SYMBOL)) {
+    parseSymbolExpression(source, state, result, expression);
+  } else if (match(state, TK_DIGIT) || match(state, TK_STRING) ||
+             match(state, TK_TRUE) || match(state, TK_FALSE)) {
+    parseLiteralExpression(source, state, result, expression);
   } else {
-    // expression does not start with '('
-    if (match(state, TK_SYMBOL)) {
-      parseSymbolExpression(source, state, result, expression);
-    } else if (match(state, TK_DIGIT) || match(state, TK_STRING) ||
-               match(state, TK_TRUE) || match(state, TK_FALSE)) {
-      parseLiteralExpression(source, state, result, expression);
-    } else {
-      printf("Unexpected token: %s\n", state->token->str);
-      exit(1);
-    }
+    printf("Unexpected token: %s\n", state->token->str);
+    exit(1);
   }
 }
 
