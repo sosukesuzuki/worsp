@@ -823,18 +823,20 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
         } else {
           // function call
           int i = 0;
-          while (env->bindings[i].symbol_name != NULL) {
-            if (strcmp(env->bindings[i].symbol_name,
+          struct Env *current_env = env;
+          struct Env *looked_up_env = current_env;
+          while (looked_up_env->bindings[i].symbol_name != NULL) {
+            if (strcmp(looked_up_env->bindings[i].symbol_name,
                        expr->data.symbol->symbol_name) == 0) {
               struct Function *function =
-                  env->bindings[i].value->function_value;
+                  looked_up_env->bindings[i].value->function_value;
               struct Env *new_env = malloc(sizeof(struct Env));
-              new_env->parent = env;
+              new_env->parent = current_env;
               int j = 0;
               struct ExpressionList *param_expr = expressions->next;
               while (function->param_symbol_names[j] != NULL) {
                 struct Object *param = malloc(sizeof(struct Object));
-                evaluateExpression(param_expr->expression, param, env);
+                evaluateExpression(param_expr->expression, param, current_env);
                 param_expr = param_expr->next;
                 setObjectToEnv(new_env, function->param_symbol_names[j], param);
                 j++;
@@ -843,6 +845,11 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
               return;
             }
             i++;
+            // look up the parent env if not found
+            if (env->bindings[i].symbol_name == NULL) {
+              looked_up_env = looked_up_env->parent;
+              i = 0;
+            }
           }
           printf("Undefined function: %s\n", expr->data.symbol->symbol_name);
           exit(1);

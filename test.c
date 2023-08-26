@@ -1137,6 +1137,22 @@ void evaluate_defunClosure() {
                   ->car->int_value == 6);
 }
 
+void evaluate_fibo() {
+  struct Env env = (struct Env){};
+  initEnv(&env);
+  char *source = "'((defun fibo (n) (if (< n 2) n (+ (fibo (- n 1)) (fibo (- n "
+                 "2))))) (fibo 20))";
+  struct ParseState state = (struct ParseState){NULL, 0};
+  struct ParseResult result = (struct ParseResult){NULL};
+  struct Object evaluated = (struct Object){};
+  parse(source, &state, &result);
+  evaluateExpression(result.program->expressions->expression, &evaluated, &env);
+  TEST_ASSERT(evaluated.type == OBJ_LIST);
+  TEST_ASSERT(evaluated.list_value->car->type == OBJ_FUNCTION);
+  TEST_ASSERT(evaluated.list_value->cdr.cdr_cell->car->type == OBJ_INTEGER);
+  TEST_ASSERT(evaluated.list_value->cdr.cdr_cell->car->int_value == 6765);
+}
+
 int main() {
   RUN_TEST(next_singleCharSymbol);
   RUN_TEST(next_multipleCharSymbol);
@@ -1203,6 +1219,7 @@ int main() {
   RUN_TEST(evaluate_notTrue);
   RUN_TEST(evaluate_notFalse);
   RUN_TEST(evaluate_notFalseEq);
+  RUN_TEST(evaluate_fibo);
 
   return 0;
 }
