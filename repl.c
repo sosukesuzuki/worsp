@@ -3,7 +3,7 @@
 #include <stdlib.h>
 
 void handleCtrlC() {
-  printf("\nCtrl-C is pressed.\n");
+  printf("%s", "\nCtrl-C is pressed.");
   exit(0);
 }
 
@@ -15,7 +15,7 @@ int main() {
 
   while (1) {
     char input[1024];
-    printf("> ");
+    printf("%s", "> ");
 
     if (scanf("%[^\n]%*c", input) == EOF) {
       printf("\nAbort .\n");
