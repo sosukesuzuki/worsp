@@ -159,7 +159,7 @@ void initEnv(struct Env *env);
 //   garbage collector
 // =================================================
 
-#define OBJECT_SIZE 30
+#define OBJECT_SIZE 5
 
 struct FreeCell {
   struct FreeCell *next;
@@ -167,5 +167,7 @@ struct FreeCell {
 };
 
 struct AllocatorContext *initAllocator();
+
+struct Object *allocate(struct AllocatorContext *context, struct Env *env);
 
 #endif

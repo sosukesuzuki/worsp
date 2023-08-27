@@ -368,13 +368,18 @@ void gc(struct AllocatorContext *context, struct Env *env) {
 
 struct Object *allocate(struct AllocatorContext *context, struct Env *env) {
   size_t object_size = sizeof(struct Object);
+  printf("%s\n", "called allocate func");
   if (context->gc_less_mode) {
     return malloc(object_size);
   }
 
   struct FreeCell *free_cell = context->free_cells;
+  printf("%s\n", "got free cell");
   if (free_cell == NULL) {
+    printf("%s\n", "gc");
     gc(context, env);
+  } else {
+    printf("%s\n", "free cell is not null");
   }
   context->free_cells = free_cell->next;
 

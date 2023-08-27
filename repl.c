@@ -26,7 +26,7 @@ int main() {
 
     struct ParseState state = (struct ParseState){NULL, 0};
     struct ParseResult *result = malloc(sizeof(struct ParseResult));
-    struct Object *evaluated = malloc(sizeof(struct Object));
+    struct Object *evaluated = allocate(context, &env);
     parse(input, &state, result);
     evaluateExpression(result->program->expressions->expression, evaluated,
                        &env, context);
