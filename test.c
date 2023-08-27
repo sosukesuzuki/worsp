@@ -276,7 +276,7 @@ void evaluate_literalExpressionInt() {
   TEST_ASSERT(expr->data.literal->int_value == 3);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated, &env);
+  evaluateExpressionWithoutContext(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_INTEGER);
   TEST_ASSERT(evaluated.int_value == 3);
@@ -294,7 +294,7 @@ void evaluate_literalExpressionString() {
   TEST_ASSERT(strcmp(expr->data.literal->string_value, "foo") == 0);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated, &env);
+  evaluateExpressionWithoutContext(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_STRING);
   TEST_ASSERT(strcmp(evaluated.string_value, "foo") == 0);
@@ -312,7 +312,7 @@ void evaluate_nil() {
   TEST_ASSERT(strcmp(expr->data.symbol->symbol_name, "nil") == 0);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated, &env);
+  evaluateExpressionWithoutContext(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_NIL);
 }
@@ -329,7 +329,7 @@ void evaluate_listWithInt() {
   TEST_ASSERT(expr->type == EXP_LIST);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated, &env);
+  evaluateExpressionWithoutContext(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_LIST);
   TEST_ASSERT(evaluated.list_value->car->type == OBJ_INTEGER);
@@ -349,7 +349,7 @@ void evaluate_listWithMultipleInt() {
   TEST_ASSERT(expr->type == EXP_LIST);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated, &env);
+  evaluateExpressionWithoutContext(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_LIST);
   TEST_ASSERT(evaluated.list_value->car->type == OBJ_INTEGER);
@@ -377,7 +377,7 @@ void evaluate_emptyList() {
   TEST_ASSERT(expr->type == EXP_LIST);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated, &env);
+  evaluateExpressionWithoutContext(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_NIL);
 }
@@ -394,7 +394,7 @@ void evaluate_emptySymbolicExp() {
   TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated, &env);
+  evaluateExpressionWithoutContext(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_NIL);
 }
@@ -411,7 +411,7 @@ void evaluate_addOp() {
   TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated, &env);
+  evaluateExpressionWithoutContext(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_INTEGER);
   TEST_ASSERT(evaluated.int_value == 1243);
@@ -429,7 +429,7 @@ void evaluate_subOp() {
   TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated, &env);
+  evaluateExpressionWithoutContext(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_INTEGER);
   TEST_ASSERT(evaluated.int_value == 1201);
@@ -447,7 +447,7 @@ void evaluate_mulOp() {
   TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated, &env);
+  evaluateExpressionWithoutContext(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_INTEGER);
   TEST_ASSERT(evaluated.int_value == 25662);
@@ -465,7 +465,7 @@ void evaluate_divOp() {
   TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated, &env);
+  evaluateExpressionWithoutContext(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_INTEGER);
   TEST_ASSERT(evaluated.int_value == 58);
@@ -483,7 +483,7 @@ void evaluate_modOp() {
   TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated, &env);
+  evaluateExpressionWithoutContext(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_INTEGER);
   TEST_ASSERT(evaluated.int_value == 4);
@@ -501,7 +501,7 @@ void evaluate_orOpTrue() {
   TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated, &env);
+  evaluateExpressionWithoutContext(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_BOOL);
   TEST_ASSERT(evaluated.bool_value == 1);
@@ -519,7 +519,7 @@ void evaluate_orOpFalse() {
   TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated, &env);
+  evaluateExpressionWithoutContext(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_BOOL);
   TEST_ASSERT(evaluated.bool_value == 0);
@@ -537,7 +537,7 @@ void evaluate_orOpTrueInt() {
   TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated, &env);
+  evaluateExpressionWithoutContext(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_BOOL);
   TEST_ASSERT(evaluated.bool_value == 1);
@@ -555,7 +555,7 @@ void evaluate_orOpTrueNil() {
   TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated, &env);
+  evaluateExpressionWithoutContext(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_BOOL);
   TEST_ASSERT(evaluated.bool_value == 1);
@@ -573,7 +573,7 @@ void evaluted_nestedOps() {
   TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated, &env);
+  evaluateExpressionWithoutContext(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_INTEGER);
   TEST_ASSERT(evaluated.int_value == -3);
@@ -591,7 +591,7 @@ void evaluate_andOpFalse() {
   TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated, &env);
+  evaluateExpressionWithoutContext(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_BOOL);
   TEST_ASSERT(evaluated.bool_value == 0);
@@ -609,7 +609,7 @@ void evaluate_andOpFalseInt() {
   TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated, &env);
+  evaluateExpressionWithoutContext(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_BOOL);
   TEST_ASSERT(evaluated.bool_value == 0);
@@ -627,7 +627,7 @@ void evaluate_andOpFalseNil() {
   TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated, &env);
+  evaluateExpressionWithoutContext(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_BOOL);
   TEST_ASSERT(evaluated.bool_value == 0);
@@ -645,7 +645,7 @@ void evaluate_andOpTrue() {
   TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated, &env);
+  evaluateExpressionWithoutContext(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_BOOL);
   TEST_ASSERT(evaluated.bool_value == 1);
@@ -663,7 +663,7 @@ void evaluate_andOpTrueInt() {
   TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated, &env);
+  evaluateExpressionWithoutContext(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_BOOL);
   TEST_ASSERT(evaluated.bool_value == 1);
@@ -681,7 +681,7 @@ void evaluate_ltOpTrue() {
   TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated, &env);
+  evaluateExpressionWithoutContext(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_BOOL);
   TEST_ASSERT(evaluated.bool_value == 1);
@@ -699,7 +699,7 @@ void evaluate_ltOpFalse() {
   TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated, &env);
+  evaluateExpressionWithoutContext(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_BOOL);
   TEST_ASSERT(evaluated.bool_value == 0);
@@ -717,7 +717,7 @@ void evaluate_gtOpTrue() {
   TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated, &env);
+  evaluateExpressionWithoutContext(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_BOOL);
   TEST_ASSERT(evaluated.bool_value == 1);
@@ -735,7 +735,7 @@ void evaluate_gtOpFalse() {
   TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated, &env);
+  evaluateExpressionWithoutContext(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_BOOL);
   TEST_ASSERT(evaluated.bool_value == 0);
@@ -753,7 +753,7 @@ void evaluate_notTrue() {
   TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated, &env);
+  evaluateExpressionWithoutContext(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_BOOL);
   TEST_ASSERT(evaluated.bool_value == 1);
@@ -771,7 +771,7 @@ void evaluate_notFalse() {
   TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated, &env);
+  evaluateExpressionWithoutContext(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_BOOL);
   TEST_ASSERT(evaluated.bool_value == 0);
@@ -789,7 +789,7 @@ void evaluate_notFalseEq() {
   TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated, &env);
+  evaluateExpressionWithoutContext(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_BOOL);
   TEST_ASSERT(evaluated.bool_value == 0);
@@ -807,7 +807,7 @@ void evaluate_eqTrue() {
   TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated, &env);
+  evaluateExpressionWithoutContext(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_BOOL);
   TEST_ASSERT(evaluated.bool_value == 1);
@@ -825,7 +825,7 @@ void evaluate_eqFalse() {
   TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated, &env);
+  evaluateExpressionWithoutContext(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_BOOL);
   TEST_ASSERT(evaluated.bool_value == 0);
@@ -843,7 +843,7 @@ void evaluate_eqTrueNil() {
   TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated, &env);
+  evaluateExpressionWithoutContext(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_BOOL);
   TEST_ASSERT(evaluated.bool_value == 1);
@@ -861,7 +861,7 @@ void evaluate_eqTrueNilList() {
   TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated, &env);
+  evaluateExpressionWithoutContext(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_BOOL);
   TEST_ASSERT(evaluated.bool_value == 1);
@@ -879,7 +879,7 @@ void evaluate_eqTrueNilSExp() {
   TEST_ASSERT(expr->type == EXP_SYMBOLIC_EXP);
 
   struct Object evaluated = (struct Object){};
-  evaluateExpression(expr, &evaluated, &env);
+  evaluateExpressionWithoutContext(expr, &evaluated, &env);
 
   TEST_ASSERT(evaluated.type == OBJ_BOOL);
   TEST_ASSERT(evaluated.bool_value == 1);
@@ -893,7 +893,8 @@ void evaluate_printString() {
   struct ParseResult result = (struct ParseResult){NULL};
   struct Object evaluated = (struct Object){};
   parse(source, &state, &result);
-  evaluateExpression(result.program->expressions->expression, &evaluated, &env);
+  evaluateExpressionWithoutContext(result.program->expressions->expression,
+                                   &evaluated, &env);
   TEST_ASSERT(evaluated.type == OBJ_NIL);
 }
 
@@ -905,7 +906,8 @@ void evaluate_printInt() {
   struct ParseResult result = (struct ParseResult){NULL};
   struct Object evaluated = (struct Object){};
   parse(source, &state, &result);
-  evaluateExpression(result.program->expressions->expression, &evaluated, &env);
+  evaluateExpressionWithoutContext(result.program->expressions->expression,
+                                   &evaluated, &env);
   TEST_ASSERT(evaluated.type == OBJ_NIL);
 }
 
@@ -917,7 +919,8 @@ void evaluate_printBooleanT() {
   struct ParseResult result = (struct ParseResult){NULL};
   struct Object evaluated = (struct Object){};
   parse(source, &state, &result);
-  evaluateExpression(result.program->expressions->expression, &evaluated, &env);
+  evaluateExpressionWithoutContext(result.program->expressions->expression,
+                                   &evaluated, &env);
   TEST_ASSERT(evaluated.type == OBJ_NIL);
 }
 
@@ -929,7 +932,8 @@ void evaluate_printBooleanF() {
   struct ParseResult result = (struct ParseResult){NULL};
   struct Object evaluated = (struct Object){};
   parse(source, &state, &result);
-  evaluateExpression(result.program->expressions->expression, &evaluated, &env);
+  evaluateExpressionWithoutContext(result.program->expressions->expression,
+                                   &evaluated, &env);
   TEST_ASSERT(evaluated.type == OBJ_NIL);
 }
 
@@ -941,7 +945,8 @@ void evaluate_printList() {
   struct ParseResult result = (struct ParseResult){NULL};
   struct Object evaluated = (struct Object){};
   parse(source, &state, &result);
-  evaluateExpression(result.program->expressions->expression, &evaluated, &env);
+  evaluateExpressionWithoutContext(result.program->expressions->expression,
+                                   &evaluated, &env);
   TEST_ASSERT(evaluated.type == OBJ_NIL);
 }
 
@@ -953,7 +958,8 @@ void evaluate_ifThen() {
   struct ParseResult result = (struct ParseResult){NULL};
   struct Object evaluated = (struct Object){};
   parse(source, &state, &result);
-  evaluateExpression(result.program->expressions->expression, &evaluated, &env);
+  evaluateExpressionWithoutContext(result.program->expressions->expression,
+                                   &evaluated, &env);
   TEST_ASSERT(evaluated.type == OBJ_INTEGER);
   TEST_ASSERT(evaluated.int_value == 1);
 }
@@ -966,7 +972,8 @@ void evaluate_ifThenElse() {
   struct ParseResult result = (struct ParseResult){NULL};
   struct Object evaluated = (struct Object){};
   parse(source, &state, &result);
-  evaluateExpression(result.program->expressions->expression, &evaluated, &env);
+  evaluateExpressionWithoutContext(result.program->expressions->expression,
+                                   &evaluated, &env);
   TEST_ASSERT(evaluated.type == OBJ_INTEGER);
   TEST_ASSERT(evaluated.int_value == 2);
 }
@@ -979,7 +986,8 @@ void evaluate_complexIf() {
   struct ParseResult result = (struct ParseResult){NULL};
   struct Object evaluated = (struct Object){};
   parse(source, &state, &result);
-  evaluateExpression(result.program->expressions->expression, &evaluated, &env);
+  evaluateExpressionWithoutContext(result.program->expressions->expression,
+                                   &evaluated, &env);
   TEST_ASSERT(evaluated.type == OBJ_INTEGER);
   TEST_ASSERT(evaluated.int_value == 1);
 }
@@ -992,7 +1000,8 @@ void evaluate_car() {
   struct ParseResult result = (struct ParseResult){NULL};
   struct Object evaluated = (struct Object){};
   parse(source, &state, &result);
-  evaluateExpression(result.program->expressions->expression, &evaluated, &env);
+  evaluateExpressionWithoutContext(result.program->expressions->expression,
+                                   &evaluated, &env);
   TEST_ASSERT(evaluated.type == OBJ_INTEGER);
   TEST_ASSERT(evaluated.int_value == 1);
 }
@@ -1006,7 +1015,8 @@ void evaluate_cdr() {
   struct ParseResult result = (struct ParseResult){NULL};
   struct Object evaluated = (struct Object){};
   parse(source, &state, &result);
-  evaluateExpression(result.program->expressions->expression, &evaluated, &env);
+  evaluateExpressionWithoutContext(result.program->expressions->expression,
+                                   &evaluated, &env);
   TEST_ASSERT(evaluated.type == OBJ_LIST);
   TEST_ASSERT(evaluated.list_value->car->type == OBJ_INTEGER);
   TEST_ASSERT(evaluated.list_value->car->int_value == 2);
@@ -1023,7 +1033,8 @@ void evaluate_consIntList() {
   struct ParseResult result = (struct ParseResult){NULL};
   struct Object evaluated = (struct Object){};
   parse(source, &state, &result);
-  evaluateExpression(result.program->expressions->expression, &evaluated, &env);
+  evaluateExpressionWithoutContext(result.program->expressions->expression,
+                                   &evaluated, &env);
   TEST_ASSERT(evaluated.type == OBJ_LIST);
   TEST_ASSERT(evaluated.list_value->car->int_value == 1);
   TEST_ASSERT(evaluated.list_value->cdr.cdr_cell->car->int_value == 2);
@@ -1042,7 +1053,8 @@ void evaluate_consInt() {
   struct ParseResult result = (struct ParseResult){NULL};
   struct Object evaluated = (struct Object){};
   parse(source, &state, &result);
-  evaluateExpression(result.program->expressions->expression, &evaluated, &env);
+  evaluateExpressionWithoutContext(result.program->expressions->expression,
+                                   &evaluated, &env);
   TEST_ASSERT(evaluated.type == OBJ_LIST);
   TEST_ASSERT(evaluated.list_value->car->int_value == 1);
   TEST_ASSERT(evaluated.list_value->cdr.cdr_cell->car->int_value == 2);
@@ -1057,7 +1069,8 @@ void evaluate_consListList() {
   struct ParseResult result = (struct ParseResult){NULL};
   struct Object evaluated = (struct Object){};
   parse(source, &state, &result);
-  evaluateExpression(result.program->expressions->expression, &evaluated, &env);
+  evaluateExpressionWithoutContext(result.program->expressions->expression,
+                                   &evaluated, &env);
   TEST_ASSERT(evaluated.type == OBJ_LIST);
   TEST_ASSERT(evaluated.list_value->car->type == OBJ_LIST);
   TEST_ASSERT(evaluated.list_value->car->list_value->car->int_value == 1);
@@ -1076,7 +1089,8 @@ void evaluate_assignment() {
   struct ParseResult result = (struct ParseResult){NULL};
   struct Object evaluated = (struct Object){};
   parse(source, &state, &result);
-  evaluateExpression(result.program->expressions->expression, &evaluated, &env);
+  evaluateExpressionWithoutContext(result.program->expressions->expression,
+                                   &evaluated, &env);
   TEST_ASSERT(evaluated.type == OBJ_LIST);
   TEST_ASSERT(evaluated.list_value->car->type == OBJ_INTEGER);
   TEST_ASSERT(evaluated.list_value->car->int_value == 1);
@@ -1092,7 +1106,8 @@ void evaluate_assignmentComplex() {
   struct ParseResult result = (struct ParseResult){NULL};
   struct Object evaluated = (struct Object){};
   parse(source, &state, &result);
-  evaluateExpression(result.program->expressions->expression, &evaluated, &env);
+  evaluateExpressionWithoutContext(result.program->expressions->expression,
+                                   &evaluated, &env);
   TEST_ASSERT(evaluated.type == OBJ_LIST);
   TEST_ASSERT(evaluated.list_value->car->type == OBJ_INTEGER);
   TEST_ASSERT(evaluated.list_value->car->int_value == 1);
@@ -1108,7 +1123,8 @@ void evaluate_defun() {
   struct ParseResult result = (struct ParseResult){NULL};
   struct Object evaluated = (struct Object){};
   parse(source, &state, &result);
-  evaluateExpression(result.program->expressions->expression, &evaluated, &env);
+  evaluateExpressionWithoutContext(result.program->expressions->expression,
+                                   &evaluated, &env);
   TEST_ASSERT(evaluated.type == OBJ_LIST);
   TEST_ASSERT(evaluated.list_value->car->type == OBJ_FUNCTION);
   TEST_ASSERT(evaluated.list_value->cdr.cdr_cell->car->type == OBJ_INTEGER);
@@ -1123,7 +1139,8 @@ void evaluate_defunClosure() {
   struct ParseResult result = (struct ParseResult){NULL};
   struct Object evaluated = (struct Object){};
   parse(source, &state, &result);
-  evaluateExpression(result.program->expressions->expression, &evaluated, &env);
+  evaluateExpressionWithoutContext(result.program->expressions->expression,
+                                   &evaluated, &env);
   TEST_ASSERT(evaluated.type == OBJ_LIST);
   TEST_ASSERT(evaluated.list_value->car->type == OBJ_INTEGER);
   TEST_ASSERT(evaluated.list_value->car->int_value == 2);
@@ -1146,7 +1163,8 @@ void evaluate_fibo() {
   struct ParseResult result = (struct ParseResult){NULL};
   struct Object evaluated = (struct Object){};
   parse(source, &state, &result);
-  evaluateExpression(result.program->expressions->expression, &evaluated, &env);
+  evaluateExpressionWithoutContext(result.program->expressions->expression,
+                                   &evaluated, &env);
   TEST_ASSERT(evaluated.type == OBJ_LIST);
   TEST_ASSERT(evaluated.list_value->car->type == OBJ_FUNCTION);
   TEST_ASSERT(evaluated.list_value->cdr.cdr_cell->car->type == OBJ_INTEGER);
@@ -1161,7 +1179,8 @@ void evaluate_assignmentAndReuse() {
   struct ParseResult result = (struct ParseResult){NULL};
   struct Object evaluated = (struct Object){};
   parse(source, &state, &result);
-  evaluateExpression(result.program->expressions->expression, &evaluated, &env);
+  evaluateExpressionWithoutContext(result.program->expressions->expression,
+                                   &evaluated, &env);
   TEST_ASSERT(evaluated.type == OBJ_LIST);
   TEST_ASSERT(evaluated.list_value->car->type == OBJ_INTEGER);
   TEST_ASSERT(evaluated.list_value->car->int_value == 1);
