@@ -13,6 +13,8 @@ int main() {
   struct Env env = (struct Env){};
   initEnv(&env);
 
+  struct AllocatorContext *context = initAllocator();
+
   while (1) {
     char input[1024];
     printf("%s", "> ");
@@ -27,7 +29,7 @@ int main() {
     struct Object *evaluated = malloc(sizeof(struct Object));
     parse(input, &state, result);
     evaluateExpression(result->program->expressions->expression, evaluated,
-                       &env);
+                       &env, context);
 
     char *stringified = stringifyObject(evaluated);
 

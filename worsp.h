@@ -139,6 +139,17 @@ struct Env {
   struct Env *parent;
 };
 
+// for gc
+struct AllocatorContext {
+  int gc_less_mode;
+  struct Object *heap_start;
+  struct Object *heap_end;
+  struct FreeCell *free_cells;
+};
+
+void evaluateExpression(struct ExpressionNode *expression,
+                        struct Object *result, struct Env *env,
+                        struct AllocatorContext *context);
 void evaluateExpressionWithoutContext(struct ExpressionNode *expression,
                                       struct Object *result, struct Env *env);
 char *stringifyObject(struct Object *obj);
@@ -150,16 +161,11 @@ void initEnv(struct Env *env);
 
 #define OBJECT_SIZE 30
 
-struct AllocatorContext {
-  int gc_less_mode;
-  struct Object *heap_start;
-  struct Object *heap_end;
-  struct FreeCell *free_cells;
-};
-
 struct FreeCell {
   struct FreeCell *next;
   struct Object *object;
 };
+
+struct AllocatorContext *initAllocator();
 
 #endif
