@@ -150,8 +150,8 @@ struct AllocatorContext {
 void evaluateExpression(struct ExpressionNode *expression,
                         struct Object *result, struct Env *env,
                         struct AllocatorContext *context);
-void evaluateExpressionWithoutContext(struct ExpressionNode *expression,
-                                      struct Object *result, struct Env *env);
+void evaluateExpressionWithContext(struct ExpressionNode *expression,
+                                   struct Object *result, struct Env *env);
 char *stringifyObject(struct Object *obj);
 void initEnv(struct Env *env);
 

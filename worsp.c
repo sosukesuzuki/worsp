@@ -612,7 +612,8 @@ void definedFunctionCdr(struct Object *op, struct Object *evaluated) {
 }
 
 void definedFunctionCons(struct Object *op1, struct Object *op2,
-                         struct Object *evaluated, struct Env *env, struct AllocatorContext *context) {
+                         struct Object *evaluated, struct Env *env,
+                         struct AllocatorContext *context) {
   evaluated->type = OBJ_LIST;
   evaluated->list_value = malloc(sizeof(struct ConsCell));
   evaluated->list_value->car = op1;
@@ -1033,14 +1034,9 @@ void evaluateExpression(struct ExpressionNode *expression,
   }
 }
 
-void evaluateExpressionWithoutContext(struct ExpressionNode *expression,
-                                      struct Object *evaluated,
-                                      struct Env *env) {
-  struct AllocatorContext *context = malloc(sizeof(struct AllocatorContext));
-  context->gc_less_mode = 1;
-  context->free_cells = NULL;
-  context->heap_end = NULL;
-  context->heap_start = NULL;
+void evaluateExpressionWithContext(struct ExpressionNode *expression,
+                                   struct Object *evaluated, struct Env *env) {
+  struct AllocatorContext *context = initAllocator();
   evaluateExpression(expression, evaluated, env, context);
 }
 
