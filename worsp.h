@@ -114,6 +114,8 @@ struct Function {
 };
 
 struct Object {
+  // for mark and sweep GC
+  int marked;
   ObjectType type;
   union {
     int int_value;
@@ -141,5 +143,23 @@ void evaluateExpression(struct ExpressionNode *expression,
                         struct Object *result, struct Env *env);
 char *stringifyObject(struct Object *obj);
 void initEnv(struct Env *env);
+
+// =================================================
+//   garbage collector
+// =================================================
+
+#define OBJECT_SIZE 30
+
+struct FreeCell {
+  struct FreeCell *next;
+  struct Object *object;
+};
+
+struct AllocatorContext {
+  int gc_less_mode;
+  struct Object *heap_start;
+  struct Object *heap_end;
+  struct FreeCell *free_cells;
+};
 
 #endif

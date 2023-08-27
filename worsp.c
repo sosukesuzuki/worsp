@@ -935,3 +935,95 @@ void evaluateProgram(struct ProgramNode *program) {
 }
 
 void evaluate(struct ParseResult *result) { evaluateProgram(result->program); }
+
+// =================================================
+//   garbage collector
+// =================================================
+
+struct AllocatorContext* initAllocator() {
+  void* heap_start = malloc(sizeof(struct Object) * OBJECT_SIZE);
+  struct AllocatorContext *context = malloc(sizeof(struct AllocatorContext));
+
+  // create free list from heap (linked list)
+  struct FreeCell *free_cells = malloc(sizeof(struct FreeCell));
+  free_cells->next = NULL;
+  free_cells->object = heap_start;
+  struct FreeCell *current = free_cells;
+  for (int i = 1; i < OBJECT_SIZE; i++) {
+    struct FreeCell *new_cell = malloc(sizeof(struct FreeCell));
+    new_cell->next = NULL;
+    new_cell->object = heap_start + sizeof(struct Object) * i;
+    current->next = new_cell;
+    current = new_cell;
+  }
+
+  context->heap_start = heap_start;
+  context->heap_end = heap_start + sizeof(struct Object) * OBJECT_SIZE;
+  context->free_cells = free_cells;
+  context->gc_less_mode = 0;
+
+  return context;
+}
+
+void sweep(struct AllocatorContext *context) {
+  struct Object *current = context->heap_start;
+  while (current < context->heap_end) {
+    if (current->marked) {
+      current->marked = 0;
+    } else {
+      struct FreeCell *free_cell = malloc(sizeof(struct FreeCell));
+      free_cell->next = context->free_cells;
+      free_cell->object = current;
+      context->free_cells = free_cell;
+    }
+    current++;
+  }
+}
+
+void mark(struct Object *obj) {
+  if (obj->marked) {
+    return;
+  }
+  obj->marked = 1;
+  if (obj->type == OBJ_LIST) {
+    struct ConsCell *current = obj->list_value;
+    while (current->cdr.cdr_nil != NULL) {
+      mark(current->car);
+      current = current->cdr.cdr_cell;
+    }
+  }
+}
+
+void markAll(struct Env *env) {
+  int i = 0;
+  while (env->bindings[i].symbol_name != NULL) {
+    mark(env->bindings[i].value);
+    i++;
+  }
+  if (env->parent != NULL) {
+    markAll(env->parent);
+  }
+}
+
+void gc(struct AllocatorContext *context, struct Env *env) {
+  markAll(env);
+  sweep(context);
+}
+
+struct Object *allocate(struct AllocatorContext *context, struct Env *env) {
+  size_t object_size = sizeof(struct Object);
+  if (context->gc_less_mode) {
+    return malloc(object_size);
+  }
+
+  struct FreeCell *free_cell = context->free_cells;
+  if (free_cell == NULL) {
+    gc(context, env);
+  }
+  context->free_cells = free_cell->next;
+
+  struct Object *obj = free_cell->object;
+  free(free_cell);
+
+  return obj;
+}
