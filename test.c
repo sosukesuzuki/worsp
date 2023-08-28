@@ -1154,11 +1154,13 @@ void evaluate_defunClosure() {
                   ->car->int_value == 6);
 }
 
-void evaluate_fibo() {
+void evaluate_fact() {
   struct Env env = (struct Env){};
   initEnv(&env);
-  char *source = "'((defun fibo (n) (if (< n 2) n (+ (fibo (- n 1)) (fibo (- n "
-                 "2))))) (fibo 20))";
+
+  // calc factorial with recursion
+  char *source =
+      "'((defun fact (n) (if (eq n 0) 1 (* n (fact (- n 1))))) (fact 5))";
   struct ParseState state = (struct ParseState){NULL, 0};
   struct ParseResult result = (struct ParseResult){NULL};
   struct Object evaluated = (struct Object){};
@@ -1168,7 +1170,7 @@ void evaluate_fibo() {
   TEST_ASSERT(evaluated.type == OBJ_LIST);
   TEST_ASSERT(evaluated.list_value->car->type == OBJ_FUNCTION);
   TEST_ASSERT(evaluated.list_value->cdr.cdr_cell->car->type == OBJ_INTEGER);
-  TEST_ASSERT(evaluated.list_value->cdr.cdr_cell->car->int_value == 6765);
+  TEST_ASSERT(evaluated.list_value->cdr.cdr_cell->car->int_value == 120);
 }
 
 void evaluate_assignmentAndReuse() {
@@ -1258,7 +1260,7 @@ int main() {
   RUN_TEST(evaluate_notTrue);
   RUN_TEST(evaluate_notFalse);
   RUN_TEST(evaluate_notFalseEq);
-  RUN_TEST(evaluate_fibo);
+  RUN_TEST(evaluate_fact);
   // FIXME: RUN_TEST(evaluate_assignmentAndReuse);
 
   return 0;
