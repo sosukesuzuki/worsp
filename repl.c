@@ -14,6 +14,7 @@ int main() {
   initEnv(&env);
 
   struct AllocatorContext *context = initAllocator();
+  // context->gc_less_mode = 1;
 
   while (1) {
     char input[1024];
