@@ -10,8 +10,10 @@ EXECUTABLE_REPL := repl
 CC := gcc
 CFLAGS := -Wall -Wextra
 
-FORMAT_FILES := $(wildcard *.c) $(wildcard *.h)
 CLANG_FORMAT := clang-format
+FORMAT_FILES := $(wildcard *.c) $(wildcard *.h)
+
+LLDB := lldb
 
 .PHONY: format clean run-test run-repl run-main
 
@@ -26,6 +28,9 @@ $(EXECUTABLE_REPL): $(REPL_SRC_FILES)
 
 run-main: $(EXECUTABLE_MAIN)
 	./$(EXECUTABLE_MAIN) $(WORSP_FILE)
+
+lldb-main: $(EXECUTABLE_MAIN)
+	$(LLDB) $(EXECUTABLE_MAIN) $(WORSP_FILE)
 
 run-test: $(EXECUTABLE_TEST)
 	./$(EXECUTABLE_TEST)

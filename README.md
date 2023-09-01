@@ -16,6 +16,14 @@ Build and run main program. It execute worsp program from a file.
 make run-main WORSP_FILE="./tmp/fact.wsp"
 ```
 
+## `make lldb-main`
+
+Build and run main program via lldb.
+
+```
+make lldb-main WORSP_FILE="./tmp/fact.wsp"
+```
+
 ### `make test` and `make run-test`
 
 Build `test.c` and run it.
