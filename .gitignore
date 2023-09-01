@@ -2,3 +2,5 @@ a.out
 test
 repl
 main
+debug_main
+/debug_main.dSYM
