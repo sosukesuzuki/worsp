@@ -99,7 +99,13 @@ typedef enum {
   OBJ_FUNCTION,
 } ObjectType;
 
+typedef enum {
+  CONSCELL_TYPE_CELL,
+  CONSCELL_TYPE_NIL,
+} ConsCellType;
+
 struct ConsCell {
+  ConsCellType type;
   struct Object *car;
   union {
     struct ConsCell *cdr_cell;
@@ -160,7 +166,7 @@ void initEnv(struct Env *env);
 //   garbage collector
 // =================================================
 
-#define OBJECT_SIZE 100
+#define OBJECT_SIZE 10
 
 struct FreeCell {
   struct FreeCell *next;

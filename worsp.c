@@ -343,7 +343,7 @@ void mark(struct Object *obj) {
   obj->marked = 1;
   if (obj->type == OBJ_LIST) {
     struct ConsCell *current = obj->list_value;
-    while (current->cdr.cdr_nil != NULL) {
+    while (current->type == CONSCELL_TYPE_CELL) {
       mark(current->car);
       current = current->cdr.cdr_cell;
     }
@@ -445,17 +445,19 @@ char *stringifyObject(struct Object *obj) {
     char *str = (char *)malloc(length + 1 * sizeof(char));
     str[0] = '(';
     struct ConsCell *current = obj->list_value;
-    while (current->cdr.cdr_nil != NULL) {
+    while (1) {
       char *serialized = stringifyObject(current->car);
       length += strlen(serialized);
       str = realloc(str, length + 1);
       strncat(str, serialized, strlen(serialized));
-      current = current->cdr.cdr_cell;
-      if (current->cdr.cdr_nil != NULL) {
+      if (current->type == CONSCELL_TYPE_NIL) {
+        break;
+      } else {
         length += 1; // " "
         str = realloc(str, length + 1);
         strncat(str, " ", 1);
       }
+      current = current->cdr.cdr_cell;
     }
     str[length - 1] = ')';
     str[length] = '\0';
@@ -626,12 +628,15 @@ void definedFunctionCons(struct Object *op1, struct Object *op2,
   evaluated->list_value = malloc(sizeof(struct ConsCell));
   evaluated->list_value->car = op1;
   if (op2->type == OBJ_LIST) {
+    evaluated->list_value->type = CONSCELL_TYPE_CELL;
     evaluated->list_value->cdr.cdr_cell = op2->list_value;
   } else if (op2->type == OBJ_NIL) {
+    evaluated->list_value->type = CONSCELL_TYPE_NIL;
     evaluated->list_value->cdr.cdr_nil = op2;
   } else {
     struct ConsCell *new_conscell = malloc(sizeof(struct ConsCell));
     new_conscell->car = op2;
+    new_conscell->type = CONSCELL_TYPE_NIL;
     new_conscell->cdr.cdr_nil = allocate(context, env);
     new_conscell->cdr.cdr_nil->type = OBJ_NIL;
     evaluated->list_value->cdr.cdr_cell = new_conscell;
@@ -685,12 +690,14 @@ void evalateListExpression(struct ExpressionNode *expression,
 
     if (prev_conscell != NULL) {
       prev_conscell->cdr.cdr_cell = new_conscell;
+      prev_conscell->type = CONSCELL_TYPE_CELL;
     }
     prev_conscell = new_conscell;
 
     if (expressions == NULL) {
       struct Object *nilObj = allocate(context, env);
       nilObj->type = OBJ_NIL;
+      prev_conscell->type = CONSCELL_TYPE_NIL;
       prev_conscell->cdr.cdr_nil = nilObj;
     }
   }
