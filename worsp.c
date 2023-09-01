@@ -974,6 +974,19 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
           evaluateExpression(expressions->next->next->expression, operand2, env,
                              context);
           definedFunctionCons(operand1, operand2, evaluated, env, context);
+        } else if (strcmp(expr->data.symbol->symbol_name, "readline") == 0) {
+          // readline
+          char *line = NULL;
+          size_t len = 0;
+          ssize_t read;
+          if ((read = getline(&line, &len, stdin)) != -1) {
+            evaluated->type = OBJ_STRING;
+            // trim newline
+            line[read - 1] = '\0';
+            evaluated->string_value = line;
+          } else {
+            evaluated->type = OBJ_NIL;
+          }
         } else {
           // function call
           int i = 0;
