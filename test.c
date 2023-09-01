@@ -1194,6 +1194,20 @@ void evaluate_assignmentAndReuse() {
       evaluated.list_value->cdr.cdr_cell->cdr.cdr_cell->car->int_value == 2);
 }
 
+void evaluate_stringConcat() {
+  struct Env env = (struct Env){};
+  initEnv(&env);
+  char *source = "(+ \"foo\" \"bar\")";
+  struct ParseState state = (struct ParseState){NULL, 0};
+  struct ParseResult result = (struct ParseResult){NULL};
+  struct Object evaluated = (struct Object){};
+  parse(source, &state, &result);
+  evaluateExpressionWithContext(result.program->expressions->expression,
+                                &evaluated, &env);
+  TEST_ASSERT(evaluated.type = OBJ_STRING);
+  TEST_ASSERT(strcmp(evaluated.string_value, "foobar") == 0);
+}
+
 int main() {
   RUN_TEST(next_singleCharSymbol);
   RUN_TEST(next_multipleCharSymbol);
@@ -1262,6 +1276,7 @@ int main() {
   RUN_TEST(evaluate_notFalseEq);
   RUN_TEST(evaluate_fact);
   // FIXME: RUN_TEST(evaluate_assignmentAndReuse);
+  RUN_TEST(evaluate_stringConcat);
 
   return 0;
 }

@@ -479,6 +479,14 @@ void definedFunctionAdd(struct Object *op1, struct Object *op2,
   if (op1->type == OBJ_INTEGER && op2->type == OBJ_INTEGER) {
     evaluated->type = OBJ_INTEGER;
     evaluated->int_value = op1->int_value + op2->int_value;
+  } else if (op1->type == OBJ_STRING && op2->type == OBJ_STRING) {
+    evaluated->type = OBJ_STRING;
+    evaluated->string_value =
+        malloc((strlen(op1->string_value) + strlen(op2->string_value) + 1) *
+               sizeof(char));
+    strncpy(evaluated->string_value, op1->string_value,
+            strlen(op1->string_value) + 1);
+    strcat(evaluated->string_value, op2->string_value);
   } else {
     printf("Type error: operands for + must be integers.\n");
     exit(1);
