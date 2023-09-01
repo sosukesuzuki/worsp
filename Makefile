@@ -15,7 +15,7 @@ FORMAT_FILES := $(wildcard *.c) $(wildcard *.h)
 
 LLDB := lldb
 
-.PHONY: format clean run-test run-repl run-main
+.PHONY: format clean run-test run-repl run-main lldb-main
 
 $(EXECUTABLE_MAIN): $(MAIN_SRC_FILES)
 	$(CC) $(CFLAGS) $(MAIN_SRC_FILES) -o $(EXECUTABLE_MAIN) -lm
