@@ -699,10 +699,21 @@ void evalateListExpression(struct ExpressionNode *expression,
 }
 
 void setObjectToEnv(struct Env *env, char *symbolName, struct Object *obj) {
+  // search binding that has the symbol name
+  int i = 0;
+  while (env->bindings[i].symbol_name != NULL) {
+    if (strcmp(env->bindings[i].symbol_name, symbolName) == 0) {
+      env->bindings[i].value = obj;
+      return;
+    }
+    i++;
+  }
+
+  // if not found, set to parent env
   struct Binding *binding = malloc(sizeof(struct Binding));
   binding->symbol_name = symbolName;
   binding->value = obj;
-  int i = 0;
+  i = 0;
   while (env->bindings[i].symbol_name != NULL) {
     i++;
   }
@@ -743,6 +754,26 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
         }
       } else if (strcmp(expr->data.symbol->symbol_name, "while") == 0) {
         // while
+        struct ExpressionNode *cond = expressions->next->expression;
+        if (cond == NULL) {
+          printf("if must have condition.\n");
+          exit(1);
+        }
+        struct ExpressionNode *then = expressions->next->next->expression;
+        if (then == NULL) {
+          printf("if must have then clause.\n");
+          exit(1);
+        }
+        while(1) {
+          struct Object *condObj = allocate(context, env);
+          evaluateExpression(cond, condObj, env, context);
+          if (boolVal(condObj)) {
+            evaluateExpression(then, evaluated, env, context);
+          } else {
+            evaluated->type = OBJ_NIL;
+            break;
+          }
+        }
       } else if (strcmp(expr->data.symbol->symbol_name, "=") == 0) {
         // assignment
         struct ExpressionNode symbolExpr = *expressions->next->expression;

@@ -1208,6 +1208,23 @@ void evaluate_stringConcat() {
   TEST_ASSERT(strcmp(evaluated.string_value, "foobar") == 0);
 }
 
+void evaluate_while() {
+  struct Env env = (struct Env){};
+  initEnv(&env);
+  char *source = "'((= counter 5) (while (> counter 0) (print counter) (= "
+                 "counter (- counter 1))))";
+  struct ParseState state = (struct ParseState){NULL, 0};
+  struct ParseResult result = (struct ParseResult){NULL};
+  struct Object evaluated = (struct Object){};
+  parse(source, &state, &result);
+  evaluateExpressionWithContext(result.program->expressions->expression,
+                                &evaluated, &env);
+  TEST_ASSERT(evaluated.type == OBJ_LIST);
+  TEST_ASSERT(evaluated.list_value->car->type == OBJ_INTEGER);
+  TEST_ASSERT(evaluated.list_value->car->int_value == 5);
+  TEST_ASSERT(evaluated.list_value->cdr.cdr_cell->car->type == OBJ_NIL);
+}
+
 int main() {
   RUN_TEST(next_singleCharSymbol);
   RUN_TEST(next_multipleCharSymbol);

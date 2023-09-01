@@ -1,0 +1,8 @@
+(= counter 5)
+
+(while (not (eq counter 0))
+  '(
+   (print "while...") 
+   (= counter (- counter 1))
+  )
+)
