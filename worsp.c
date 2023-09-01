@@ -488,7 +488,7 @@ void definedFunctionAdd(struct Object *op1, struct Object *op2,
             strlen(op1->string_value) + 1);
     strcat(evaluated->string_value, op2->string_value);
   } else {
-    printf("Type error: operands for + must be integers.\n");
+    printf("Type error: operands for + must be integers or strings.\n");
     exit(1);
   }
 }
