@@ -764,7 +764,7 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
           printf("if must have then clause.\n");
           exit(1);
         }
-        while(1) {
+        while (1) {
           struct Object *condObj = allocate(context, env);
           evaluateExpression(cond, condObj, env, context);
           if (boolVal(condObj)) {
