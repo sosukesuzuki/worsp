@@ -1,3 +1,6 @@
+MAIN_SRC_FILES := worsp.c main.c
+EXECUTABLE_MAIN := main
+
 TEST_SRC_FILES := worsp.c test.c
 EXECUTABLE_TEST := test
 
@@ -10,13 +13,19 @@ CFLAGS := -Wall -Wextra
 FORMAT_FILES := $(wildcard *.c) $(wildcard *.h)
 CLANG_FORMAT := clang-format
 
-.PHONY: format clean run-test
+.PHONY: format clean run-test run-repl run-main
+
+$(EXECUTABLE_MAIN): $(MAIN_SRC_FILES)
+	$(CC) $(CFLAGS) $(MAIN_SRC_FILES) -o $(EXECUTABLE_MAIN) -lm
 
 $(EXECUTABLE_TEST): $(TEST_SRC_FILES)
 	$(CC) $(CFLAGS) $(TEST_SRC_FILES) -o $(EXECUTABLE_TEST) -lm
 
 $(EXECUTABLE_REPL): $(REPL_SRC_FILES)
 	$(CC) $(CFLAGS) $(REPL_SRC_FILES) -o $(EXECUTABLE_REPL) -lm
+
+run-main: $(EXECUTABLE_MAIN)
+	./$(EXECUTABLE_MAIN) $(WORSP_FILE)
 
 run-test: $(EXECUTABLE_TEST)
 	./$(EXECUTABLE_TEST)
@@ -28,4 +37,4 @@ format:
 	$(CLANG_FORMAT) -i $(FORMAT_FILES)
 
 clean:
-	rm -f $(EXECUTABLE_TEST) $(EXECUTABLE_REPL)
+	rm -f $(EXECUTABLE_MAIN) $(EXECUTABLE_TEST) $(EXECUTABLE_REPL)

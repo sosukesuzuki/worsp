@@ -20,7 +20,7 @@ int match(struct ParseState *state, TokenKind kind) {
 
 void next(char *source, struct ParseState *state) {
   // Skip whitespaces
-  while (isspace(source[state->pos])) {
+  while (isspace(source[state->pos]) || source[state->pos] == '\n') {
     state->pos++;
   }
 

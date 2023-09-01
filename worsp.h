@@ -152,6 +152,7 @@ void evaluateExpression(struct ExpressionNode *expression,
                         struct AllocatorContext *context);
 void evaluateExpressionWithContext(struct ExpressionNode *expression,
                                    struct Object *result, struct Env *env);
+void evaluate(struct ParseResult *result);
 char *stringifyObject(struct Object *obj);
 void initEnv(struct Env *env);
 
