@@ -346,10 +346,14 @@ void mark(struct Object *obj) {
   }
   obj->marked = 1;
   if (obj->type == OBJ_LIST) {
-    struct ConsCell *current = obj->list_value;
-    while (current->type == CONSCELL_TYPE_CELL) {
-      mark(current->car);
-      current = current->cdr->list_value;
+    struct Object *current = obj;
+    while (1) {
+      mark(current);
+      mark(current->list_value->car);
+      if (isLastConsCell(current->list_value)) {
+        break;
+      }
+      current = current->list_value->cdr;
     }
   }
 }
