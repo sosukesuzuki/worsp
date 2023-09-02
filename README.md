@@ -16,7 +16,7 @@ Build and run main program. It execute worsp program from a file.
 make run-main WORSP_FILE="./tmp/fact.wsp"
 ```
 
-## `make lldb-main`
+### `make lldb-main`
 
 Build and run main program via lldb.
 
