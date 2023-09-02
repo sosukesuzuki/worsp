@@ -660,9 +660,9 @@ void definedFunctionNot(struct Object *op, struct Object *evaluated) {
 //   evaluator
 // =================================================
 
-void evalateListExpression(struct ExpressionNode *expression,
-                           struct Object *evaluated, struct Env *env,
-                           struct AllocatorContext *context) {
+void evaluateListExpression(struct ExpressionNode *expression,
+                            struct Object *evaluated, struct Env *env,
+                            struct AllocatorContext *context) {
   struct ExpressionList *expressions = expression->data.list->expressions;
 
   // empty data list is evaluated as nil
@@ -1083,7 +1083,7 @@ void evaluateExpression(struct ExpressionNode *expression,
                         struct Object *evaluated, struct Env *env,
                         struct AllocatorContext *context) {
   if (expression->type == EXP_LIST) {
-    evalateListExpression(expression, evaluated, env, context);
+    evaluateListExpression(expression, evaluated, env, context);
   } else if (expression->type == EXP_SYMBOLIC_EXP) {
     evaluateSymbolicExpression(expression, evaluated, env, context);
   } else if (expression->type == EXP_LITERAL) {
