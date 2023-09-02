@@ -166,7 +166,7 @@ void initEnv(struct Env *env);
 //   garbage collector
 // =================================================
 
-#define OBJECT_SIZE 5
+#define OBJECT_SIZE 100
 
 struct FreeCell {
   struct FreeCell *next;
