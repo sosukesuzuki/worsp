@@ -336,6 +336,10 @@ void sweep(struct AllocatorContext *context) {
   }
 }
 
+int isLastConsCell(struct ConsCell *conscell) {
+  return conscell->cdr->type == OBJ_NIL;
+}
+
 void mark(struct Object *obj) {
   if (obj->marked) {
     return;
@@ -345,7 +349,7 @@ void mark(struct Object *obj) {
     struct ConsCell *current = obj->list_value;
     while (current->type == CONSCELL_TYPE_CELL) {
       mark(current->car);
-      current = current->cdr.cdr_cell;
+      current = current->cdr->list_value;
     }
   }
 }
@@ -450,14 +454,14 @@ char *stringifyObject(struct Object *obj) {
       length += strlen(serialized);
       str = realloc(str, length + 1);
       strncat(str, serialized, strlen(serialized));
-      if (current->type == CONSCELL_TYPE_NIL) {
+      if (current->cdr->type == OBJ_NIL) {
         break;
       } else {
         length += 1; // " "
         str = realloc(str, length + 1);
         strncat(str, " ", 1);
       }
-      current = current->cdr.cdr_cell;
+      current = current->cdr->list_value;
     }
     str[length - 1] = ')';
     str[length] = '\0';
@@ -617,8 +621,7 @@ void definedFunctionCdr(struct Object *op, struct Object *evaluated) {
     printf("Type error: cdr operand must be list.\n");
     exit(1);
   }
-  evaluated->type = OBJ_LIST;
-  evaluated->list_value = op->list_value->cdr.cdr_cell;
+  *evaluated = *op->list_value->cdr;
 }
 
 void definedFunctionCons(struct Object *op1, struct Object *op2,
@@ -627,19 +630,22 @@ void definedFunctionCons(struct Object *op1, struct Object *op2,
   evaluated->type = OBJ_LIST;
   evaluated->list_value = malloc(sizeof(struct ConsCell));
   evaluated->list_value->car = op1;
+
   if (op2->type == OBJ_LIST) {
     evaluated->list_value->type = CONSCELL_TYPE_CELL;
-    evaluated->list_value->cdr.cdr_cell = op2->list_value;
+    evaluated->list_value->cdr = op2;
   } else if (op2->type == OBJ_NIL) {
-    evaluated->list_value->type = CONSCELL_TYPE_NIL;
-    evaluated->list_value->cdr.cdr_nil = op2;
+    evaluated->list_value->cdr = op2;
   } else {
+    struct Object *cdr_obj = allocate(context, env);
+    cdr_obj->type = OBJ_LIST;
     struct ConsCell *new_conscell = malloc(sizeof(struct ConsCell));
     new_conscell->car = op2;
-    new_conscell->type = CONSCELL_TYPE_NIL;
-    new_conscell->cdr.cdr_nil = allocate(context, env);
-    new_conscell->cdr.cdr_nil->type = OBJ_NIL;
-    evaluated->list_value->cdr.cdr_cell = new_conscell;
+    new_conscell->type = CONSCELL_TYPE_CELL;
+    new_conscell->cdr = allocate(context, env);
+    new_conscell->cdr->type = OBJ_NIL;
+    cdr_obj->list_value = new_conscell;
+    evaluated->list_value->cdr = cdr_obj;
   }
 }
 
@@ -689,7 +695,10 @@ void evaluateListExpression(struct ExpressionNode *expression,
     expressions = expressions->next;
 
     if (prev_conscell != NULL) {
-      prev_conscell->cdr.cdr_cell = new_conscell;
+      struct Object *new_cdr = allocate(context, env);
+      new_cdr->type = OBJ_LIST;
+      new_cdr->list_value = new_conscell;
+      prev_conscell->cdr = new_cdr;
       prev_conscell->type = CONSCELL_TYPE_CELL;
     }
     prev_conscell = new_conscell;
@@ -698,7 +707,7 @@ void evaluateListExpression(struct ExpressionNode *expression,
       struct Object *nilObj = allocate(context, env);
       nilObj->type = OBJ_NIL;
       prev_conscell->type = CONSCELL_TYPE_NIL;
-      prev_conscell->cdr.cdr_nil = nilObj;
+      prev_conscell->cdr = nilObj;
     }
   }
 

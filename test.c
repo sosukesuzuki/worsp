@@ -334,7 +334,7 @@ void evaluate_listWithInt() {
   TEST_ASSERT(evaluated.type == OBJ_LIST);
   TEST_ASSERT(evaluated.list_value->car->type == OBJ_INTEGER);
   TEST_ASSERT(evaluated.list_value->car->int_value == 133);
-  TEST_ASSERT(evaluated.list_value->cdr.cdr_nil->type == OBJ_NIL);
+  TEST_ASSERT(evaluated.list_value->cdr->type == OBJ_NIL);
 }
 
 void evaluate_listWithMultipleInt() {
@@ -354,14 +354,14 @@ void evaluate_listWithMultipleInt() {
   TEST_ASSERT(evaluated.type == OBJ_LIST);
   TEST_ASSERT(evaluated.list_value->car->type == OBJ_INTEGER);
   TEST_ASSERT(evaluated.list_value->car->int_value == 133);
-  TEST_ASSERT(evaluated.list_value->cdr.cdr_cell->car->type == OBJ_INTEGER);
-  TEST_ASSERT(evaluated.list_value->cdr.cdr_cell->car->int_value == 234);
-  TEST_ASSERT(evaluated.list_value->cdr.cdr_cell->cdr.cdr_cell->car->type ==
-              OBJ_INTEGER);
+  TEST_ASSERT(evaluated.list_value->cdr->list_value->car->type == OBJ_INTEGER);
+  TEST_ASSERT(evaluated.list_value->cdr->list_value->car->int_value == 234);
+  TEST_ASSERT(evaluated.list_value->cdr->list_value->cdr->type == OBJ_LIST);
   TEST_ASSERT(
-      evaluated.list_value->cdr.cdr_cell->cdr.cdr_cell->car->int_value == 345);
+      evaluated.list_value->cdr->list_value->cdr->list_value->car->int_value ==
+      345);
   TEST_ASSERT(
-      evaluated.list_value->cdr.cdr_cell->cdr.cdr_cell->cdr.cdr_nil->type ==
+      evaluated.list_value->cdr->list_value->cdr->list_value->cdr->type ==
       OBJ_NIL);
 }
 
@@ -1020,9 +1020,9 @@ void evaluate_cdr() {
   TEST_ASSERT(evaluated.type == OBJ_LIST);
   TEST_ASSERT(evaluated.list_value->car->type == OBJ_INTEGER);
   TEST_ASSERT(evaluated.list_value->car->int_value == 2);
-  TEST_ASSERT(evaluated.list_value->cdr.cdr_cell->car->type == OBJ_INTEGER);
-  TEST_ASSERT(evaluated.list_value->cdr.cdr_cell->car->int_value == 3);
-  TEST_ASSERT(evaluated.list_value->cdr.cdr_cell->cdr.cdr_nil->type == OBJ_NIL);
+  TEST_ASSERT(evaluated.list_value->cdr->list_value->car->type == OBJ_INTEGER);
+  TEST_ASSERT(evaluated.list_value->cdr->list_value->car->int_value == 3);
+  TEST_ASSERT(evaluated.list_value->cdr->list_value->cdr->type == OBJ_NIL);
 }
 
 void evaluate_consIntList() {
@@ -1037,11 +1037,12 @@ void evaluate_consIntList() {
                                 &evaluated, &env);
   TEST_ASSERT(evaluated.type == OBJ_LIST);
   TEST_ASSERT(evaluated.list_value->car->int_value == 1);
-  TEST_ASSERT(evaluated.list_value->cdr.cdr_cell->car->int_value == 2);
+  TEST_ASSERT(evaluated.list_value->cdr->list_value->car->int_value == 2);
   TEST_ASSERT(
-      evaluated.list_value->cdr.cdr_cell->cdr.cdr_cell->car->int_value == 3);
+      evaluated.list_value->cdr->list_value->cdr->list_value->car->int_value ==
+      3);
   TEST_ASSERT(
-      evaluated.list_value->cdr.cdr_cell->cdr.cdr_cell->cdr.cdr_nil->type ==
+      evaluated.list_value->cdr->list_value->cdr->list_value->cdr->type ==
       OBJ_NIL);
 }
 
@@ -1057,8 +1058,8 @@ void evaluate_consInt() {
                                 &evaluated, &env);
   TEST_ASSERT(evaluated.type == OBJ_LIST);
   TEST_ASSERT(evaluated.list_value->car->int_value == 1);
-  TEST_ASSERT(evaluated.list_value->cdr.cdr_cell->car->int_value == 2);
-  TEST_ASSERT(evaluated.list_value->cdr.cdr_cell->cdr.cdr_nil->type == OBJ_NIL);
+  TEST_ASSERT(evaluated.list_value->cdr->list_value->car->int_value == 2);
+  TEST_ASSERT(evaluated.list_value->cdr->list_value->cdr->type == OBJ_NIL);
 }
 
 void evaluate_consListList() {
@@ -1075,10 +1076,12 @@ void evaluate_consListList() {
   TEST_ASSERT(evaluated.list_value->car->type == OBJ_LIST);
   TEST_ASSERT(evaluated.list_value->car->list_value->car->int_value == 1);
   TEST_ASSERT(
-      evaluated.list_value->car->list_value->cdr.cdr_cell->car->int_value == 2);
-  TEST_ASSERT(evaluated.list_value->cdr.cdr_cell->car->int_value == 3);
+      evaluated.list_value->car->list_value->cdr->list_value->car->int_value ==
+      2);
+  TEST_ASSERT(evaluated.list_value->cdr->list_value->car->int_value == 3);
   TEST_ASSERT(
-      evaluated.list_value->cdr.cdr_cell->cdr.cdr_cell->car->int_value == 4);
+      evaluated.list_value->cdr->list_value->cdr->list_value->car->int_value ==
+      4);
 }
 
 void evaluate_assignment() {
@@ -1094,8 +1097,8 @@ void evaluate_assignment() {
   TEST_ASSERT(evaluated.type == OBJ_LIST);
   TEST_ASSERT(evaluated.list_value->car->type == OBJ_INTEGER);
   TEST_ASSERT(evaluated.list_value->car->int_value == 1);
-  TEST_ASSERT(evaluated.list_value->cdr.cdr_cell->car->type == OBJ_INTEGER);
-  TEST_ASSERT(evaluated.list_value->cdr.cdr_cell->car->int_value == 1);
+  TEST_ASSERT(evaluated.list_value->cdr->list_value->car->type == OBJ_INTEGER);
+  TEST_ASSERT(evaluated.list_value->cdr->list_value->car->int_value == 1);
 }
 
 void evaluate_assignmentComplex() {
@@ -1111,8 +1114,8 @@ void evaluate_assignmentComplex() {
   TEST_ASSERT(evaluated.type == OBJ_LIST);
   TEST_ASSERT(evaluated.list_value->car->type == OBJ_INTEGER);
   TEST_ASSERT(evaluated.list_value->car->int_value == 1);
-  TEST_ASSERT(evaluated.list_value->cdr.cdr_cell->car->type == OBJ_INTEGER);
-  TEST_ASSERT(evaluated.list_value->cdr.cdr_cell->car->int_value == 3);
+  TEST_ASSERT(evaluated.list_value->cdr->list_value->car->type == OBJ_INTEGER);
+  TEST_ASSERT(evaluated.list_value->cdr->list_value->car->int_value == 3);
 }
 
 void evaluate_defun() {
@@ -1127,8 +1130,8 @@ void evaluate_defun() {
                                 &evaluated, &env);
   TEST_ASSERT(evaluated.type == OBJ_LIST);
   TEST_ASSERT(evaluated.list_value->car->type == OBJ_FUNCTION);
-  TEST_ASSERT(evaluated.list_value->cdr.cdr_cell->car->type == OBJ_INTEGER);
-  TEST_ASSERT(evaluated.list_value->cdr.cdr_cell->car->int_value == 2);
+  TEST_ASSERT(evaluated.list_value->cdr->list_value->car->type == OBJ_INTEGER);
+  TEST_ASSERT(evaluated.list_value->cdr->list_value->car->int_value == 2);
 }
 
 void evaluate_defunClosure() {
@@ -1144,14 +1147,15 @@ void evaluate_defunClosure() {
   TEST_ASSERT(evaluated.type == OBJ_LIST);
   TEST_ASSERT(evaluated.list_value->car->type == OBJ_INTEGER);
   TEST_ASSERT(evaluated.list_value->car->int_value == 2);
-  TEST_ASSERT(evaluated.list_value->cdr.cdr_cell->car->type == OBJ_INTEGER);
-  TEST_ASSERT(evaluated.list_value->cdr.cdr_cell->car->int_value == 3);
-  TEST_ASSERT(evaluated.list_value->cdr.cdr_cell->cdr.cdr_cell->car->type ==
-              OBJ_FUNCTION);
-  TEST_ASSERT(evaluated.list_value->cdr.cdr_cell->cdr.cdr_cell->cdr.cdr_cell
-                  ->car->type == OBJ_INTEGER);
-  TEST_ASSERT(evaluated.list_value->cdr.cdr_cell->cdr.cdr_cell->cdr.cdr_cell
-                  ->car->int_value == 6);
+  TEST_ASSERT(evaluated.list_value->cdr->list_value->car->type == OBJ_INTEGER);
+  TEST_ASSERT(evaluated.list_value->cdr->list_value->car->int_value == 3);
+  TEST_ASSERT(
+      evaluated.list_value->cdr->list_value->cdr->list_value->car->type ==
+      OBJ_FUNCTION);
+  TEST_ASSERT(evaluated.list_value->cdr->list_value->cdr->list_value->cdr
+                  ->list_value->car->type == OBJ_INTEGER);
+  TEST_ASSERT(evaluated.list_value->cdr->list_value->cdr->list_value->cdr
+                  ->list_value->car->int_value == 6);
 }
 
 void evaluate_fact() {
@@ -1169,8 +1173,8 @@ void evaluate_fact() {
                                 &evaluated, &env);
   TEST_ASSERT(evaluated.type == OBJ_LIST);
   TEST_ASSERT(evaluated.list_value->car->type == OBJ_FUNCTION);
-  TEST_ASSERT(evaluated.list_value->cdr.cdr_cell->car->type == OBJ_INTEGER);
-  TEST_ASSERT(evaluated.list_value->cdr.cdr_cell->car->int_value == 120);
+  TEST_ASSERT(evaluated.list_value->cdr->list_value->car->type == OBJ_INTEGER);
+  TEST_ASSERT(evaluated.list_value->cdr->list_value->car->int_value == 120);
 }
 
 void evaluate_assignmentAndReuse() {
@@ -1186,12 +1190,14 @@ void evaluate_assignmentAndReuse() {
   TEST_ASSERT(evaluated.type == OBJ_LIST);
   TEST_ASSERT(evaluated.list_value->car->type == OBJ_INTEGER);
   TEST_ASSERT(evaluated.list_value->car->int_value == 1);
-  TEST_ASSERT(evaluated.list_value->cdr.cdr_cell->car->type == OBJ_INTEGER);
-  TEST_ASSERT(evaluated.list_value->cdr.cdr_cell->car->int_value == 2);
-  TEST_ASSERT(evaluated.list_value->cdr.cdr_cell->cdr.cdr_cell->car->type ==
-              OBJ_INTEGER);
+  TEST_ASSERT(evaluated.list_value->cdr->list_value->car->type == OBJ_INTEGER);
+  TEST_ASSERT(evaluated.list_value->cdr->list_value->car->int_value == 2);
   TEST_ASSERT(
-      evaluated.list_value->cdr.cdr_cell->cdr.cdr_cell->car->int_value == 2);
+      evaluated.list_value->cdr->list_value->cdr->list_value->car->type ==
+      OBJ_INTEGER);
+  TEST_ASSERT(
+      evaluated.list_value->cdr->list_value->cdr->list_value->car->int_value ==
+      2);
 }
 
 void evaluate_stringConcat() {
@@ -1222,7 +1228,7 @@ void evaluate_while() {
   TEST_ASSERT(evaluated.type == OBJ_LIST);
   TEST_ASSERT(evaluated.list_value->car->type == OBJ_INTEGER);
   TEST_ASSERT(evaluated.list_value->car->int_value == 5);
-  TEST_ASSERT(evaluated.list_value->cdr.cdr_cell->car->type == OBJ_NIL);
+  TEST_ASSERT(evaluated.list_value->cdr->list_value->car->type == OBJ_NIL);
 }
 
 int main() {

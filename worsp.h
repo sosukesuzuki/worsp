@@ -107,11 +107,7 @@ typedef enum {
 struct ConsCell {
   ConsCellType type;
   struct Object *car;
-  union {
-    struct ConsCell *cdr_cell;
-    // only nil
-    struct Object *cdr_nil;
-  } cdr;
+  struct Object *cdr;
 };
 
 struct Function {
