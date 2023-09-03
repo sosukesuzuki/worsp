@@ -380,6 +380,10 @@ void mark(struct Object *obj) {
     struct Object *current = obj;
     while (1) {
       mark(current);
+      // evaluating list object can be nil
+      if (current->list_value == NULL) {
+        break;
+      }
       mark(current->list_value->car);
       if (isLastConsCell(current->list_value)) {
         break;
@@ -496,7 +500,7 @@ char *stringifyObject(struct Object *obj) {
       length += strlen(serialized);
       str = realloc(str, length + 1);
       strncat(str, serialized, strlen(serialized));
-      if (current->cdr->type == OBJ_NIL) {
+      if (isLastConsCell(current->cdr->list_value)) {
         break;
       } else {
         length += 1; // " "
