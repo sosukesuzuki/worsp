@@ -141,12 +141,20 @@ struct Env {
   struct Env *parent;
 };
 
+#define OBJECT_SIZE 15
+
+struct ObjectStack {
+  struct Object *objects[OBJECT_SIZE];
+  int top;
+};
+
 // for gc
 struct AllocatorContext {
   int gc_less_mode;
   struct Object *heap_start;
   struct Object *heap_end;
   struct FreeCell *free_cells;
+  struct ObjectStack *stack;
 };
 
 void evaluateExpression(struct ExpressionNode *expression,
@@ -161,8 +169,6 @@ void initEnv(struct Env *env);
 // =================================================
 //   garbage collector
 // =================================================
-
-#define OBJECT_SIZE 50
 
 struct FreeCell {
   struct FreeCell *next;

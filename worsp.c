@@ -296,6 +296,33 @@ void parse(char *source, struct ParseState *state, struct ParseResult *result) {
 //   garbage collector
 // =================================================
 
+void initializeObjectStack(struct ObjectStack *stack) { stack->top = -1; }
+
+int isFullObjectStack(struct ObjectStack *stack) {
+  return stack->top == OBJECT_SIZE;
+}
+
+int isEmptyObjectStack(struct ObjectStack *stack) { return stack->top == -1; }
+
+void pushObjectStack(struct ObjectStack *stack, struct Object *obj) {
+  if (isFullObjectStack(stack)) {
+    printf("Object stack is full.\n");
+    exit(1);
+  }
+  stack->top++;
+  stack->objects[stack->top] = obj;
+}
+
+struct Object *popObjectStack(struct ObjectStack *stack) {
+  if (isEmptyObjectStack(stack)) {
+    printf("Object stack is empty.\n");
+    exit(1);
+  }
+  struct Object *obj = stack->objects[stack->top];
+  stack->top--;
+  return obj;
+}
+
 struct AllocatorContext *initAllocator() {
   void *heap_start = malloc(sizeof(struct Object) * OBJECT_SIZE);
   struct AllocatorContext *context = malloc(sizeof(struct AllocatorContext));
@@ -317,6 +344,10 @@ struct AllocatorContext *initAllocator() {
   context->heap_end = heap_start + sizeof(struct Object) * OBJECT_SIZE;
   context->free_cells = free_cells;
   context->gc_less_mode = 0;
+
+  struct ObjectStack *stack = malloc(sizeof(struct ObjectStack));
+  initializeObjectStack(stack);
+  context->stack = stack;
 
   return context;
 }
@@ -358,19 +389,26 @@ void mark(struct Object *obj) {
   }
 }
 
-void markAll(struct Env *env) {
+void markAll(struct Env *env, struct AllocatorContext *context) {
+  // mark objects in stack
+  for (int i = 0; i <= context->stack->top; i++) {
+    struct Object *obj = context->stack->objects[i];
+    mark(obj);
+  }
+
   int i = 0;
   while (env->bindings[i].symbol_name != NULL) {
-    mark(env->bindings[i].value);
+    struct Object *obj = env->bindings[i].value;
+    mark(obj);
     i++;
   }
   if (env->parent != NULL) {
-    markAll(env->parent);
+    markAll(env->parent, context);
   }
 }
 
 void gc(struct AllocatorContext *context, struct Env *env) {
-  markAll(env);
+  markAll(env, context);
   sweep(context);
 }
 
@@ -1095,6 +1133,7 @@ void evaluateSymbolExpression(struct ExpressionNode *expression,
 void evaluateExpression(struct ExpressionNode *expression,
                         struct Object *evaluated, struct Env *env,
                         struct AllocatorContext *context) {
+  pushObjectStack(context->stack, evaluated);
   if (expression->type == EXP_LIST) {
     evaluateListExpression(expression, evaluated, env, context);
   } else if (expression->type == EXP_SYMBOLIC_EXP) {
@@ -1104,6 +1143,7 @@ void evaluateExpression(struct ExpressionNode *expression,
   } else if (expression->type == EXP_SYMBOL) {
     evaluateSymbolExpression(expression, evaluated, env, context);
   }
+  popObjectStack(context->stack);
 }
 
 void evaluateExpressionWithContext(struct ExpressionNode *expression,
