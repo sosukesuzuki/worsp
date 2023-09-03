@@ -141,7 +141,7 @@ struct Env {
   struct Env *parent;
 };
 
-#define OBJECT_SIZE 15
+#define OBJECT_SIZE 50
 
 struct ObjectStack {
   struct Object *objects[OBJECT_SIZE];

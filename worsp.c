@@ -430,6 +430,7 @@ struct Object *allocate(struct AllocatorContext *context, struct Env *env) {
       exit(1);
     }
     free_cell = context->free_cells;
+    context->free_cells = free_cell->next;
   } else {
     context->free_cells = free_cell->next;
   }
