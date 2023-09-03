@@ -500,7 +500,7 @@ char *stringifyObject(struct Object *obj) {
       length += strlen(serialized);
       str = realloc(str, length + 1);
       strncat(str, serialized, strlen(serialized));
-      if (isLastConsCell(current->cdr->list_value)) {
+      if (isLastConsCell(current)) {
         break;
       } else {
         length += 1; // " "
