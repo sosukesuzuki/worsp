@@ -1,6 +1,8 @@
 #ifndef WORST_H
 #define WORST_H
 
+#include <stdbool.h>
+
 // =================================================
 //   tokenizer & parser
 // =================================================
@@ -69,7 +71,7 @@ struct LiteralNode {
   enum LiteralType type;
   union {
     int int_value;
-    int boolean_value;
+    bool boolean_value;
     char *string_value;
   };
 };
@@ -117,7 +119,7 @@ struct Function {
 
 struct Object {
   // for mark and sweep GC
-  int marked;
+  bool marked;
   ObjectType type;
   union {
     int int_value;

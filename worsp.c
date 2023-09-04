@@ -4,6 +4,7 @@
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
+#include <stdbool.h>
 
 // =================================================
 //   tokenizer
@@ -225,13 +226,13 @@ void parseLiteralExpression(char *source, struct ParseState *state,
     expression->type = EXP_LITERAL;
     expression->data.literal = malloc(sizeof(struct LiteralNode));
     expression->data.literal->type = LIT_BOOLEAN;
-    expression->data.literal->boolean_value = 1;
+    expression->data.literal->boolean_value = true;
     next(source, state);
   } else if (match(state, TK_FALSE)) {
     expression->type = EXP_LITERAL;
     expression->data.literal = malloc(sizeof(struct LiteralNode));
     expression->data.literal->type = LIT_BOOLEAN;
-    expression->data.literal->boolean_value = 0;
+    expression->data.literal->boolean_value = false;
     next(source, state);
   } else {
     printf("Unexpected token: %s\n", state->token->str);
@@ -356,7 +357,7 @@ void sweep(struct AllocatorContext *context) {
   struct Object *current = context->heap_start;
   while (current < context->heap_end) {
     if (current->marked) {
-      current->marked = 0;
+      current->marked = false;
     } else {
       struct FreeCell *free_cell = malloc(sizeof(struct FreeCell));
       free_cell->next = context->free_cells;
@@ -375,7 +376,7 @@ void mark(struct Object *obj) {
   if (obj->marked) {
     return;
   }
-  obj->marked = 1;
+  obj->marked = true;
   if (obj->type == OBJ_LIST) {
     struct Object *current = obj;
     while (1) {
@@ -759,6 +760,7 @@ void evaluateListExpression(struct ExpressionNode *expression,
   }
 
   evaluated->list_value = car_conscell;
+
 }
 
 void setObjectToEnv(struct Env *env, char *symbolName, struct Object *obj) {
