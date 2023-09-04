@@ -300,7 +300,7 @@ void parse(char *source, struct ParseState *state, struct ParseResult *result) {
 void initializeObjectStack(struct ObjectStack *stack) { stack->top = -1; }
 
 int isFullObjectStack(struct ObjectStack *stack) {
-  return stack->top == OBJECT_SIZE;
+  return stack->top == OBJECT_NUMBER;
 }
 
 int isEmptyObjectStack(struct ObjectStack *stack) { return stack->top == -1; }

@@ -144,13 +144,13 @@ struct Env {
   struct Env *parent;
 };
 
-#define OBJECT_SIZE 15
+#define OBJECT_NUMBER 50
 #define BLOCK_SIZE sizeof(struct Object)
-#define MEMORY_SIZE (BLOCK_SIZE * OBJECT_SIZE)
+#define MEMORY_SIZE (BLOCK_SIZE * OBJECT_NUMBER)
 #define FREE_BITMAP_SIZE (MEMORY_SIZE / BLOCK_SIZE)
 
 struct ObjectStack {
-  struct Object *objects[OBJECT_SIZE];
+  struct Object *objects[OBJECT_NUMBER];
   int top;
 };
 
