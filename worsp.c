@@ -704,6 +704,47 @@ void definedFunctionNot(struct Object *op, struct Object *evaluated) {
   }
 }
 
+void definedFunctionSplit(struct Object *op1, struct Object *op2,
+                          struct Object *evaluated, struct Env *env,
+                          struct AllocatorContext *context) {
+  if (op1->type != OBJ_STRING) {
+    printf("Type error: split first operand must be string.\n");
+    exit(1);
+  }
+  if (op2->type != OBJ_STRING) {
+    printf("Type error: split second operand must be string.\n");
+    exit(1);
+  }
+  // split op1 string by op2 string and return list of strings
+  evaluated->type = OBJ_LIST;
+  evaluated->list_value = malloc(sizeof(struct ConsCell));
+  evaluated->list_value->type = CONSCELL_TYPE_CELL;
+  evaluated->list_value->car = allocate(context, env);
+  evaluated->list_value->car->type = OBJ_STRING;
+  evaluated->list_value->car->string_value =
+      strtok(op1->string_value, op2->string_value);
+  evaluated->list_value->cdr = allocate(context, env);
+  evaluated->list_value->cdr->type = OBJ_NIL;
+  struct ConsCell *current = evaluated->list_value;
+  while (1) {
+    char *token = strtok(NULL, op2->string_value);
+    if (token == NULL) {
+      break;
+    }
+    struct ConsCell *new_conscell = malloc(sizeof(struct ConsCell));
+    new_conscell->type = CONSCELL_TYPE_CELL;
+    new_conscell->car = allocate(context, env);
+    new_conscell->car->type = OBJ_STRING;
+    new_conscell->car->string_value = token;
+    new_conscell->cdr = allocate(context, env);
+    new_conscell->cdr->type = OBJ_NIL;
+    current->cdr = allocate(context, env);
+    current->cdr->type = OBJ_LIST;
+    current->cdr->list_value = new_conscell;
+    current = current->cdr->list_value;
+  }
+}
+
 // =================================================
 //   evaluator
 // =================================================
@@ -1045,6 +1086,14 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
           } else {
             evaluated->type = OBJ_NIL;
           }
+        } else if (strcmp(expr->data.symbol->symbol_name, "split") == 0) {
+          struct Object *operand1 = allocate(context, env);
+          struct Object *operand2 = allocate(context, env);
+          evaluateExpression(expressions->next->expression, operand1, env,
+                             context);
+          evaluateExpression(expressions->next->next->expression, operand2, env,
+                             context);
+          definedFunctionSplit(operand1, operand2, evaluated, env, context);
         } else {
           // function call
           int i = 0;

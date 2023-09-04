@@ -1231,6 +1231,40 @@ void evaluate_while() {
   TEST_ASSERT(evaluated.list_value->cdr->list_value->car->type == OBJ_NIL);
 }
 
+void evalute_split() {
+  struct Env env = (struct Env){};
+  initEnv(&env);
+  char *source = "(split \"1 + 1 + 1 \" \" \")";
+  struct ParseState state = (struct ParseState){NULL, 0};
+  struct ParseResult result = (struct ParseResult){NULL};
+  struct Object evaluated = (struct Object){};
+  parse(source, &state, &result);
+  evaluateExpressionWithContext(result.program->expressions->expression,
+                                &evaluated, &env);
+  TEST_ASSERT(evaluated.type == OBJ_LIST);
+  TEST_ASSERT(evaluated.list_value->car->type == OBJ_STRING);
+  TEST_ASSERT(strcmp(evaluated.list_value->car->string_value, "1") == 0);
+  TEST_ASSERT(evaluated.list_value->cdr->list_value->car->type == OBJ_STRING);
+  TEST_ASSERT(strcmp(evaluated.list_value->cdr->list_value->car->string_value,
+                     "+") == 0);
+  TEST_ASSERT(
+      evaluated.list_value->cdr->list_value->cdr->list_value->car->type ==
+      OBJ_STRING);
+  TEST_ASSERT(strcmp(evaluated.list_value->cdr->list_value->cdr->list_value->car
+                         ->string_value,
+                     "1") == 0);
+  TEST_ASSERT(evaluated.list_value->cdr->list_value->cdr->list_value->cdr
+                  ->list_value->car->type == OBJ_STRING);
+  TEST_ASSERT(strcmp(evaluated.list_value->cdr->list_value->cdr->list_value->cdr
+                         ->list_value->car->string_value,
+                     "+") == 0);
+  TEST_ASSERT(evaluated.list_value->cdr->list_value->cdr->list_value->cdr
+                  ->list_value->cdr->list_value->car->type == OBJ_STRING);
+  TEST_ASSERT(strcmp(evaluated.list_value->cdr->list_value->cdr->list_value->cdr
+                         ->list_value->cdr->list_value->car->string_value,
+                     "1") == 0);
+}
+
 int main() {
   RUN_TEST(next_singleCharSymbol);
   RUN_TEST(next_multipleCharSymbol);
@@ -1298,8 +1332,9 @@ int main() {
   RUN_TEST(evaluate_notFalse);
   RUN_TEST(evaluate_notFalseEq);
   RUN_TEST(evaluate_fact);
-  // FIXME: RUN_TEST(evaluate_assignmentAndReuse);
+  RUN_TEST(evaluate_assignmentAndReuse);
   RUN_TEST(evaluate_stringConcat);
+  RUN_TEST(evalute_split);
 
   return 0;
 }
