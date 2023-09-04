@@ -1,10 +1,10 @@
 #include "worsp.h"
 #include <ctype.h>
 #include <math.h>
+#include <stdbool.h>
 #include <stdio.h>
 #include <stdlib.h>
 #include <string.h>
-#include <stdbool.h>
 
 // =================================================
 //   tokenizer
@@ -325,25 +325,13 @@ struct Object *popObjectStack(struct ObjectStack *stack) {
 }
 
 struct AllocatorContext *initAllocator() {
-  void *heap_start = malloc(sizeof(struct Object) * OBJECT_SIZE);
   struct AllocatorContext *context = malloc(sizeof(struct AllocatorContext));
 
-  // create free list from heap (linked list)
-  struct FreeCell *free_cells = malloc(sizeof(struct FreeCell));
-  free_cells->next = NULL;
-  free_cells->object = heap_start;
-  struct FreeCell *current = free_cells;
-  for (int i = 1; i < OBJECT_SIZE; i++) {
-    struct FreeCell *new_cell = malloc(sizeof(struct FreeCell));
-    new_cell->next = NULL;
-    new_cell->object = heap_start + sizeof(struct Object) * i;
-    current->next = new_cell;
-    current = new_cell;
+  context->memory_pool = (struct Object *)malloc(MEMORY_SIZE);
+  for (unsigned long i = 0; i < FREE_BITMAP_SIZE; ++i) {
+    context->free_bitmap[i] = 0;
   }
 
-  context->heap_start = heap_start;
-  context->heap_end = heap_start + sizeof(struct Object) * OBJECT_SIZE;
-  context->free_cells = free_cells;
   context->gc_less_mode = 0;
 
   struct ObjectStack *stack = malloc(sizeof(struct ObjectStack));
@@ -353,18 +341,21 @@ struct AllocatorContext *initAllocator() {
   return context;
 }
 
+void freeObject(struct AllocatorContext *context, struct Object *object) {
+  int index = object - context->memory_pool;
+  context->free_bitmap[index] = 0;
+}
+
 void sweep(struct AllocatorContext *context) {
-  struct Object *current = context->heap_start;
-  while (current < context->heap_end) {
-    if (current->marked) {
-      current->marked = false;
-    } else {
-      struct FreeCell *free_cell = malloc(sizeof(struct FreeCell));
-      free_cell->next = context->free_cells;
-      free_cell->object = current;
-      context->free_cells = free_cell;
+  for (unsigned long i = 0; i < FREE_BITMAP_SIZE; ++i) {
+    if (context->free_bitmap[i] == 1) {
+      struct Object *obj = &context->memory_pool[i];
+      if (obj->marked) {
+        obj->marked = false;
+      } else {
+        freeObject(context, obj);
+      }
     }
-    current++;
   }
 }
 
@@ -423,24 +414,24 @@ struct Object *allocate(struct AllocatorContext *context, struct Env *env) {
     return malloc(object_size);
   }
 
-  struct FreeCell *free_cell = context->free_cells;
-  if (free_cell == NULL) {
-    gc(context, env);
-    if (context->free_cells == NULL) {
-      printf("Out of memory.\n");
-      exit(1);
+  for (unsigned long i = 0; i < FREE_BITMAP_SIZE; ++i) {
+    if (context->free_bitmap[i] == 0) {
+      context->free_bitmap[i] = 1; // Mark the block as used
+      return &context->memory_pool[i];
     }
-    free_cell = context->free_cells;
-    context->free_cells = free_cell->next;
-  } else {
-    context->free_cells = free_cell->next;
   }
 
-  struct Object *obj = free_cell->object;
+  gc(context, env);
 
-  memset(obj, 0, object_size);
+  for (unsigned long i = 0; i < FREE_BITMAP_SIZE; ++i) {
+    if (context->free_bitmap[i] == 0) {
+      context->free_bitmap[i] = 1; // Mark the block as used
+      return &context->memory_pool[i];
+    }
+  }
 
-  return obj;
+  fprintf(stderr, "Out of Memory\n");
+  exit(1);
 }
 
 // =================================================
@@ -762,7 +753,6 @@ void evaluateListExpression(struct ExpressionNode *expression,
   }
 
   evaluated->list_value = car_conscell;
-
 }
 
 void setObjectToEnv(struct Env *env, char *symbolName, struct Object *obj) {

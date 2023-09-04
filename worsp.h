@@ -2,6 +2,7 @@
 #define WORST_H
 
 #include <stdbool.h>
+#include <stdint.h>
 
 // =================================================
 //   tokenizer & parser
@@ -143,7 +144,10 @@ struct Env {
   struct Env *parent;
 };
 
-#define OBJECT_SIZE 50
+#define OBJECT_SIZE 15
+#define BLOCK_SIZE sizeof(struct Object)
+#define MEMORY_SIZE (BLOCK_SIZE * OBJECT_SIZE)
+#define FREE_BITMAP_SIZE (MEMORY_SIZE / BLOCK_SIZE)
 
 struct ObjectStack {
   struct Object *objects[OBJECT_SIZE];
@@ -153,10 +157,9 @@ struct ObjectStack {
 // for gc
 struct AllocatorContext {
   int gc_less_mode;
-  struct Object *heap_start;
-  struct Object *heap_end;
-  struct FreeCell *free_cells;
   struct ObjectStack *stack;
+  struct Object *memory_pool;
+  uint8_t free_bitmap[FREE_BITMAP_SIZE];
 };
 
 void evaluateExpression(struct ExpressionNode *expression,
