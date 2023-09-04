@@ -438,6 +438,8 @@ struct Object *allocate(struct AllocatorContext *context, struct Env *env) {
 
   struct Object *obj = free_cell->object;
 
+  memset(obj, 0, object_size);
+
   return obj;
 }
 
