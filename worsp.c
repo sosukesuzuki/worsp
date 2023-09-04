@@ -447,13 +447,13 @@ struct Object *allocate(struct AllocatorContext *context, struct Env *env) {
 //   defined functions
 // =================================================
 
-int boolVal(struct Object *obj) {
+bool boolVal(struct Object *obj) {
   if (obj->type == OBJ_BOOL) {
     return obj->bool_value;
   } else if (obj->type == OBJ_NIL) {
-    return 0;
+    return false;
   } else {
-    return 1;
+    return true;
   }
 }
 
