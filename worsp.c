@@ -488,6 +488,7 @@ char *stringifyObject(struct Object *obj) {
   } else if (obj->type == OBJ_LIST) {
     int length = 2; // '(' and ')'
     char *str = (char *)malloc(length + 1 * sizeof(char));
+    memset(str, 0, length + 1);
     str[0] = '(';
     struct ConsCell *current = obj->list_value;
     while (1) {
