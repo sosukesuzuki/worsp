@@ -175,11 +175,6 @@ void initEnv(struct Env *env);
 //   garbage collector
 // =================================================
 
-struct FreeCell {
-  struct FreeCell *next;
-  struct Object *object;
-};
-
 struct AllocatorContext *initAllocator();
 
 struct Object *allocate(struct AllocatorContext *context, struct Env *env);
