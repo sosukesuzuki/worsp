@@ -745,6 +745,28 @@ void definedFunctionSplit(struct Object *op1, struct Object *op2,
   }
 }
 
+void definedFunctionListRef(struct Object *op1, struct Object *op2,
+                            struct Object *evaluated) {
+  if (op1->type != OBJ_LIST) {
+    printf("Type error: list-ref first operand must be list.\n");
+    exit(1);
+  }
+  if (op2->type != OBJ_INTEGER) {
+    printf("Type error: list-ref second operand must be integer.\n");
+    exit(1);
+  }
+  int index = op2->int_value;
+  struct ConsCell *current = op1->list_value;
+  for (int i = 0; i < index; i++) {
+    if (current->cdr->type == OBJ_NIL) {
+      printf("Index out of range.\n");
+      exit(1);
+    }
+    current = current->cdr->list_value;
+  }
+  *evaluated = *current->car;
+}
+
 // =================================================
 //   evaluator
 // =================================================
@@ -1087,6 +1109,7 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
             evaluated->type = OBJ_NIL;
           }
         } else if (strcmp(expr->data.symbol->symbol_name, "split") == 0) {
+          // split
           struct Object *operand1 = allocate(context, env);
           struct Object *operand2 = allocate(context, env);
           evaluateExpression(expressions->next->expression, operand1, env,
@@ -1094,6 +1117,15 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
           evaluateExpression(expressions->next->next->expression, operand2, env,
                              context);
           definedFunctionSplit(operand1, operand2, evaluated, env, context);
+        } else if (strcmp(expr->data.symbol->symbol_name, "list-ref") == 0) {
+          // list-ref
+          struct Object *operand1 = allocate(context, env);
+          struct Object *operand2 = allocate(context, env);
+          evaluateExpression(expressions->next->expression, operand1, env,
+                             context);
+          evaluateExpression(expressions->next->next->expression, operand2, env,
+                             context);
+          definedFunctionListRef(operand1, operand2, evaluated);
         } else {
           // function call
           int i = 0;

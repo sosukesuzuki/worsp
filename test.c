@@ -1265,6 +1265,20 @@ void evalute_split() {
                      "1") == 0);
 }
 
+void evaluate_listRef() {
+  struct Env env = (struct Env){};
+  initEnv(&env);
+  char *source = "(list-ref '(1 2 3) 1)";
+  struct ParseState state = (struct ParseState){NULL, 0};
+  struct ParseResult result = (struct ParseResult){NULL};
+  struct Object evaluated = (struct Object){};
+  parse(source, &state, &result);
+  evaluateExpressionWithContext(result.program->expressions->expression,
+                                &evaluated, &env);
+  TEST_ASSERT(evaluated.type == OBJ_INTEGER);
+  TEST_ASSERT(evaluated.int_value == 2);
+}
+
 int main() {
   RUN_TEST(next_singleCharSymbol);
   RUN_TEST(next_multipleCharSymbol);
@@ -1335,6 +1349,7 @@ int main() {
   RUN_TEST(evaluate_assignmentAndReuse);
   RUN_TEST(evaluate_stringConcat);
   RUN_TEST(evalute_split);
+  RUN_TEST(evaluate_listRef);
 
   return 0;
 }
