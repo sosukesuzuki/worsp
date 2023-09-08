@@ -1140,8 +1140,7 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
 }
 
 void evaluateLiteralExpression(struct ExpressionNode *expression,
-                               struct Object *evaluated,
-                               struct AllocatorContext *context) {
+                               struct Object *evaluated) {
   if (expression->data.literal->type == LIT_INTERGER) {
     evaluated->type = OBJ_INTEGER;
     evaluated->int_value = expression->data.literal->int_value;
@@ -1188,7 +1187,7 @@ void evaluateExpression(struct ExpressionNode *expression,
   } else if (expression->type == EXP_SYMBOLIC_EXP) {
     evaluateSymbolicExpression(expression, evaluated, env, context);
   } else if (expression->type == EXP_LITERAL) {
-    evaluateLiteralExpression(expression, evaluated, context);
+    evaluateLiteralExpression(expression, evaluated);
   } else if (expression->type == EXP_SYMBOL) {
     evaluateSymbolExpression(expression, evaluated, env, context);
   }
