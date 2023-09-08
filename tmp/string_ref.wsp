@@ -1,0 +1,4 @@
+(defun string-ref (str index) (list-ref (split str "") index))
+
+(print (string-ref "foo" 2))
+(print (string-ref "foobarbaz" 3))
