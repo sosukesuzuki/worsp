@@ -1265,6 +1265,30 @@ void evalute_split() {
                      "1") == 0);
 }
 
+void evaluate_splitWithEmptryChar() {
+  struct Env env = (struct Env){};
+  initEnv(&env);
+  char *source = "(split \"foo\" \"\")";
+  struct ParseState state = (struct ParseState){NULL, 0};
+  struct ParseResult result = (struct ParseResult){NULL};
+  struct Object evaluated = (struct Object){};
+  parse(source, &state, &result);
+  evaluateExpressionWithContext(result.program->expressions->expression,
+                                &evaluated, &env);
+  TEST_ASSERT(evaluated.type == OBJ_LIST);
+  TEST_ASSERT(evaluated.list_value->car->type == OBJ_STRING);
+  TEST_ASSERT(strcmp(evaluated.list_value->car->string_value, "f") == 0);
+  TEST_ASSERT(evaluated.list_value->cdr->list_value->car->type == OBJ_STRING);
+  TEST_ASSERT(strcmp(evaluated.list_value->cdr->list_value->car->string_value,
+                     "o") == 0);
+  TEST_ASSERT(
+      evaluated.list_value->cdr->list_value->cdr->list_value->car->type ==
+      OBJ_STRING);
+  TEST_ASSERT(strcmp(evaluated.list_value->cdr->list_value->cdr->list_value->car
+                         ->string_value,
+                     "o") == 0);
+}
+
 void evaluate_listRef() {
   struct Env env = (struct Env){};
   initEnv(&env);
@@ -1349,6 +1373,7 @@ int main() {
   RUN_TEST(evaluate_assignmentAndReuse);
   RUN_TEST(evaluate_stringConcat);
   RUN_TEST(evalute_split);
+  RUN_TEST(evaluate_splitWithEmptryChar);
   RUN_TEST(evaluate_listRef);
 
   return 0;

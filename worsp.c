@@ -715,6 +715,36 @@ void definedFunctionSplit(struct Object *op1, struct Object *op2,
     printf("Type error: split second operand must be string.\n");
     exit(1);
   }
+
+  // when op2 is "", return list of characters
+  if (strcmp(op2->string_value, "") == 0) {
+    evaluated->type = OBJ_LIST;
+    evaluated->list_value = malloc(sizeof(struct ConsCell));
+    evaluated->list_value->type = CONSCELL_TYPE_CELL;
+    evaluated->list_value->car = allocate(context, env);
+    evaluated->list_value->car->type = OBJ_STRING;
+    evaluated->list_value->car->string_value = malloc(sizeof(char));
+    evaluated->list_value->car->string_value[0] = op1->string_value[0];
+    evaluated->list_value->cdr = allocate(context, env);
+    evaluated->list_value->cdr->type = OBJ_NIL;
+    struct ConsCell *current = evaluated->list_value;
+    for (unsigned long i = 1; i < strlen(op1->string_value); i++) {
+      struct ConsCell *new_conscell = malloc(sizeof(struct ConsCell));
+      new_conscell->type = CONSCELL_TYPE_CELL;
+      new_conscell->car = allocate(context, env);
+      new_conscell->car->type = OBJ_STRING;
+      new_conscell->car->string_value = malloc(sizeof(char));
+      new_conscell->car->string_value[0] = op1->string_value[i];
+      new_conscell->cdr = allocate(context, env);
+      new_conscell->cdr->type = OBJ_NIL;
+      current->cdr = allocate(context, env);
+      current->cdr->type = OBJ_LIST;
+      current->cdr->list_value = new_conscell;
+      current = current->cdr->list_value;
+    }
+    return;
+  }
+
   // split op1 string by op2 string and return list of strings
   evaluated->type = OBJ_LIST;
   evaluated->list_value = malloc(sizeof(struct ConsCell));
