@@ -1289,6 +1289,20 @@ void evaluate_splitWithEmptryChar() {
                      "o") == 0);
 }
 
+void evaluate_progn() {
+  struct Env env = (struct Env){};
+  initEnv(&env);
+  char *source = "(progn 1 2 3)";
+  struct ParseState state = (struct ParseState){NULL, 0};
+  struct ParseResult result = (struct ParseResult){NULL};
+  struct Object evaluated = (struct Object){};
+  parse(source, &state, &result);
+  evaluateExpressionWithContext(result.program->expressions->expression,
+                                &evaluated, &env);
+  TEST_ASSERT(evaluated.type == OBJ_INTEGER);
+  TEST_ASSERT(evaluated.int_value == 3);
+}
+
 void evaluate_listRef() {
   struct Env env = (struct Env){};
   initEnv(&env);
@@ -1375,6 +1389,7 @@ int main() {
   RUN_TEST(evalute_split);
   RUN_TEST(evaluate_splitWithEmptryChar);
   RUN_TEST(evaluate_listRef);
+  RUN_TEST(evaluate_progn);
 
   return 0;
 }

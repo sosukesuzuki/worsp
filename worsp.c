@@ -1156,6 +1156,20 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
           evaluateExpression(expressions->next->next->expression, operand2, env,
                              context);
           definedFunctionListRef(operand1, operand2, evaluated);
+        } else if (strcmp(expr->data.symbol->symbol_name, "progn") == 0) {
+          // progn
+          struct ExpressionList *exprs = expressions->next;
+          struct Object *operand = NULL;
+          while (exprs != NULL) {
+            operand = allocate(context, env);
+            evaluateExpression(exprs->expression, operand, env, context);
+            exprs = exprs->next;
+          }
+          if (operand != NULL) {
+            *evaluated = *operand;
+          } else {
+            evaluated->type = OBJ_NIL;
+          }
         } else {
           // function call
           int i = 0;
