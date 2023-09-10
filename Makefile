@@ -20,7 +20,7 @@ LLDB := lldb
 
 BASH := bash
 
-.PHONY: format clean run-test run-repl run-main lldb-main
+.PHONY: format clean run-test run-repl run-main lldb-main check-snapshot update-snapshot
 
 $(EXECUTABLE_MAIN): $(MAIN_SRC_FILES)
 	$(CC) $(CFLAGS) $(MAIN_SRC_FILES) -o $(EXECUTABLE_MAIN) -lm
