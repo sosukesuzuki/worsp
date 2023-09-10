@@ -31,3 +31,7 @@ Build `test.c` and run it.
 ### `make repl` and `make run-repl`
 
 Build `repl.c` and run it.
+
+### `make check-snapshot` and `make update-snapshot`
+
+Run `./tests/fixtreus/*.wsp` files and checks and updates whether its standard output is equal to the one in `./tests/snapshot.json`.

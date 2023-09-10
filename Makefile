@@ -8,6 +8,8 @@ EXECUTABLE_TEST := test
 REPL_SRC_FILES := worsp.c repl.c
 EXECUTABLE_REPL := repl
 
+EXECUTABLE_SNAPSHOT_TEST := ./tests/test.sh
+
 CC := gcc
 CFLAGS := -Wall -Wextra
 
@@ -15,6 +17,8 @@ CLANG_FORMAT := clang-format
 FORMAT_FILES := $(wildcard *.c) $(wildcard *.h)
 
 LLDB := lldb
+
+BASH := bash
 
 .PHONY: format clean run-test run-repl run-main lldb-main
 
@@ -38,6 +42,12 @@ lldb-main: $(DEBUGGABLE_MAIN)
 
 run-test: $(EXECUTABLE_TEST)
 	./$(EXECUTABLE_TEST)
+
+check-snapshot: $(EXECUTABLE_MAIN)
+	$(BASH) $(EXECUTABLE_SNAPSHOT_TEST)
+
+update-snapshot: $(EXECUTABLE_MAIN)
+	$(BASH) $(EXECUTABLE_SNAPSHOT_TEST) -u
 
 run-repl: $(EXECUTABLE_REPL)
 	./$(EXECUTABLE_REPL)
