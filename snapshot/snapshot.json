@@ -4,7 +4,23 @@
     "stdout": "3"
   },
   {
+    "fixture": "./snapshot/fixtures/fact.wsp",
+    "stdout": "120"
+  },
+  {
     "fixture": "./snapshot/fixtures/simple_print.wsp",
     "stdout": "Hello World!"
+  },
+  {
+    "fixture": "./snapshot/fixtures/splice.wsp",
+    "stdout": "ob"
+  },
+  {
+    "fixture": "./snapshot/fixtures/while.wsp",
+    "stdout": "while... while... while... while... while... "
+  },
+  {
+    "fixture": "./snapshot/fixtures/string-ref.wsp",
+    "stdout": "b"
   }
 ]

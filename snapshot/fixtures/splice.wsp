@@ -14,4 +14,4 @@
   )
 )
 
-(print (splice "foobar" 0 6))
+(print (splice "foobar" 2 4))

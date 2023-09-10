@@ -1,6 +1,0 @@
-(defun length (list base)
-  (if (eq list nil) base (length (cdr list) (+ base 1)))
-)
-
-(print (length '(3 3 3) 0))
-(print (length (split "foobar" "") 0))
