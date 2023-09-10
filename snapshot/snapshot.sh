@@ -23,7 +23,7 @@ declare -a RESULTS
 ALL_TESTS_PASSED=true
 
 for FILE in $(find "$SCRIPT_DIR/fixtures" -name '*.wsp'); do
-  FULL_OUTPUT=$(make run-main WORSP_FILE="$FILE")
+  FULL_OUTPUT=$(make --no-print-directory run-main WORSP_FILE="$FILE")
   OUTPUT=$(echo -e "$FULL_OUTPUT" | sed -n '2,$p')
   EXIT_CODE=$?
 
