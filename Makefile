@@ -8,7 +8,7 @@ EXECUTABLE_TEST := test
 REPL_SRC_FILES := worsp.c repl.c
 EXECUTABLE_REPL := repl
 
-EXECUTABLE_SNAPSHOT_TEST := ./tests/test.sh
+EXECUTABLE_SNAPSHOT_TEST := ./snapshot/snapshot.sh
 
 CC := gcc
 CFLAGS := -Wall -Wextra

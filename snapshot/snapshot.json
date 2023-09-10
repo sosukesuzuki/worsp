@@ -1,0 +1,10 @@
+[
+  {
+    "fixture": "./snapshot/fixtures/calc.wsp",
+    "stdout": "3"
+  },
+  {
+    "fixture": "./snapshot/fixtures/simple_print.wsp",
+    "stdout": "Hello World!"
+  }
+]
