@@ -846,7 +846,31 @@ void definedFunctionPop(struct Object *op, struct Object *evaluated) {
   }
 }
 
-void definedFunctionPush(struct Object *op1, struct Object *op2, struct Object *evaluated, struct Env *env, struct AllocatorContext *context) {
+void definedFunctionPush(struct Object *op1, struct Object *op2,
+                         struct Object *evaluated, struct Env *env,
+                         struct AllocatorContext *context) {
+  if (op1->type == OBJ_NIL) {
+    *evaluated = *op2;
+
+    int i = 0;
+    while (env->bindings[i].symbol_name != NULL) {
+      if (env->bindings[i].value == op1) {
+        struct Object *new_list = allocate(context, env);
+        new_list->type = OBJ_LIST;
+        new_list->list_value = malloc(sizeof(struct ConsCell));
+        new_list->list_value->type = CONSCELL_TYPE_CELL;
+        new_list->list_value->car = op2;
+        new_list->list_value->cdr = allocate(context, env);
+        new_list->list_value->cdr->type = OBJ_NIL;
+        env->bindings[i].value = new_list;
+        break;
+      }
+      i++;
+    }
+
+    return;
+  }
+
   if (op1->type != OBJ_LIST) {
     printf("Type error: push second operand must be list.\n");
     exit(1);
@@ -1263,7 +1287,7 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
           evaluateExpression(expressions->next->next->expression, operand1, env,
                              context);
           evaluateExpression(expressions->next->expression, operand2, env,
-                              context);
+                             context);
           definedFunctionPush(operand2, operand1, evaluated, env, context);
         } else {
           // function call
@@ -1335,7 +1359,8 @@ void evaluateSymbolExpression(struct ExpressionNode *expression,
     while (env->bindings[i].symbol_name != NULL) {
       if (strcmp(env->bindings[i].symbol_name,
                  expression->data.symbol->symbol_name) == 0) {
-        *evaluated = *(env->bindings[i].value);
+        *evaluated = *env->bindings[i].value;
+        env->bindings[i].value = evaluated;
         return;
       }
       i++;

@@ -40,6 +40,10 @@
     "stdout": "while... while... while... while... while... "
   },
   {
+    "fixture": "./snapshot/fixtures/push-2.wsp",
+    "stdout": "(1 2 3)"
+  },
+  {
     "fixture": "./snapshot/fixtures/string-ref.wsp",
     "stdout": "b"
   }
