@@ -1,5 +1,9 @@
 [
   {
+    "fixture": "./snapshot/fixtures/remove-whitespaces.wsp",
+    "stdout": "foobar"
+  },
+  {
     "fixture": "./snapshot/fixtures/calc.wsp",
     "stdout": "3"
   },

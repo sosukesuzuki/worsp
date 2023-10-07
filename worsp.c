@@ -797,6 +797,27 @@ void definedFunctionListRef(struct Object *op1, struct Object *op2,
   *evaluated = *current->car;
 }
 
+void definedFunctionRemoveWhitespaces(struct Object *op1,
+                                      struct Object *evaluated) {
+  if (op1->type != OBJ_STRING) {
+    printf("Type error: remove-whitespaces operand must be string.\n");
+    exit(1);
+  }
+  char *str = op1->string_value;
+  char *new_str = malloc(sizeof(char) * (strlen(str) + 1));
+  int i = 0;
+  int j = 0;
+  while (str[i]) {
+    if (!isspace(str[i])) {
+      new_str[j++] = str[i];
+    }
+    i++;
+  }
+  new_str[j] = '\0';
+  evaluated->type = OBJ_STRING;
+  evaluated->string_value = new_str;
+}
+
 // =================================================
 //   evaluator
 // =================================================
@@ -1170,6 +1191,13 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
           } else {
             evaluated->type = OBJ_NIL;
           }
+        } else if (strcmp(expr->data.symbol->symbol_name,
+                          "remove-whitespaces") == 0) {
+          // remove-whitespaces
+          struct Object *operand = allocate(context, env);
+          evaluateExpression(expressions->next->expression, operand, env,
+                             context);
+          definedFunctionRemoveWhitespaces(operand, evaluated);
         } else {
           // function call
           int i = 0;

@@ -1,0 +1,22 @@
+(defun evaluate (tokens)
+  (progn
+    (print "evalute")
+  )
+)
+
+(defun tokenize (expr)
+  (progn
+    (print "tokenize")
+  )
+)
+
+(defun calc (expression)
+    (evalute
+        (tokenize
+            (remove-whitespaces expression)
+        )
+    )
+)
+
+(print (calc "1 + 2"))
+(print (calc "1 * 2 + (4 * 4) * (3 + 1 + 2)"))
