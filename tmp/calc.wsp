@@ -16,6 +16,23 @@
     (defun get-precedence (op)
       (if (|| (eq op "+") (eq op "-")) 1 (if (|| (eq op "*") (eq op "/")) 2) 0)
     )
+
+    (= i 0)
+    (while (< i (length tokens))
+      (progn
+        (= token (list-ref tokens i))
+        (if (is-int-string token)
+            (push (stack (parse-int token)))
+            (if (eq token "==L_PAREN==")
+                (push ops token)
+                (if (eq token "==R_PAREN==")
+                    (progn)
+                    (progn)
+                )
+            )
+        )
+      )
+    )
   )
 )
 
@@ -33,3 +50,6 @@
 
 (print (calc "1 + 2"))
 (print (calc "1 * 2 + (4 * 4) * (3 + 1 + 2)"))
+
+; is-int-string
+; parse-int
