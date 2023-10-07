@@ -1,5 +1,17 @@
 [
   {
+    "fixture": "./snapshot/fixtures/pop-1.wsp",
+    "stdout": "2"
+  },
+  {
+    "fixture": "./snapshot/fixtures/pop-3.wsp",
+    "stdout": "1"
+  },
+  {
+    "fixture": "./snapshot/fixtures/pop-2.wsp",
+    "stdout": "nil"
+  },
+  {
     "fixture": "./snapshot/fixtures/remove-whitespaces.wsp",
     "stdout": "foobar"
   },

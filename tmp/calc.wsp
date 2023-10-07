@@ -11,11 +11,9 @@
 )
 
 (defun calc (expression)
-    (evalute
-        (tokenize
-            (remove-whitespaces expression)
-        )
-    )
+  (progn
+    (print (remove-whitespaces expression))
+  )
 )
 
 (print (calc "1 + 2"))

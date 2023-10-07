@@ -818,6 +818,34 @@ void definedFunctionRemoveWhitespaces(struct Object *op1,
   evaluated->string_value = new_str;
 }
 
+void definedFunctionPop(struct Object *op, struct Object *evaluated) {
+  // empty list is evaluted as nil
+  if (op->type == OBJ_NIL) {
+    evaluated->type = OBJ_NIL;
+    return;
+  }
+  if (op->type != OBJ_LIST) {
+    printf("Type error: pop operand must be list.\n");
+    exit(1);
+  }
+  struct ConsCell *current = op->list_value;
+  struct ConsCell *prev = NULL;
+  while (1) {
+    if (isLastConsCell(current)) {
+      if (prev == NULL) {
+        *evaluated = *current->car;
+      } else {
+        prev->cdr->type = OBJ_NIL;
+        prev->cdr->list_value = NULL;
+        *evaluated = *current->car;
+      }
+      break;
+    }
+    prev = current;
+    current = current->cdr->list_value;
+  }
+}
+
 // =================================================
 //   evaluator
 // =================================================
@@ -1198,6 +1226,12 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
           evaluateExpression(expressions->next->expression, operand, env,
                              context);
           definedFunctionRemoveWhitespaces(operand, evaluated);
+        } else if (strcmp(expr->data.symbol->symbol_name, "pop") == 0) {
+          // pop
+          struct Object *operand = allocate(context, env);
+          evaluateExpression(expressions->next->expression, operand, env,
+                             context);
+          definedFunctionPop(operand, evaluated);
         } else {
           // function call
           int i = 0;
