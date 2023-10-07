@@ -469,6 +469,11 @@ int eq(struct Object *op1, struct Object *op2) {
 
 char *stringifyObject(struct Object *obj) {
   if (obj->type == OBJ_INTEGER) {
+    if (obj->int_value == 0) {
+      char *str = (char *)malloc(2 * sizeof(char));
+      strncpy(str, "0", 2);
+      return str;
+    }
     int digits = (int)log10(obj->int_value) + 1;
     char *str = (char *)malloc((digits + 1) * sizeof(char));
     sprintf(str, "%d", obj->int_value);
@@ -894,6 +899,29 @@ void definedFunctionPush(struct Object *op1, struct Object *op2,
   *evaluated = *op2;
 }
 
+void definedFunctionLength(struct Object *op, struct Object *evaluated) {
+  if (op->type == OBJ_NIL) {
+    evaluated->type = OBJ_INTEGER;
+    evaluated->int_value = 0;
+    return;
+  }
+  if (op->type != OBJ_LIST) {
+    printf("Type error: length operand must be list.\n");
+    exit(1);
+  }
+  int length = 1;
+  struct ConsCell *current = op->list_value;
+  while (1) {
+    if (isLastConsCell(current)) {
+      break;
+    }
+    length++;
+    current = current->cdr->list_value;
+  }
+  evaluated->type = OBJ_INTEGER;
+  evaluated->int_value = length;
+}
+
 // =================================================
 //   evaluator
 // =================================================
@@ -1289,6 +1317,12 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
           evaluateExpression(expressions->next->expression, operand2, env,
                              context);
           definedFunctionPush(operand2, operand1, evaluated, env, context);
+        } else if (strcmp(expr->data.symbol->symbol_name, "length") == 0) {
+          // length
+          struct Object *operand = allocate(context, env);
+          evaluateExpression(expressions->next->expression, operand, env,
+                             context);
+          definedFunctionLength(operand, evaluated);
         } else {
           // function call
           int i = 0;

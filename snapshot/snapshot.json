@@ -46,5 +46,13 @@
   {
     "fixture": "./snapshot/fixtures/string-ref.wsp",
     "stdout": "b"
+  },
+  {
+    "fixture": "./snapshot/fixtures/length-1.wsp",
+    "stdout": "0"
+  },
+  {
+    "fixture": "./snapshot/fixtures/length-2.wsp",
+    "stdout": "3"
   }
 ]

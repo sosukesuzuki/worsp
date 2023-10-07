@@ -1,6 +1,18 @@
 (defun evaluate (tokens)
   (progn
-    (print "evalute")
+    (= stack '())
+    (= ops '())
+    (defun apply_op ()
+      (progn
+        (= b (pop stack))
+        (= a (pop stack))
+        (= op (pop ops))
+        (if (eq op "+") (push stack (+ a b)))
+        (if (eq op "-") (push stack (- a b)))
+        (if (eq op "*") (push stack (* a b)))
+        (if (eq op "/") (push stack (/ a b)))
+      )
+    )
   )
 )
 
