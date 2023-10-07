@@ -5,13 +5,9 @@
 
 (= i 0)
 
-(print "start")
-
 (while (< i list-length)
   (progn
-    (push results (list-ref list i))
+    (print i)
     (= i (+ i 1))
   )
 )
-
-(print results)
