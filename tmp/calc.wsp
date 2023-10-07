@@ -2,7 +2,7 @@
   (progn
     (= stack '())
     (= ops '())
-    (defun apply_op ()
+    (defun apply-op ()
       (progn
         (= b (pop stack))
         (= a (pop stack))
@@ -12,6 +12,10 @@
         (if (eq op "*") (push stack (* a b)))
         (if (eq op "/") (push stack (/ a b)))
       )
+    )
+
+    (defun get-precedence (op)
+      (if (|| (eq op "+") (eq op "-")) 1 (if (|| (eq op "*") (eq op "/")) 2) 0)
     )
   )
 )
