@@ -32,6 +32,10 @@
     "stdout": "ob"
   },
   {
+    "fixture": "./snapshot/fixtures/push-1.wsp",
+    "stdout": "(1 2 3 4)"
+  },
+  {
     "fixture": "./snapshot/fixtures/while.wsp",
     "stdout": "while... while... while... while... while... "
   },

@@ -846,6 +846,30 @@ void definedFunctionPop(struct Object *op, struct Object *evaluated) {
   }
 }
 
+void definedFunctionPush(struct Object *op1, struct Object *op2, struct Object *evaluated, struct Env *env, struct AllocatorContext *context) {
+  if (op1->type != OBJ_LIST) {
+    printf("Type error: push second operand must be list.\n");
+    exit(1);
+  }
+
+  struct ConsCell *current = op1->list_value;
+  while (1) {
+    if (isLastConsCell(current)) {
+      struct ConsCell *new_conscell = malloc(sizeof(struct ConsCell));
+      new_conscell->type = CONSCELL_TYPE_CELL;
+      new_conscell->car = op2;
+      new_conscell->cdr = allocate(context, env);
+      new_conscell->cdr->type = OBJ_NIL;
+      current->cdr->type = OBJ_LIST;
+      current->cdr->list_value = new_conscell;
+      break;
+    }
+    current = current->cdr->list_value;
+  }
+
+  *evaluated = *op2;
+}
+
 // =================================================
 //   evaluator
 // =================================================
@@ -1232,6 +1256,15 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
           evaluateExpression(expressions->next->expression, operand, env,
                              context);
           definedFunctionPop(operand, evaluated);
+        } else if (strcmp(expr->data.symbol->symbol_name, "push") == 0) {
+          // push
+          struct Object *operand1 = allocate(context, env);
+          struct Object *operand2 = allocate(context, env);
+          evaluateExpression(expressions->next->next->expression, operand1, env,
+                             context);
+          evaluateExpression(expressions->next->expression, operand2, env,
+                              context);
+          definedFunctionPush(operand2, operand1, evaluated, env, context);
         } else {
           // function call
           int i = 0;
