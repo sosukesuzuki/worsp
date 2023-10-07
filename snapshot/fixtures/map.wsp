@@ -5,7 +5,7 @@
 
 (= i 0)
 
-(while (> i list-length)
+(while (< i list-length)
   (progn
     (push results (list-ref list i))
     (= i (+ i 1))

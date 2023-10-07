@@ -7,7 +7,9 @@
 
 (while (< i list-length)
   (progn
-    (print i)
+    (push results (list-ref list i))
     (= i (+ i 1))
   )
 )
+
+(print results)
