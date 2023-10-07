@@ -20,6 +20,10 @@
     "stdout": "3"
   },
   {
+    "fixture": "./snapshot/fixtures/map.wsp",
+    "stdout": "(1st 2nd 3rd)"
+  },
+  {
     "fixture": "./snapshot/fixtures/fact.wsp",
     "stdout": "120"
   },
