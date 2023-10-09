@@ -1,5 +1,9 @@
 [
   {
+    "fixture": "./snapshot/fixtures/length-for-string.wsp",
+    "stdout": "6"
+  },
+  {
     "fixture": "./snapshot/fixtures/pop-1.wsp",
     "stdout": "2"
   },

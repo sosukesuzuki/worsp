@@ -912,21 +912,25 @@ void definedFunctionLength(struct Object *op, struct Object *evaluated) {
     evaluated->int_value = 0;
     return;
   }
-  if (op->type != OBJ_LIST) {
-    printf("Type error: length operand must be list.\n");
+  if (op->type == OBJ_LIST) {
+    int length = 1;
+    struct ConsCell *current = op->list_value;
+    while (1) {
+      if (isLastConsCell(current)) {
+        break;
+      }
+      length++;
+      current = current->cdr->list_value;
+    }
+    evaluated->type = OBJ_INTEGER;
+    evaluated->int_value = length;
+  } else if (op->type == OBJ_STRING) {
+    evaluated->type = OBJ_INTEGER;
+    evaluated->int_value = strlen(op->string_value);
+  } else {
+    printf("Type error: length operand must be list or string.\n");
     exit(1);
   }
-  int length = 1;
-  struct ConsCell *current = op->list_value;
-  while (1) {
-    if (isLastConsCell(current)) {
-      break;
-    }
-    length++;
-    current = current->cdr->list_value;
-  }
-  evaluated->type = OBJ_INTEGER;
-  evaluated->int_value = length;
 }
 
 void definedFunctionIsIntString(struct Object *op, struct Object *evaluated) {
