@@ -28,6 +28,10 @@
     "stdout": "120"
   },
   {
+    "fixture": "./snapshot/fixtures/or-1.wsp",
+    "stdout": "T"
+  },
+  {
     "fixture": "./snapshot/fixtures/is-int-string-1.wsp",
     "stdout": "F"
   },
@@ -58,6 +62,10 @@
   {
     "fixture": "./snapshot/fixtures/string-ref.wsp",
     "stdout": "b"
+  },
+  {
+    "fixture": "./snapshot/fixtures/and-1.wsp",
+    "stdout": "F"
   },
   {
     "fixture": "./snapshot/fixtures/length-1.wsp",

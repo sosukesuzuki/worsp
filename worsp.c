@@ -1209,22 +1209,36 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
           definedFunctionMod(operand1, operand2, evaluated);
         } else if (strcmp(expr->data.symbol->symbol_name, "||") == 0) {
           // ||
-          struct Object *operand1 = allocate(context, env);
-          struct Object *operand2 = allocate(context, env);
-          evaluateExpression(expressions->next->expression, operand1, env,
-                             context);
-          evaluateExpression(expressions->next->next->expression, operand2, env,
-                             context);
-          definedFunctionOr(operand1, operand2, evaluated);
+          struct ExpressionList *exprs = expressions->next;
+          struct Object *operand = NULL;
+          while (exprs != NULL) {
+            operand = allocate(context, env);
+            evaluateExpression(exprs->expression, operand, env, context);
+            if (boolVal(operand)) {
+              evaluated->type = OBJ_BOOL;
+              evaluated->bool_value = 1;
+              return;
+            }
+            exprs = exprs->next;
+          }
+          evaluated->type = OBJ_BOOL;
+          evaluated->bool_value = 0;
         } else if (strcmp(expr->data.symbol->symbol_name, "&&") == 0) {
           // &&
-          struct Object *operand1 = allocate(context, env);
-          struct Object *operand2 = allocate(context, env);
-          evaluateExpression(expressions->next->expression, operand1, env,
-                             context);
-          evaluateExpression(expressions->next->next->expression, operand2, env,
-                             context);
-          definedFunctionAnd(operand1, operand2, evaluated);
+          struct ExpressionList *exprs = expressions->next;
+          struct Object *operand = NULL;
+          while (exprs != NULL) {
+            operand = allocate(context, env);
+            evaluateExpression(exprs->expression, operand, env, context);
+            if (!boolVal(operand)) {
+              evaluated->type = OBJ_BOOL;
+              evaluated->bool_value = 0;
+              return;
+            }
+            exprs = exprs->next;
+          }
+          evaluated->type = OBJ_BOOL;
+          evaluated->bool_value = 1;
         } else if (strcmp(expr->data.symbol->symbol_name, "<") == 0) {
           // <
           struct Object *operand1 = allocate(context, env);
