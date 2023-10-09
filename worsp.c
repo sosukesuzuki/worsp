@@ -922,6 +922,26 @@ void definedFunctionLength(struct Object *op, struct Object *evaluated) {
   evaluated->int_value = length;
 }
 
+void definedFunctionIsIntString(struct Object *op, struct Object *evaluated) {
+  if (op->type == OBJ_STRING) {
+    char *str = op->string_value;
+    int i = 0;
+    while (str[i]) {
+      if (!isdigit(str[i])) {
+        evaluated->type = OBJ_BOOL;
+        evaluated->bool_value = false;
+        return;
+      }
+      i++;
+    }
+    evaluated->type = OBJ_BOOL;
+    evaluated->bool_value = true;
+  } else {
+    evaluated->type = OBJ_BOOL;
+    evaluated->bool_value = false;
+  }
+}
+
 // =================================================
 //   evaluator
 // =================================================
@@ -1323,6 +1343,13 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
           evaluateExpression(expressions->next->expression, operand, env,
                              context);
           definedFunctionLength(operand, evaluated);
+        } else if (strcmp(expr->data.symbol->symbol_name, "is-int-string") ==
+                   0) {
+          // is-int-string
+          struct Object *operand = allocate(context, env);
+          evaluateExpression(expressions->next->expression, operand, env,
+                             context);
+          definedFunctionIsIntString(operand, evaluated);
         } else {
           // function call
           int i = 0;

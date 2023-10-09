@@ -28,8 +28,16 @@
     "stdout": "120"
   },
   {
+    "fixture": "./snapshot/fixtures/is-int-string-1.wsp",
+    "stdout": "F"
+  },
+  {
     "fixture": "./snapshot/fixtures/simple_print.wsp",
     "stdout": "Hello World!"
+  },
+  {
+    "fixture": "./snapshot/fixtures/is-int-string-2.wsp",
+    "stdout": "T"
   },
   {
     "fixture": "./snapshot/fixtures/splice.wsp",
