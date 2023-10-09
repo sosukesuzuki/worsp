@@ -4,6 +4,12 @@ Worsp is a minimal LISP interpreter written in C.
 
 ## Development
 
+## VSCode extension
+
+You can install the VSCode extension for syntax highlighting.
+
+Please check https://marketplace.visualstudio.com/items?itemName=sosukesuzuki.worsp-vscode .
+
 ### `make format`
 
 Run clang-format for all `*.c` and `*.h` files.
