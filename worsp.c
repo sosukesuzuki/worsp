@@ -96,6 +96,13 @@ void next(char *source, struct ParseState *state) {
     if (source[state->pos] == '"') {
       state->pos++; // Skip quote
     }
+  } else if (source[state->pos] == ';') {
+    // tokenize comment
+    while (source[state->pos] != '\n' && source[state->pos] != '\0') {
+      state->pos++;
+    }
+    next(source, state);
+    return;
   } else {
     printf("Unexpected token: %c\n", source[state->pos]);
     exit(1);
