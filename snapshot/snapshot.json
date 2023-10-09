@@ -64,6 +64,10 @@
     "stdout": "0"
   },
   {
+    "fixture": "./snapshot/fixtures/parse-int-1.wsp",
+    "stdout": "40"
+  },
+  {
     "fixture": "./snapshot/fixtures/length-2.wsp",
     "stdout": "3"
   }

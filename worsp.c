@@ -942,6 +942,24 @@ void definedFunctionIsIntString(struct Object *op, struct Object *evaluated) {
   }
 }
 
+void definedFunctionParseInt(struct Object *op, struct Object *evaluated) {
+  if (op->type != OBJ_STRING) {
+    printf("Type error: parse-int operand must be string.\n");
+    exit(1);
+  }
+  char *str = op->string_value;
+  int i = 0;
+  while (str[i]) {
+    if (!isdigit(str[i])) {
+      printf("Type error: parse-int operand must be string of digits.\n");
+      exit(1);
+    }
+    i++;
+  }
+  evaluated->type = OBJ_INTEGER;
+  evaluated->int_value = atoi(str);
+}
+
 // =================================================
 //   evaluator
 // =================================================
@@ -1350,6 +1368,12 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
           evaluateExpression(expressions->next->expression, operand, env,
                              context);
           definedFunctionIsIntString(operand, evaluated);
+        } else if (strcmp(expr->data.symbol->symbol_name, "parse-int") == 0) {
+          // parse-int
+          struct Object *operand = allocate(context, env);
+          evaluateExpression(expressions->next->expression, operand, env,
+                             context);
+          definedFunctionParseInt(operand, evaluated);
         } else {
           // function call
           int i = 0;
