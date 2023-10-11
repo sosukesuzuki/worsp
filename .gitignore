@@ -5,3 +5,4 @@ main
 debug_main
 /debug_main.dSYM
 test.js
+test.*.js
