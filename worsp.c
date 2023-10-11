@@ -971,6 +971,27 @@ void definedFunctionParseInt(struct Object *op, struct Object *evaluated) {
   evaluated->int_value = atoi(str);
 }
 
+void definedFunctionStringRef(struct Object *op1, struct Object *op2, struct Object *evaluated) {
+  if (op1->type != OBJ_STRING) {
+    printf("Type error: string-ref first operand must be string.\n");
+    exit(1);
+  }
+  if (op2->type != OBJ_INTEGER) {
+    printf("Type error: string-ref second operand must be integer.\n");
+    exit(1);
+  }
+  int index = op2->int_value;
+
+  if (index < 0 || index >= (int)strlen(op1->string_value)) {
+    printf("Index out of range.\n");
+    exit(1);
+  }
+  evaluated->type = OBJ_STRING;
+  evaluated->string_value = malloc(sizeof(char) * 2);
+  evaluated->string_value[0] = op1->string_value[index];
+  evaluated->string_value[1] = '\0';
+}
+
 // =================================================
 //   evaluator
 // =================================================
@@ -1399,6 +1420,15 @@ void evaluateSymbolicExpression(struct ExpressionNode *expression,
           evaluateExpression(expressions->next->expression, operand, env,
                              context);
           definedFunctionParseInt(operand, evaluated);
+        } else if (strcmp(expr->data.symbol->symbol_name, "string-ref") == 0) {
+          // string-ref
+          struct Object *operand1 = allocate(context, env);
+          struct Object *operand2 = allocate(context, env);
+          evaluateExpression(expressions->next->expression, operand1, env,
+                             context);
+          evaluateExpression(expressions->next->next->expression, operand2, env,
+                              context);
+          definedFunctionStringRef(operand1, operand2, evaluated);
         } else {
           // function call
           int i = 0;

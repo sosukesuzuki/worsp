@@ -24,6 +24,10 @@
     "stdout": "3"
   },
   {
+    "fixture": "./snapshot/fixtures/string-ref-1.wsp",
+    "stdout": "d"
+  },
+  {
     "fixture": "./snapshot/fixtures/map.wsp",
     "stdout": "(1st 2nd 3rd)"
   },
